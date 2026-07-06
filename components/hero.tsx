@@ -1,48 +1,36 @@
-// import {CanvasFractalGrid} from "@/components/ui/canvas-fractal-grid";
-import {
-    HeroDitheringRoot,
-    HeroDitheringContainer,
-    HeroDitheringContent,
-    HeroDitheringHeading,
-    HeroDitheringDescription,
-    HeroDitheringActions,
-    HeroDitheringBadges,
-    // HeroDitheringVisual,
-    HeroDitheringMobileVisual,
-} from "@/components/ui/hero-dithering"
+
+import TextAnimate from "@/components/ui/text-animate";
+import { ThreeDMarquee } from "@/components/ui/3d-marquee";
+
+const marqueeColors = [
+  "#ef4444",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+                
+  "#8b5cf6",
+  "#ec4899",
+  "#06b6d4",
+  "#84cc16",
+  "#a855f7",
+  "#f43f5e",
+  "#10b981",
+  "#6366f1",
+  "#d946ef",
+  "#0ea5e9",
+];
 
 export default function Hero() {
-
     return (
-        <section >
-            {/*<div className="absolute inset-0 w-full h-full pointer-events-none">*/}
-            {/*    <CanvasFractalGrid*/}
-            {/*        dotSize={2.5}*/}
-            {/*        dotSpacing={20}*/}
-            {/*        dotOpacity={0.4}*/}
-            {/*        gradientAnimationDuration={6}*/}
-            {/*        waveIntensity={60}*/}
-            {/*        waveRadius={250}*/}
-            {/*        enableGradient={false}*/}
-            {/*        enableMouseGlow={false}*/}
-            {/*        enableNoise={true}*/}
-            {/*        bottomFadeHeight={0.5}*/}
-
-            {/*    />*/}
-            {/*</div>*/}
-            {/*<div className="relative z-10 pt-20 w-full flex justify-center">*/}
-            {/*    /!* 在这里写你的内容 *!/*/}
-
-
-
-            {/*</div>*/}
-            <div className="pt-24 flex justify-center">
-
-
-
-
+        <section className="relative h-screen w-full overflow-hidden">
+            <div className="absolute inset-0">
+                <ThreeDMarquee colors={marqueeColors} />
             </div>
 
+            <div className="relative z-10 flex h-full items-center justify-center pt-26">
+                <TextAnimate text="Build beautiful" type="rollIn" />
+            </div>
         </section>
     );
 }
