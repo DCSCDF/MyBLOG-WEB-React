@@ -13,8 +13,9 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
 import {ArrowUpIcon} from "lucide-react";
+import { TopBlur } from "@/components/ui/edge-blur";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -62,7 +63,9 @@ export default function Header() {
     router.push(href);
   };
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full  bg-background/60 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <>
+      <TopBlur height={100} />
+      <header className="fixed top-0 left-0 right-0 z-50 w-full">
       <div className=" mx-auto flex h-14 items-center justify-between px-4 md:px-6">
         <div className="flex items-center">
           <Link href="/" className="text-lg font-semibold">
@@ -129,12 +132,17 @@ export default function Header() {
         </div>
         <nav className="flex items-center gap-4">
 
-
+            <Input type="search" placeholder="Search..." />
 
             <div className={"h-4 border"}></div>
 
             <Button variant="outline" size="icon" aria-label="Submit">
-                <ArrowUpIcon />
+              <svg d="1783371765925" className="icon" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="16725" width="200" height="200">
+                <path
+                  d="M608.704 127.001a394.77 394.77 0 0 1 13.582 102.35c0 216.341-175.11 391.451-391.451 391.451a401.312 401.312 0 0 1-102.839-13.583c45.111 166.379 196.938 289.1 377.869 289.1 216.341 0 391.451-175.11 391.451-391.451 0.004-180.929-122.233-332.756-288.612-377.867z"
+                  fill="#333333" p-id="16726"></path>
+              </svg>
             </Button>
 
             <div className={"h-4 border"}></div>
@@ -145,6 +153,7 @@ export default function Header() {
         </nav>
       </div>
     </header>
+    </>
   );
 }
 
