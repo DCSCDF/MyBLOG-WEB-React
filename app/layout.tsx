@@ -91,7 +91,7 @@ export default function RootLayout({
                             </MobileNavMenu>
                         </MobileNav>
                     </Navbar>
-                    <main className="w-full px-4 sm:px-8 py-8">
+                    <main className="w-full px-4 py-6">
                         {children}
                     </main>
                 </div>

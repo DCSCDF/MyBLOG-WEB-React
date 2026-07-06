@@ -232,46 +232,52 @@ export const MobileNavToggle = ({
 
 export const NavbarLogo = () => {
   return (
-    <a
-      href="#"
-      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
-    >
-      <img
-        src="https://assets.aceternity.com/logo-dark.png"
-        alt="logo"
-        width={30}
-        height={30}
-      />
-      <span className="font-medium text-black dark:text-white">Startup</span>
-    </a>
+      <a
+          href="#"
+          className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
+      >
+          <svg className="icon" height="30" p-id="1320" version="1.1" viewBox="0 0 1024 1024"
+               width="30" xmlns="http://www.w3.org/2000/svg" data-v-00d6f774="">
+              <path
+                  d="M447.7 62H94.1C76.4 62 62 74.6 62 90.1v478.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1V90.1c0.1-15.5-14.3-28.1-32.1-28.1z m-32.1 478.1H126.3V118.3h289.3v421.8z"
+                  fill="#37B1C9" p-id="1321" data-v-00d6f774=""></path>
+              <path
+                  d="M447.7 652.6H94.1c-17.8 0-32.1 12.6-32.1 28.1v253.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1v-253c0.1-15.6-14.3-28.2-32.1-28.2z m-32.1 253.2H126.3V708.9h289.3v196.9zM929.9 62H576.3c-17.8 0-32.1 12.6-32.1 28.1v253.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1V90.1c0-15.5-14.4-28.1-32.1-28.1z m-32.2 253.1H608.4V118.3h289.3v196.8z"
+                  fill="#9BD8E4" p-id="1322" data-v-00d6f774=""></path>
+              <path
+                  d="M929.9 427.6H576.3c-17.8 0-32.1 12.6-32.1 28.1v478.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1v-478c0-15.6-14.4-28.2-32.1-28.2z m-32.2 478.2H608.4V483.9h289.3v421.9z"
+                  fill="#37B1C9" p-id="1323" data-v-00d6f774=""></path>
+          </svg>
+          {/*<span className="font-medium text-black dark:text-white">BLOG</span>*/}
+      </a>
   );
 };
 
 export const NavbarButton = ({
-  href,
-  as: Tag = "a",
-  children,
-  className,
-  variant = "primary",
-  ...props
-}: {
-  href?: string;
-  as?: React.ElementType;
-  children: React.ReactNode;
-  className?: string;
-  variant?: "primary" | "secondary" | "dark" | "gradient";
+                                 href,
+                                 as: Tag = "a",
+                                 children,
+                                 className,
+                                 variant = "primary",
+                                 ...props
+                             }: {
+    href?: string;
+    as?: React.ElementType;
+    children: React.ReactNode;
+    className?: string;
+    variant?: "primary" | "secondary" | "dark" | "gradient";
 } & (
-  | React.ComponentPropsWithoutRef<"a">
-  | React.ComponentPropsWithoutRef<"button">
-)) => {
-  const baseStyles =
-    "px-4 py-2 rounded-md bg-white button bg-white text-black text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
+    | React.ComponentPropsWithoutRef<"a">
+    | React.ComponentPropsWithoutRef<"button">
+    )) => {
+    const baseStyles =
+        "px-4 py-2 rounded-md bg-white button bg-white text-black text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
 
-  const variantStyles = {
-    primary:
-      "shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
-    secondary: "bg-transparent shadow-none dark:text-white",
-    dark: "bg-black text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
+    const variantStyles = {
+        primary:
+            "shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
+        secondary: "bg-transparent shadow-none dark:text-white",
+        dark: "bg-black text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
     gradient:
       "bg-gradient-to-b from-blue-500 to-blue-700 text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]",
   };
