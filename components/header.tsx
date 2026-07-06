@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {ArrowUpIcon} from "lucide-react";
 import { TopBlur } from "@/components/ui/edge-blur";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -29,30 +28,7 @@ const components: { title: string; href: string; description: string }[] = [
     href: "/docs/primitives/hover-card",
     description:
       "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
+  }
 ];
 
 export default function Header() {
@@ -64,7 +40,7 @@ export default function Header() {
   };
   return (
     <>
-      <TopBlur height={100} />
+      <TopBlur height={100} bgColor="rgba(255, 255, 255, 1)" />
       <header className="fixed top-0 left-0 right-0 z-50 w-full">
       <div className=" mx-auto flex h-14 items-center justify-between px-4 md:px-6">
         <div className="flex items-center">
@@ -86,7 +62,7 @@ export default function Header() {
                 <NavigationMenu>
                     <NavigationMenuList>
                         <NavigationMenuItem>
-                            <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
+                            <NavigationMenuTrigger>首页</NavigationMenuTrigger>
                             <NavigationMenuContent>
                                 <ul className="w-96">
                                     <ListItem href="/docs" title="Introduction">
@@ -102,9 +78,9 @@ export default function Header() {
                             </NavigationMenuContent>
                         </NavigationMenuItem>
                 <NavigationMenuItem className="hidden md:flex">
-                  <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+                  <NavigationMenuTrigger>我的博客</NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                      <ul className="grid w-100 gap-2 md:w-125 md:grid-cols-2 lg:w-150">
                       {components.map((component) => (
                         <ListItem
                           key={component.title}
@@ -123,7 +99,7 @@ export default function Header() {
                     onClick={(e) => handleNav(e, "/docs")}
                     className={navigationMenuTriggerStyle()}
                   >
-                    Docs
+                    其他文章
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -132,7 +108,7 @@ export default function Header() {
         </div>
         <nav className="flex items-center gap-4">
 
-            <Input type="search" placeholder="Search..." />
+            <Input type="search" placeholder="搜索..." />
 
             <div className={"h-4 border"}></div>
 
@@ -148,7 +124,7 @@ export default function Header() {
             <div className={"h-4 border"}></div>
 
             <Button>
-                <Link href="/login">Login</Link>
+                <Link href="/login">登入</Link>
             </Button>
         </nav>
       </div>

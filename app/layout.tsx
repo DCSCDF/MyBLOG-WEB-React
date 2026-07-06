@@ -13,7 +13,7 @@ export default function RootLayout({
         <html lang="zh-CN">
             <body className="min-h-full">
           <Header />
-          <main className="w-full px-4 pt-20 pb-6">
+          <main className="w-full pb-6">
                         {children}
                     </main>
 

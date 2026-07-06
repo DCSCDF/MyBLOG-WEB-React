@@ -1,7 +1,9 @@
+import Hero from "@/components/hero";
+
 export default function Home() {
   return (
     <section>
-主页
+        <Hero/>
     </section>
   );
 }

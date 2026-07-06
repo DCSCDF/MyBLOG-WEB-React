@@ -47,6 +47,12 @@ interface CanvasFractalGridProps {
   initialPerformance?: "low" | "medium" | "high"
   /** Enable or disable the gradient animation */
   enableGradient?: boolean
+  /** Height of the bottom fade-out area as a fraction of total height (0-1) */
+  bottomFadeHeight?: number
+  /** Additional class names for the container */
+  className?: string
+  /** Additional inline styles for the container */
+  style?: React.CSSProperties
 }
 
 const NoiseSVG = React.memo(() => (
@@ -134,6 +140,7 @@ const usePerformance = (
 
   useEffect(() => {
     if (fps < 30 && performance !== "low") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
       setPerformance("low")
     } else if (fps >= 30 && fps < 50 && performance !== "medium") {
       setPerformance("medium")
@@ -185,6 +192,7 @@ const DotCanvas: React.FC<{
   glowColor: string
   performance: "low" | "medium" | "high"
   mousePos: { x: number; y: number }
+  containerRef: React.RefObject<HTMLDivElement | null>
 }> = React.memo(
   ({
     dotSize,
@@ -196,9 +204,16 @@ const DotCanvas: React.FC<{
     glowColor,
     performance,
     mousePos,
+    containerRef,
   }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const animationRef = useRef<number | null>(null)
+    const resizeObserverRef = useRef<ResizeObserver | null>(null)
+    const mousePosRef = useRef(mousePos)
+
+    useEffect(() => {
+      mousePosRef.current = mousePos
+    }, [mousePos])
 
     const drawDots = useCallback(
       (ctx: CanvasRenderingContext2D, time: number) => {
@@ -216,8 +231,8 @@ const DotCanvas: React.FC<{
         const cols = Math.ceil(width / dotSpacing)
         const rows = Math.ceil(height / dotSpacing)
 
-        const centerX = mousePos.x * width
-        const centerY = mousePos.y * height
+        const centerX = mousePosRef.current.x * width
+        const centerY = mousePosRef.current.y * height
 
         for (let i = 0; i < cols; i += skip) {
           for (let j = 0; j < rows; j += skip) {
@@ -277,7 +292,6 @@ const DotCanvas: React.FC<{
         dotColor,
         glowColor,
         performance,
-        mousePos,
       ]
     )
 
@@ -291,12 +305,22 @@ const DotCanvas: React.FC<{
       if (!ctx) return
 
       const resizeCanvas = () => {
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
+        const container = containerRef.current
+        if (container) {
+          const rect = container.getBoundingClientRect()
+          canvas.width = rect.width
+          canvas.height = rect.height
+        }
       }
 
       resizeCanvas()
-      window.addEventListener("resize", resizeCanvas)
+
+      if (containerRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          resizeCanvas()
+        })
+        resizeObserverRef.current.observe(containerRef.current)
+      }
 
       let lastTime = 0
       const animate = (time: number) => {
@@ -310,18 +334,19 @@ const DotCanvas: React.FC<{
       animationRef.current = requestAnimationFrame(animate)
 
       return () => {
-        window.removeEventListener("resize", resizeCanvas)
+        if (resizeObserverRef.current) {
+          resizeObserverRef.current.disconnect()
+        }
         if (animationRef.current) {
           cancelAnimationFrame(animationRef.current)
         }
       }
-    }, [drawDots])
+    }, [drawDots, containerRef])
 
     return (
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 h-full w-full bg-gray-100"
-        style={{ mixBlendMode: "multiply" }}
+        className="absolute inset-0 h-full w-full bg-transparent"
       />
     )
   }
@@ -412,6 +437,9 @@ export function CanvasFractalGrid({
   enableMouseGlow = true,
   initialPerformance = "medium",
   enableGradient = false,
+  bottomFadeHeight = 0.3,
+  className = "",
+  style,
 }: CanvasFractalGridProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { isMobile, isTablet } = useResponsive()
@@ -451,6 +479,15 @@ export function CanvasFractalGrid({
     return dotSpacing
   }, [isMobile, isTablet, dotSpacing])
 
+  const maskStyle = useMemo(
+    () => ({
+      maskImage: `linear-gradient(to bottom, black 0%, black ${(1 - bottomFadeHeight) * 100}%, transparent 100%)`,
+      WebkitMaskImage: `linear-gradient(to bottom, black 0%, black ${(1 - bottomFadeHeight) * 100}%, transparent 100%)`,
+      ...style,
+    }),
+    [bottomFadeHeight, style]
+  )
+
   return (
     <AnimatePresence>
       <motion.div
@@ -460,7 +497,8 @@ export function CanvasFractalGrid({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute inset-0 overflow-hidden w-full h-full"
+        className={`absolute inset-0 overflow-hidden w-full h-full ${className}`}
+        style={maskStyle}
       >
         {enableGradient && (
           <Gradient
@@ -492,6 +530,7 @@ export function CanvasFractalGrid({
           glowColor={glowColor}
           performance={performance}
           mousePos={mousePos}
+          containerRef={containerRef}
         />
         {enableNoise && <NoiseOverlay opacity={noiseOpacity} />}
         {enableMouseGlow && (
