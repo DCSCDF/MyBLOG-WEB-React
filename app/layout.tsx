@@ -1,51 +1,101 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+"use client";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "我的博客",
-  description: "个人博客网站",
-};
+import {
+    Navbar,
+    NavBody,
+    NavItems,
+    MobileNav,
+    NavbarLogo,
+    NavbarButton,
+    MobileNavHeader,
+    MobileNavToggle,
+    MobileNavMenu,
+} from "@/components/ui/resizable-navbar";
+import { useState } from "react";
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html
-      lang="zh-CN"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <header>
+    const navItems = [
+        {
+            name: "Features",
+            link: "#features",
+        },
+        {
+            name: "Pricing",
+            link: "#pricing",
+        },
+        {
+            name: "Contact",
+            link: "#contact",
+        },
+    ];
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-          {/*<nav>*/}
-          {/*  <ul>*/}
-          {/*    <li><a href="/">主页</a></li>*/}
-          {/*    <li><a href="/blog">博客</a></li>*/}
-          {/*    <li><a href="/links">友链</a></li>*/}
-          {/*  </ul>*/}
-          {/*</nav>*/}
+    return (
+        <html lang="zh-CN">
+            <body className="min-h-full">
+                <div className="relative w-full">
+                    <Navbar>
+                        <NavBody>
+                            <NavbarLogo />
+                            <NavItems items={navItems} />
+                            <div className="flex items-center gap-4">
+                                <NavbarButton variant="secondary">Login</NavbarButton>
+                                <NavbarButton variant="primary">Book a call</NavbarButton>
+                            </div>
+                        </NavBody>
 
+                        <MobileNav>
+                            <MobileNavHeader>
+                                <NavbarLogo />
+                                <MobileNavToggle
+                                    isOpen={isMobileMenuOpen}
+                                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                />
+                            </MobileNavHeader>
 
-        </header>
-        <main className="flex-1">{children}</main>
-        <footer>
-          <p>页脚内容</p>
-        </footer>
-      </body>
-    </html>
-  );
+                            <MobileNavMenu
+                                isOpen={isMobileMenuOpen}
+                                onClose={() => setIsMobileMenuOpen(false)}
+                            >
+                                {navItems.map((item, idx) => (
+                                    <a
+                                        key={`mobile-link-${idx}`}
+                                        href={item.link}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="relative text-neutral-600 dark:text-neutral-300"
+                                    >
+                                        <span className="block">{item.name}</span>
+                                    </a>
+                                ))}
+                                <div className="flex w-full flex-col gap-4">
+                                    <NavbarButton
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        variant="primary"
+                                        className="w-full"
+                                    >
+                                        Login
+                                    </NavbarButton>
+                                    <NavbarButton
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        variant="primary"
+                                        className="w-full"
+                                    >
+                                        Book a call
+                                    </NavbarButton>
+                                </div>
+                            </MobileNavMenu>
+                        </MobileNav>
+                    </Navbar>
+                    <main className="w-full px-4 sm:px-8 py-8">
+                        {children}
+                    </main>
+                </div>
+            </body>
+        </html>
+    );
 }
