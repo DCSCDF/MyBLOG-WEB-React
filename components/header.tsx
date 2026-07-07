@@ -134,7 +134,7 @@ export default function Header() {
                                     <NavigationMenuItem>
                                         <NavigationMenuLink
                                             href="/links"
-                                            onClick={(e) => handleNav(e, "/docs")}
+                                            onClick={(e) => handleNav(e, "/links")}
                                             className={navigationMenuTriggerStyle()}
                                         >
                                             友情链接
