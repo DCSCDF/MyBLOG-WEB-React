@@ -9,13 +9,16 @@ import {
 } from "@/components/ui/card"
 import {CodeEditor} from "@/components/ui/code-editor"
 
-const mySiteCode = `
+const mySiteCode = `<!-- 站点链接-->
 <a href="https://myblog.icu" target="_blank" rel="noopener noreferrer">
+  <!-- 图片url-->
   <img src="https://api.myblog.icu/api/images/66d8abaee825b7d74238c6bc8a58f4a5?size=sm"
        alt="myblog.icu" />
   <div>
-    <h3>myblog.icu</h3>
-    <p>JiuLiu的博客，分享前端开发经验与生活日常。</p>
+     <!-- 网站名称-->
+    <h3>JiuLiuBLOG</h3>
+     <!-- 简介-->
+    <p>一个个人开发的简洁博客，分享开发经验和生活日常。</p>
   </div>
 </a>
 `
