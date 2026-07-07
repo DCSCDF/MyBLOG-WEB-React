@@ -58,7 +58,7 @@ export default function Header() {
               </div>
 
           </Link>
-            <div className="mx-4">
+            <div className="mx-6">
                 <NavigationMenu>
                     <NavigationMenuList>
                         <NavigationMenuItem>
@@ -95,6 +95,15 @@ export default function Header() {
                     其他文章
                   </NavigationMenuLink>
                 </NavigationMenuItem>
+                        <NavigationMenuItem>
+                            <NavigationMenuLink
+                                href="/links"
+                                onClick={(e) => handleNav(e, "/docs")}
+                                className={navigationMenuTriggerStyle()}
+                            >
+                                友情链接
+                            </NavigationMenuLink>
+                        </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </div>

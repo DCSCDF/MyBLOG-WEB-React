@@ -67,11 +67,7 @@ export const ThreeDMarquee = ({
                     backgroundColor: useColors ? item : undefined,
                     minHeight: "20vmax",
                   }}
-                  whileHover={{
-                    y: -20,
-                    scale: 1.05,
-                    transition: { duration: 0.2 },
-                  }}
+
                 >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                   {!useColors && <img src={item} alt="" className="size-full object-cover" />}

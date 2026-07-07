@@ -14,8 +14,11 @@ export default function RootLayout({
             <body className="min-h-full">
           <Header />
           <main className="w-full">
-                        {children}
-                    </main>
+              {children}
+          </main>
+
+
+
 
             </body>
         </html>
