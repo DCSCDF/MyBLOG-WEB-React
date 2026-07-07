@@ -1,36 +1,23 @@
 
+import { readdirSync } from "fs";
+import { join } from "path";
 import TextAnimate from "@/components/ui/text-animate";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 
-const marqueeColors = [
-  "#ef4444",
-  "#f97316",
-  "#eab308",
-  "#22c55e",
-  "#14b8a6",
-  "#8b5cf6",
-  "#ec4899",
-  "#06b6d4",
-  "#84cc16",
-  "#a855f7",
-  "#f43f5e",
-  "#10b981",
-  "#6366f1",
-  "#d946ef",
-  "#0ea5e9",
-];
-
 export default function Hero() {
+    const heroImages = readdirSync(join(process.cwd(), "public", "hero-img"))
+        .filter((f) => /\.(png|jpe?g|webp|gif)$/i.test(f))
+        .map((f) => `/hero-img/${f}`);
     return (
         <section className="relative h-screen w-full overflow-hidden">
             <div className="absolute inset-0">
-                <ThreeDMarquee colors={marqueeColors} />
+                <ThreeDMarquee images={heroImages} />
             </div>
 
             <div className="relative z-10 flex h-full flex-col items-center justify-center gap-8">
                 <AppleHelloEnglishEffect className="text-gray-800 h-16" />
-                <TextAnimate text="Build beautiful" type="rollIn" />
+                <TextAnimate text="I am a Blog Developer" type="rollIn" />
             </div>
         </section>
     );
