@@ -7,6 +7,18 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import {CodeEditor} from "@/components/ui/code-editor"
+
+const mySiteCode = `
+<a href="https://myblog.icu" target="_blank" rel="noopener noreferrer">
+  <img src="https://api.myblog.icu/api/images/66d8abaee825b7d74238c6bc8a58f4a5?size=sm"
+       alt="myblog.icu" />
+  <div>
+    <h3>myblog.icu</h3>
+    <p>JiuLiu的博客，分享前端开发经验与生活日常。</p>
+  </div>
+</a>
+`
 
 
 export default function Links() {
@@ -18,7 +30,7 @@ export default function Links() {
                     朋友们
                 </h1>
                 <p
-                    className="dark:text-zinc-400 text-zinc-600 text-sm font-medium tracking-wide uppercase opacity-70">
+                    className="dark:text-neutral-400 text-neutral-600 text-sm font-medium tracking-wide uppercase opacity-70">
                     Curation of Excellent
                     Technical Blogs &amp; Links
                 </p>
@@ -26,7 +38,7 @@ export default function Links() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
                 <a href="https://amvc.top"
-                   className="group block p-4 bg-zinc-100 dark:bg-zinc-900  rounded-lg transition-all duration-300"
+                   className="group block p-4 bg-neutral-50 dark:bg-neutral-900  rounded-lg transition-all duration-300"
                    rel="noopener noreferrer" target="_blank">
                     <div className="flex items-center gap-4">
                         <div
@@ -36,14 +48,14 @@ export default function Links() {
                                  className="w-full h-full object-cover transition-all"/></div>
                         <div className="min-w-0"><h3
                             className="font-bold text-on-surface text-sm truncate group-hover:text-primary transition-colors">麻辣工夫茶博客网</h3>
-                            <p className="dark:text-zinc-400 text-zinc-600 text-xs truncate leading-relaxed">天气晴朗，万物可爱~</p>
+                            <p className="dark:text-neutral-400 text-neutral-600 text-xs truncate leading-relaxed">天气晴朗，万物可爱~</p>
                         </div>
                     </div>
                 </a>
 
 
                 <a href="https://amvc.top"
-                   className="group block p-4 bg-zinc-100 dark:bg-zinc-900  rounded-lg transition-all duration-300"
+                   className="group block p-4 bg-neutral-50 dark:bg-neutral-900  rounded-lg transition-all duration-300"
                    rel="noopener noreferrer" target="_blank">
                     <div className="flex items-center gap-4">
                         <div
@@ -53,13 +65,14 @@ export default function Links() {
                                  className="w-full h-full object-cover transition-all"/></div>
                         <div className="min-w-0"><h3
                             className="font-bold text-on-surface text-sm truncate group-hover:text-primary transition-colors">麻辣工夫茶博客网</h3>
-                            <p className="dark:text-zinc-400 text-zinc-600 text-xs truncate leading-relaxed">天气晴朗，万物可爱~</p>
+                            <p className="dark:text-neutral-400 text-neutral-600 text-xs truncate leading-relaxed">天气晴朗，万物可爱~</p>
                         </div>
                     </div>
                 </a>
 
 
             </div>
+
 
             {/*<div className="mt-16 bg-surface-container-low p-8 rounded-lg">*/}
             {/*    <h2*/}
@@ -79,7 +92,7 @@ export default function Links() {
             {/*    </p>*/}
             {/*</div>*/}
 
-            <Card className="mx-auto w-full mt-10">
+            <Card className="mx-auto w-full my-10">
                 <CardHeader>
                     <CardTitle>申请友链</CardTitle>
                     <CardDescription>
@@ -88,7 +101,7 @@ export default function Links() {
                 </CardHeader>
                 <CardContent className="-mb-(--card-spacing)">
                     <div
-                        className="-mx-(--card-spacing) max-h-48 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4 text-sm leading-relaxed">
+                        className="-mx-(--card-spacing) max-h-72 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4 text-sm leading-relaxed">
                         <p>
                             请提前添加本站，我将会很快处理。
                         </p>
@@ -98,12 +111,20 @@ export default function Links() {
                         <p>
                             若长时间未审核or评论不了，请加QQ：3209174373，只换个人博客。
                         </p>
-             
+                        <CodeEditor
+                            lang="html"
+                            title="myblog.icu"
+                            copyButton
+                            writing={false}
+                            className="w-full h-75"
+                        >
+                            {mySiteCode}
+                        </CodeEditor>
                     </div>
                 </CardContent>
                 <CardFooter className="justify-end gap-2">
-                    <Button variant="outline">Decline</Button>
-                    <Button>Accept</Button>
+                    {/*<Button variant="outline">Decline</Button>*/}
+                    <Button>申请</Button>
                 </CardFooter>
             </Card>
 

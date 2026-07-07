@@ -32,27 +32,27 @@ export default function Blog() {
                                     <p className={"text-black dark:text-white text-md font-bold"}>JiuLiu</p>
                                     <Badge variant="secondary">博客作者</Badge>
                                 </div>
-                                <p className={"text-zinc-500 dark:text-zinc-400 mt-2"}>
+                                <p className={"text-neutral-500 dark:text-neutral-400 mt-2"}>
                                     我是一名独立开发者，主要熟悉前后端开发等方面，爱好探险、剪辑、摄影等等，目前正在开发我的博客。
                                 </p>
                             </div>
                         </div>
-                        <h2 className={"text-zinc-500 mt-8 sm:mt-10 dark:text-zinc-400 text-xs"}>Recent Posts</h2>
+                        <h2 className={"text-neutral-500 mt-8 sm:mt-10 dark:text-neutral-400 text-xs"}>Recent Posts</h2>
 
                     </div>
                     <div>
 
 
-                        <div className={"p-4 sm:p-6 hover:bg-zinc-50 dark:hover:bg-zinc-900 my-4 mx-4 sm:mx-0"}>
+                        <div className={"p-4 sm:p-6 hover:bg-neutral-50 dark:hover:bg-neutral-900 my-4 mx-4 sm:mx-0"}>
                             <div className={"flex items-center gap-2 flex-wrap"}>
                                 <Badge variant="secondary">分类</Badge>
-                                <span className={"text-xs text-zinc-500 dark:text-zinc-400"}>2026/4/12</span>
+                                <span className={"text-xs text-neutral-500 dark:text-neutral-400"}>2026/4/12</span>
                             </div>
                             <p className={"mt-1 text-md"}>MYBLOG博客网站项目介绍</p>
-                            <p className={"mt-1 text-sm text-zinc-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
-                            <p className=" pt-2 flex items-center text-xs text-zinc-500">Read more
+                            <p className={"mt-1 text-sm text-neutral-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
+                            <p className=" pt-2 flex items-center text-xs text-neutral-500">Read more
                                 <span className="mt-0.75 ">
-                                    <svg className="relative mt-px overflow-visible ml-2.5 text-zinc-500" fill="none"
+                                    <svg className="relative mt-px overflow-visible ml-2.5 text-neutral-500" fill="none"
                                          height="6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                                          strokeWidth="2" viewBox="0 0 3 6" width="3"><path d="M0 0L3 3L0 6"></path>
                                     </svg>
@@ -61,16 +61,16 @@ export default function Blog() {
                         </div>
 
 
-                        <div className={"p-4 sm:p-6 hover:bg-zinc-50 dark:hover:bg-zinc-900 my-4 mx-4 sm:mx-0"}>
+                        <div className={"p-4 sm:p-6 hover:bg-neutral-50 dark:hover:bg-neutral-900 my-4 mx-4 sm:mx-0"}>
                             <div className={"flex items-center gap-2 flex-wrap"}>
                                 <Badge variant="secondary">分类</Badge>
-                                <span className={"text-xs text-zinc-500 dark:text-zinc-400"}>2026/4/12</span>
+                                <span className={"text-xs text-neutral-500 dark:text-neutral-400"}>2026/4/12</span>
                             </div>
                             <p className={"mt-1 text-md"}>MYBLOG博客网站项目介绍</p>
-                            <p className={"mt-1 text-sm text-zinc-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
-                            <p className=" pt-2 flex items-center text-xs text-zinc-500">Read more
+                            <p className={"mt-1 text-sm text-neutral-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
+                            <p className=" pt-2 flex items-center text-xs text-neutral-500">Read more
                                 <span className="mt-0.75 ">
-                                    <svg className="relative mt-px overflow-visible ml-2.5 text-zinc-500" fill="none"
+                                    <svg className="relative mt-px overflow-visible ml-2.5 text-neutral-500" fill="none"
                                          height="6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                                          strokeWidth="2" viewBox="0 0 3 6" width="3"><path d="M0 0L3 3L0 6"></path>
                                     </svg>
@@ -79,16 +79,16 @@ export default function Blog() {
                         </div>
 
 
-                        <div className={"p-4 sm:p-6 hover:bg-zinc-50 dark:hover:bg-zinc-900 my-4 mx-4 sm:mx-0"}>
+                        <div className={"p-4 sm:p-6 hover:bg-neutral-50 dark:hover:bg-neutral-900 my-4 mx-4 sm:mx-0"}>
                             <div className={"flex items-center gap-2 flex-wrap"}>
                                 <Badge variant="secondary">分类</Badge>
-                                <span className={"text-xs text-zinc-500 dark:text-zinc-400"}>2026/4/12</span>
+                                <span className={"text-xs text-neutral-500 dark:text-neutral-400"}>2026/4/12</span>
                             </div>
                             <p className={"mt-1 text-md"}>MYBLOG博客网站项目介绍</p>
-                            <p className={"mt-1 text-sm text-zinc-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
-                            <p className=" pt-2 flex items-center text-xs text-zinc-500">Read more
+                            <p className={"mt-1 text-sm text-neutral-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
+                            <p className=" pt-2 flex items-center text-xs text-neutral-500">Read more
                                 <span className="mt-0.75 ">
-                                    <svg className="relative mt-px overflow-visible ml-2.5 text-zinc-500" fill="none"
+                                    <svg className="relative mt-px overflow-visible ml-2.5 text-neutral-500" fill="none"
                                          height="6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                                          strokeWidth="2" viewBox="0 0 3 6" width="3"><path d="M0 0L3 3L0 6"></path>
                                     </svg>
@@ -97,16 +97,16 @@ export default function Blog() {
                         </div>
 
 
-                        <div className={"p-4 sm:p-6 hover:bg-zinc-50 dark:hover:bg-zinc-900 my-4 mx-4 sm:mx-0"}>
+                        <div className={"p-4 sm:p-6 hover:bg-neutral-50 dark:hover:bg-neutral-900 my-4 mx-4 sm:mx-0"}>
                             <div className={"flex items-center gap-2 flex-wrap"}>
                                 <Badge variant="secondary">分类</Badge>
-                                <span className={"text-xs text-zinc-500 dark:text-zinc-400"}>2026/4/12</span>
+                                <span className={"text-xs text-neutral-500 dark:text-neutral-400"}>2026/4/12</span>
                             </div>
                             <p className={"mt-1 text-md"}>MYBLOG博客网站项目介绍</p>
-                            <p className={"mt-1 text-sm text-zinc-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
-                            <p className=" pt-2 flex items-center text-xs text-zinc-500">Read more
+                            <p className={"mt-1 text-sm text-neutral-500"}>我的博客网站经过多次迭代，也是伴随着经验的增长，最后决定重构自己的博客。新博客项目经过半年多的开发，大体功能已经完成了，架构三端分离方便维护，剩下的主要还是进行功能打磨</p>
+                            <p className=" pt-2 flex items-center text-xs text-neutral-500">Read more
                                 <span className="mt-0.75 ">
-                                    <svg className="relative mt-px overflow-visible ml-2.5 text-zinc-500" fill="none"
+                                    <svg className="relative mt-px overflow-visible ml-2.5 text-neutral-500" fill="none"
                                          height="6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                                          strokeWidth="2" viewBox="0 0 3 6" width="3"><path d="M0 0L3 3L0 6"></path>
                                     </svg>

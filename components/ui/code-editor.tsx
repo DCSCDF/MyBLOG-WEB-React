@@ -2,10 +2,31 @@
 
 import { Check, Copy } from "lucide-react"
 import { type UseInViewOptions, useInView } from "motion/react"
-import { useTheme } from "next-themes"
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+
+function useResolvedTheme() {
+  const [resolvedTheme, setResolvedTheme] = React.useState<"light" | "dark">("light")
+
+  React.useEffect(() => {
+    const checkTheme = () => {
+      setResolvedTheme(
+        document.documentElement.classList.contains("dark") ? "dark" : "light",
+      )
+    }
+    checkTheme()
+
+    const observer = new MutationObserver(checkTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  return resolvedTheme
+}
 
 interface CopyButtonProps {
   content: string
@@ -94,7 +115,7 @@ function CodeEditor({
   onCopy,
   ...props
 }: CodeEditorProps) {
-  const { resolvedTheme } = useTheme()
+  const resolvedTheme = useResolvedTheme()
 
   const editorRef = React.useRef<HTMLDivElement>(null)
   const [visibleCode, setVisibleCode] = React.useState("")
