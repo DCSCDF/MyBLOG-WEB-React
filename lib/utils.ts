@@ -36,6 +36,18 @@ export function applyTheme(theme: "light" | "dark") {
 
 const themeListeners = new Set<() => void>();
 
+// Theme state is tracked independently of the DOM class so that external
+// consumers (useSyncExternalStore) stay in sync with the animation library
+// without creating a circular dependency: the library reads isDarkMode from
+// this snapshot and, in its own effect, toggles the class — so the snapshot
+// must not read the class back.
+let currentTheme: "light" | "dark" = "light";
+if (typeof document !== "undefined") {
+  currentTheme = document.documentElement.classList.contains("dark")
+    ? "dark"
+    : "light";
+}
+
 export function subscribeTheme(callback: () => void) {
   themeListeners.add(callback);
   return () => {
@@ -44,7 +56,7 @@ export function subscribeTheme(callback: () => void) {
 }
 
 export function getThemeSnapshot(): "light" | "dark" {
-  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+  return currentTheme;
 }
 
 export function getThemeServerSnapshot(): "light" | "dark" {
@@ -52,8 +64,18 @@ export function getThemeServerSnapshot(): "light" | "dark" {
 }
 
 export function toggleTheme() {
-  const next = getThemeSnapshot() === "dark" ? "light" : "dark";
+  const next = currentTheme === "dark" ? "light" : "dark";
+  currentTheme = next;
   setThemeCookie(next);
   applyTheme(next);
+  themeListeners.forEach((l) => l());
+}
+
+// Updates theme state + cookie + notifies subscribers without touching the
+// dark class. react-theme-switch-animation manages the class itself via the
+// View Transition API; we only mirror the change into our external store.
+export function syncThemeState(theme: "light" | "dark") {
+  currentTheme = theme;
+  setThemeCookie(theme);
   themeListeners.forEach((l) => l());
 }

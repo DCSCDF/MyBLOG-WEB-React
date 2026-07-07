@@ -28,11 +28,15 @@ import {
 } from "@/components/ui/command";
 
 import {
-    toggleTheme,
     subscribeTheme,
     getThemeSnapshot,
     getThemeServerSnapshot,
+    syncThemeState,
 } from "@/lib/utils";
+import {
+    useModeAnimation,
+    ThemeAnimationType,
+} from "react-theme-switch-animation";
 
 const components: { title: string; href: string; description: string }[] = [
     {
@@ -58,13 +62,15 @@ export default function Header() {
         getThemeServerSnapshot
     );
 
+    const { ref: themeToggleRef, toggleSwitchTheme } = useModeAnimation({
+        animationType: ThemeAnimationType.CIRCLE,
+        isDarkMode: theme === "dark",
+        onDarkModeChange: (isDark) => syncThemeState(isDark ? "dark" : "light"),
+    });
+
     const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
         e.preventDefault();
         router.push(href);
-    };
-
-    const handleThemeToggle = () => {
-        toggleTheme();
     };
 
     const goTo = (href: string) => {
@@ -149,7 +155,8 @@ export default function Header() {
 
                         <div className={"h-4 border hidden lg:block"}></div>
 
-                        <Button variant="outline" size="icon" aria-label="Toggle theme" onClick={handleThemeToggle}
+                        <Button ref={themeToggleRef} variant="outline" size="icon" aria-label="Toggle theme"
+                                onClick={toggleSwitchTheme}
                                 className="hidden lg:inline-flex">
                             {theme === "dark" ? (
                                 <Sun className="h-5 w-5"/>
@@ -204,7 +211,7 @@ export default function Header() {
                         <CommandGroup heading="其他">
                             <CommandItem
                                 onSelect={() => {
-                                    toggleTheme();
+                                    toggleSwitchTheme();
                                     setMobileOpen(false);
                                 }}
                             >
