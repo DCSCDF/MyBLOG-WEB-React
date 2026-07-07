@@ -8,7 +8,6 @@ const marqueeColors = [
   "#eab308",
   "#22c55e",
   "#14b8a6",
-                
   "#8b5cf6",
   "#ec4899",
   "#06b6d4",
@@ -28,7 +27,7 @@ export default function Hero() {
                 <ThreeDMarquee colors={marqueeColors} />
             </div>
 
-            <div className="relative z-10 flex h-full items-center justify-center pt-26">
+            <div className="relative z-10 flex h-full items-start justify-center pt-[33vh]">
                 <TextAnimate text="Build beautiful" type="rollIn" />
             </div>
         </section>

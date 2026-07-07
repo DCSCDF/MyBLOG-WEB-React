@@ -58,24 +58,17 @@ export default function Header() {
               </div>
 
           </Link>
-            <div className="mx-2">
+            <div className="mx-4">
                 <NavigationMenu>
                     <NavigationMenuList>
                         <NavigationMenuItem>
-                            <NavigationMenuTrigger>首页</NavigationMenuTrigger>
-                            <NavigationMenuContent>
-                                <ul className="w-96">
-                                    <ListItem href="/docs" title="Introduction">
-                                        Re-usable components built with Tailwind CSS.
-                                    </ListItem>
-                                    <ListItem href="/docs/installation" title="Installation">
-                                        How to install dependencies and structure your app.
-                                    </ListItem>
-                                    <ListItem href="/docs/primitives/typography" title="Typography">
-                                        Styles for headings, paragraphs, lists...etc
-                                    </ListItem>
-                                </ul>
-                            </NavigationMenuContent>
+                            <NavigationMenuLink
+                                href="/"
+                                onClick={(e) => handleNav(e, "/")}
+                                className={navigationMenuTriggerStyle()}
+                            >
+                                主页
+                            </NavigationMenuLink>
                         </NavigationMenuItem>
                 <NavigationMenuItem className="hidden md:flex">
                   <NavigationMenuTrigger>我的博客</NavigationMenuTrigger>

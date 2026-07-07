@@ -62,7 +62,7 @@ export const ThreeDMarquee = ({
               {[...column, ...column, ...column].map((item, itemIndex) => (
                 <motion.div
                   key={itemIndex}
-                  className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-2xl shadow-xl"
+                  className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-2xl shadow-xl"
                   style={{
                     backgroundColor: useColors ? item : undefined,
                     minHeight: "20vmax",
@@ -73,6 +73,7 @@ export const ThreeDMarquee = ({
                     transition: { duration: 0.2 },
                   }}
                 >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                   {!useColors && <img src={item} alt="" className="size-full object-cover" />}
                 </motion.div>
               ))}
@@ -82,36 +83,36 @@ export const ThreeDMarquee = ({
       </div>
 
       {/* Gradient overlays for fade effect */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-transparent to-background" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background via-transparent to-background" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-background via-transparent to-background" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-background via-transparent to-background" />
     </div>
   )
 }
 
-// Demo
-const demoColors = [
-  "#ef4444",
-  "#f97316",
-  "#eab308",
-  "#22c55e",
-  "#14b8a6",
-  "#3b82f6",
-  "#8b5cf6",
-  "#ec4899",
-  "#06b6d4",
-  "#84cc16",
-  "#a855f7",
-  "#f43f5e",
-  "#10b981",
-  "#6366f1",
-  "#d946ef",
-  "#0ea5e9",
-]
-
-export function Demo() {
-  return (
-    <div className="fixed inset-0 bg-background">
-      <ThreeDMarquee colors={demoColors} />
-    </div>
-  )
-}
+// // Demo
+// const demoColors = [
+//   "#ef4444",
+//   "#f97316",
+//   "#eab308",
+//   "#22c55e",
+//   "#14b8a6",
+//   "#3b82f6",
+//   "#8b5cf6",
+//   "#ec4899",
+//   "#06b6d4",
+//   "#84cc16",
+//   "#a855f7",
+//   "#f43f5e",
+//   "#10b981",
+//   "#6366f1",
+//   "#d946ef",
+//   "#0ea5e9",
+// ]
+//
+// export function Demo() {
+//   return (
+//     <div className="fixed inset-0 bg-background">
+//       <ThreeDMarquee colors={demoColors} />
+//     </div>
+//   )
+// }
