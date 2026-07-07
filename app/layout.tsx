@@ -3,16 +3,16 @@ import React from "react";
 import Header from "@/components/header";
 
 export default function RootLayout({
-    children,
-}: Readonly<{
+                                       children,
+                                   }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
         <html lang="zh-CN" suppressHydrationWarning>
-            <head>
-                <script
-                    dangerouslySetInnerHTML={{
-                        __html: `
+        <head>
+            <script
+                dangerouslySetInnerHTML={{
+                    __html: ` 
                             (function() {
                                 try {
                                     var cookies = document.cookie.split(';');
@@ -31,19 +31,18 @@ export default function RootLayout({
                                 } catch (e) {}
                             })();
                         `,
-                    }}
-                />
-            </head>
-            <body className="min-h-full">
-          <Header />
-          <main className="w-full">
-              {children}
-          </main>
+                }}
+            />
+            <title>JIULIUBLOG</title>
+        </head>
+        <body className="min-h-full">
+        <Header/>
+        <main className="w-full">
+            {children}
+        </main>
 
 
-
-
-            </body>
+        </body>
         </html>
     );
 }

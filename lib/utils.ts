@@ -7,17 +7,17 @@ export function cn(...inputs: ClassValue[]) {
 
 const THEME_COOKIE_NAME = "theme";
 
-export function getThemeFromCookie(): "light" | "dark" {
-  if (typeof document === "undefined") return "light";
-  const cookies = document.cookie.split(";");
-  for (const cookie of cookies) {
-    const [name, value] = cookie.trim().split("=");
-    if (name === THEME_COOKIE_NAME) {
-      return value === "dark" ? "dark" : "light";
-    }
-  }
-  return "light";
-}
+// export function getThemeFromCookie(): "light" | "dark" {
+//   if (typeof document === "undefined") return "light";
+//   const cookies = document.cookie.split(";");
+//   for (const cookie of cookies) {
+//     const [name, value] = cookie.trim().split("=");
+//     if (name === THEME_COOKIE_NAME) {
+//       return value === "dark" ? "dark" : "light";
+//     }
+//   }
+//   return "light";
+// }
 
 export function setThemeCookie(theme: "light" | "dark") {
   if (typeof document === "undefined") return;
