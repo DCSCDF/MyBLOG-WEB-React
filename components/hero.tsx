@@ -14,16 +14,16 @@ export default function Hero({images}: { images: string[] }) {
             </div>
 
             <div className="relative z-10 flex h-full flex-col items-center mt-[26vh] gap-8 mx-3">
-                <AppleHelloEnglishEffect className="text-zinc-800 dark:text-neutral-100 h-16"/>
+                <AppleHelloEnglishEffect className="text-zinc-800 dark:text-zinc-100 h-16"/>
                 {/*<TextAnimate text="Hello" type="rollIn" />*/}
                 <TextAnimate text="I am a Blog Developer" type="rollIn"/>
                 <motion.p
-                    className="text-neutral-600 dark:text-neutral-400  max-w-xl text-center"
+                    className="text-zinc-600 dark:text-zinc-400  max-w-xl text-center"
                     initial={{opacity: 0, y: 20}}
                     animate={{opacity: 1, y: 0}}
                     transition={{delay: 1, duration: 0.6}}
                 >
-                    该博客采用后端SrpingBoot前端Vue+React开发，如果你想要使用同款博客，前往github查看发行版仓库。
+                    该博客采用后端SpringBoot前端Vue+React开发，如果你想要使用同款博客，前往github查看发行版仓库。
                 </motion.p>
                 <motion.div
                     className="flex gap-4"

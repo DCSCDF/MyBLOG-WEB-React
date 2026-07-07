@@ -36,16 +36,16 @@ import {
 
 const components: { title: string; href: string; description: string }[] = [
     {
-        title: "Alert Dialog",
-        href: "/docs/primitives/alert-dialog",
+        title: "文章",
+        href: "/blog/list",
         description:
-            "A modal dialog that interrupts the user with important content and expects a response.",
+            "这里可以查看该网站其他用户作者的文章，其他用户发表的文章均与本站站长无关。",
     },
     {
-        title: "Hover Card",
-        href: "/docs/primitives/hover-card",
+        title: "作者",
+        href: "/blog/userlist",
         description:
-            "For sighted users to preview content available behind a link.",
+            "这里可以查看所有文章作者用户，可以查看选中用户的文章。",
     }
 ];
 
@@ -115,7 +115,7 @@ export default function Header() {
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
                                     <NavigationMenuItem className="hidden md:flex">
-                                        <NavigationMenuTrigger>其他博客</NavigationMenuTrigger>
+                                        <NavigationMenuTrigger>文章</NavigationMenuTrigger>
                                         <NavigationMenuContent>
                                             <ul className="grid w-100 gap-2 md:w-125 md:grid-cols-2 lg:w-150">
                                                 {components.map((component) => (
@@ -149,7 +149,8 @@ export default function Header() {
 
                         <div className={"h-4 border hidden lg:block"}></div>
 
-                        <Button variant="outline" size="icon" aria-label="Toggle theme" onClick={handleThemeToggle} className="hidden lg:inline-flex">
+                        <Button variant="outline" size="icon" aria-label="Toggle theme" onClick={handleThemeToggle}
+                                className="hidden lg:inline-flex">
                             {theme === "dark" ? (
                                 <Sun className="h-5 w-5"/>
                             ) : (
@@ -176,9 +177,10 @@ export default function Header() {
                 </div>
             </header>
 
-            <CommandDialog open={mobileOpen} onOpenChange={setMobileOpen} title="导航菜单" description="搜索并跳转到页面">
+            <CommandDialog open={mobileOpen} onOpenChange={setMobileOpen} title="导航菜单"
+                           description="搜索并跳转到页面">
                 <Command>
-                    <CommandInput placeholder="搜索导航..."/>
+                    <CommandInput placeholder="搜索..."/>
                     <CommandList>
                         <CommandEmpty>未找到结果。</CommandEmpty>
                         <CommandGroup heading="导航">
@@ -187,7 +189,7 @@ export default function Header() {
                             <CommandItem onSelect={() => goTo("/links")}>友情链接</CommandItem>
                         </CommandGroup>
                         <CommandSeparator/>
-                        <CommandGroup heading="其他博客">
+                        <CommandGroup heading="文章">
                             {components.map((component) => (
                                 <CommandItem
                                     key={component.title}
@@ -199,7 +201,7 @@ export default function Header() {
                             ))}
                         </CommandGroup>
                         <CommandSeparator/>
-                        <CommandGroup heading="设置">
+                        <CommandGroup heading="其他">
                             <CommandItem
                                 onSelect={() => {
                                     toggleTheme();
