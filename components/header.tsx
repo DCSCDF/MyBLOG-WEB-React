@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {Moon, Sun} from "lucide-react";
+import {Moon, Menu, Sun} from "lucide-react";
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -16,6 +16,16 @@ import {
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {TopBlur} from "@/components/ui/edge-blur";
+import {
+    Command,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator,
+} from "@/components/ui/command";
 
 import {
     toggleTheme,
@@ -41,6 +51,7 @@ const components: { title: string; href: string; description: string }[] = [
 
 export default function Header() {
     const router = useRouter();
+    const [mobileOpen, setMobileOpen] = React.useState(false);
     const theme = React.useSyncExternalStore(
         subscribeTheme,
         getThemeSnapshot,
@@ -55,6 +66,12 @@ export default function Header() {
     const handleThemeToggle = () => {
         toggleTheme();
     };
+
+    const goTo = (href: string) => {
+        setMobileOpen(false);
+        router.push(href);
+    };
+
     return (
         <>
             <TopBlur height={100} bgColor="var(--background)"/>
@@ -76,7 +93,7 @@ export default function Header() {
                             </div>
 
                         </Link>
-                        <div className="mx-6">
+                        <div className="mx-6 hidden lg:block">
                             <NavigationMenu>
                                 <NavigationMenuList>
                                     <NavigationMenuItem>
@@ -128,12 +145,11 @@ export default function Header() {
                         </div>
                     </div>
                     <nav className="flex items-center gap-4">
+                        <Input type="search" placeholder="搜索..." className="hidden lg:inline-flex w-40"/>
 
-                        <Input type="search" placeholder="搜索..."/>
+                        <div className={"h-4 border hidden lg:block"}></div>
 
-                        <div className={"h-4 border"}></div>
-
-                        <Button variant="outline" size="icon" aria-label="Toggle theme" onClick={handleThemeToggle}>
+                        <Button variant="outline" size="icon" aria-label="Toggle theme" onClick={handleThemeToggle} className="hidden lg:inline-flex">
                             {theme === "dark" ? (
                                 <Sun className="h-5 w-5"/>
                             ) : (
@@ -141,14 +157,62 @@ export default function Header() {
                             )}
                         </Button>
 
-                        <div className={"h-4 border"}></div>
+                        <div className={"h-4 border hidden lg:block"}></div>
 
-                        <Button>
+                        <Button className="hidden lg:inline-flex">
                             <Link href="/login">登入</Link>
+                        </Button>
+
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            aria-label="Open menu"
+                            className="lg:hidden"
+                            onClick={() => setMobileOpen(true)}
+                        >
+                            <Menu className="h-5 w-5"/>
                         </Button>
                     </nav>
                 </div>
             </header>
+
+            <CommandDialog open={mobileOpen} onOpenChange={setMobileOpen} title="导航菜单" description="搜索并跳转到页面">
+                <Command>
+                    <CommandInput placeholder="搜索导航..."/>
+                    <CommandList>
+                        <CommandEmpty>未找到结果。</CommandEmpty>
+                        <CommandGroup heading="导航">
+                            <CommandItem onSelect={() => goTo("/")}>主页</CommandItem>
+                            <CommandItem onSelect={() => goTo("/myblog")}>我的博客</CommandItem>
+                            <CommandItem onSelect={() => goTo("/links")}>友情链接</CommandItem>
+                        </CommandGroup>
+                        <CommandSeparator/>
+                        <CommandGroup heading="其他博客">
+                            {components.map((component) => (
+                                <CommandItem
+                                    key={component.title}
+                                    value={component.title}
+                                    onSelect={() => goTo(component.href)}
+                                >
+                                    {component.title}
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                        <CommandSeparator/>
+                        <CommandGroup heading="设置">
+                            <CommandItem
+                                onSelect={() => {
+                                    toggleTheme();
+                                    setMobileOpen(false);
+                                }}
+                            >
+                                {theme === "dark" ? "切换到浅色模式" : "切换到深色模式"}
+                            </CommandItem>
+                            <CommandItem onSelect={() => goTo("/login")}>登入</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </CommandDialog>
         </>
     );
 }
