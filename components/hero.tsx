@@ -1,6 +1,7 @@
 
 import TextAnimate from "@/components/ui/text-animate";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
+import { AppleHelloEnglishEffect } from "@/components/ui/apple-hello-effect";
 
 const marqueeColors = [
   "#ef4444",
@@ -27,7 +28,8 @@ export default function Hero() {
                 <ThreeDMarquee colors={marqueeColors} />
             </div>
 
-            <div className="relative z-10 flex h-full items-start justify-center pt-[33vh]">
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-8">
+                <AppleHelloEnglishEffect className="text-gray-800 h-16" />
                 <TextAnimate text="Build beautiful" type="rollIn" />
             </div>
         </section>
