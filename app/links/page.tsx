@@ -1,3 +1,5 @@
+"use client"
+
 import {Button} from "@/components/ui/button"
 import {
     Card,
@@ -8,6 +10,24 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {CodeEditor} from "@/components/ui/code-editor"
+import {
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalTrigger,
+    useModal,
+} from "@/components/ui/animated-modal"
+import {Input} from "@/components/ui/input"
+import {Textarea} from "@/components/ui/textarea"
+
+function ModalCancelButton() {
+    const {setOpen} = useModal()
+    return (
+        <Button variant="outline" onClick={() => setOpen(false)}>
+            取消
+        </Button>
+    )
+}
 
 const mySiteCode = `<!-- 站点链接-->
 <a href="https://myblog.icu" target="_blank" rel="noopener noreferrer">
@@ -126,8 +146,52 @@ export default function Links() {
                     </div>
                 </CardContent>
                 <CardFooter className="justify-end gap-2">
-                    {/*<Button variant="outline">Decline</Button>*/}
-                    <Button>申请</Button>
+                    <Modal>
+                        <ModalTrigger asChild>
+                            <Button>申请</Button>
+                        </ModalTrigger>
+                        <ModalBody>
+                            <ModalContent>
+                                <h2 className="text-2xl font-bold mb-2 text-on-surface">申请友链</h2>
+                                <p className="text-muted-foreground text-sm mb-6">
+                                    请填写以下信息，我会尽快审核。
+                                </p>
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-medium text-on-surface">
+                                            站点名称
+                                        </label>
+                                        <Input placeholder="请输入你的站点名称"/>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-medium text-on-surface">
+                                            站点链接
+                                        </label>
+                                        <Input placeholder="https://example.com"/>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-medium text-on-surface">
+                                            站点描述
+                                        </label>
+                                        <Textarea
+                                            placeholder="简单介绍一下你的网站..."
+                                            className="min-h-20"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-medium text-on-surface">
+                                            站点图片
+                                        </label>
+                                        <Input placeholder="输入站点图片链接，确保无跨域问题。"/>
+                                    </div>
+                                </div>
+                            </ModalContent>
+                            <div className="flex justify-end gap-2 p-4 bg-gray-100 dark:bg-neutral-900">
+                                <ModalCancelButton/>
+                                <Button>提交申请</Button>
+                            </div>
+                        </ModalBody>
+                    </Modal>
                 </CardFooter>
             </Card>
 

@@ -2,7 +2,18 @@
 
 import { AnimatePresence, motion } from "framer-motion"
 import type React from "react"
-import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react"
+import {
+  Children,
+  cloneElement,
+  createContext,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import { cn } from "@/lib/utils"
 import { useOnClickOutside } from "@/packages/hooks"
 
@@ -34,11 +45,25 @@ export function Modal({ children }: { children: ReactNode }) {
 export const ModalTrigger = ({
   children,
   className,
+  asChild,
 }: {
   children: ReactNode
   className?: string
+  asChild?: boolean
 }) => {
   const { setOpen } = useModal()
+
+  if (asChild && isValidElement(children)) {
+    const child = children as ReactElement<{ onClick?: (e: React.MouseEvent) => void; className?: string }>
+    return cloneElement(child, {
+      onClick: (e: React.MouseEvent) => {
+        child.props.onClick?.(e)
+        setOpen(true)
+      },
+      className: cn(child.props.className, className),
+    })
+  }
+
   return (
     <button
       type="button"
