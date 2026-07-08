@@ -1,4 +1,5 @@
-﻿import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+﻿import {cn} from "@/lib/utils"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {Badge} from "@/components/ui/badge"
 import {
     Pagination,
@@ -9,14 +10,29 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination"
-import {TextHoverEffect} from "@/components/ui/text-hover-effect"
+// import {TextHoverEffect} from "@/components/ui/text-hover-effect"
 
 export default function Blog() {
     return (
         <section className="relative min-h-screen overflow-hidden">
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-                <TextHoverEffect text="JIULIU"/>
-            </div>
+            <div
+                className={cn(
+                    "absolute inset-0 -z-10 pointer-events-none",
+                    "[background-size:20px_20px]",
+                    "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",
+                    "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]",
+                )}
+            />
+            <div
+                className="pointer-events-none absolute inset-0 -z-10 bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-black"></div>
+
+            {/*<div className="absolute inset-0 z-0 opacity-40">*/}
+            {/*    <div className="absolute top-[24%] w-full">*/}
+            {/*        <div className="mx-[-1%] sm:mx-0">*/}
+            {/*            <TextHoverEffect text="JIULIU"/>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
             <div className="relative z-10">
                 <div className="flex flex-col items-center">
                     <div className="my-24 w-full max-w-none sm:max-w-2xl">
