@@ -124,9 +124,46 @@
 
     body {
         @apply bg-background text-foreground;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) var(--muted);
+    }
+
+    .dark body {
+        scrollbar-color: var(--border) var(--card);
     }
 
     html {
         @apply font-sans;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--muted);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+        transition: background 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--muted-foreground);
+    }
+
+    .dark ::-webkit-scrollbar-track {
+        background: var(--card);
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+        background: var(--border);
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: var(--muted-foreground);
     }
 }
