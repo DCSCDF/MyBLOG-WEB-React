@@ -40,8 +40,7 @@ const mySiteCode = `<!-- 站点链接-->
      <!-- 简介-->
     <p>一个个人开发的简洁博客，分享开发经验和生活日常。</p>
   </div>
-</a>
-`
+</a>`
 
 
 export default function Links() {
@@ -139,7 +138,7 @@ export default function Links() {
                             title="myblog.icu"
                             copyButton
                             writing={false}
-                            className="w-full h-75"
+                            className="w-full"
                         >
                             {mySiteCode}
                         </CodeEditor>
