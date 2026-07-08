@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
 } from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 import { useOnClickOutside } from "@/packages/hooks"
 
@@ -80,8 +81,10 @@ export const ModalTrigger = ({
 
 export const ModalBody = ({ children, className }: { children: ReactNode; className?: string }) => {
   const { open } = useModal()
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
     if (open) {
       document.body.style.overflow = "hidden"
     } else {
@@ -93,7 +96,7 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
   const { setOpen } = useModal()
   useOnClickOutside(modalRef as React.RefObject<HTMLElement>, () => setOpen(false))
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {open && (
         <motion.div
@@ -101,7 +104,7 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
             opacity: 1,
             backdropFilter: "blur(10px)",
           }}
-          className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50"
+          className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-55"
           exit={{
             opacity: 0,
             backdropFilter: "blur(0px)",
@@ -120,7 +123,7 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
               y: 0,
             }}
             className={cn(
-              "min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden",
+              "min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 md:rounded-2xl relative z-56 flex flex-col flex-1 overflow-hidden",
               className,
             )}
             exit={{
@@ -148,6 +151,12 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
       )}
     </AnimatePresence>
   )
+
+  if (!isClient) {
+    return null
+  }
+
+  return createPortal(modalContent, document.body)
 }
 
 export const ModalContent = ({
@@ -181,7 +190,7 @@ const Overlay = ({ className }: { className?: string }) => {
         opacity: 1,
         backdropFilter: "blur(10px)",
       }}
-      className={`fixed inset-0 h-full w-full bg-black bg-opacity-50 z-50 ${className}`}
+      className={`fixed inset-0 h-full w-full bg-black bg-opacity-50 z-55 ${className}`}
       exit={{
         opacity: 0,
         backdropFilter: "blur(0px)",
