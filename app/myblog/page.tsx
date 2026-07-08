@@ -10,6 +10,8 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination"
+import {Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Button} from "@base-ui/react";
 // import {TextHoverEffect} from "@/components/ui/text-hover-effect"
 
 export default function Blog() {
@@ -36,28 +38,36 @@ export default function Blog() {
             <div className="relative z-10">
                 <div className="flex flex-col items-center">
                     <div className="my-24 w-full max-w-none sm:max-w-2xl">
-                        <div className="px-4 sm:px-6">
-                            <h2 className="text-black dark:text-white text-xl font-bold">用户简介</h2>
-                            <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                                <div className="shrink-0">
-                                    <Avatar size={60}>
-                                        <AvatarImage src="https://github.com/shadcn.png"/>
-                                        <AvatarFallback>CN</AvatarFallback>
-                                    </Avatar>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex gap-2 items-center flex-wrap">
-                                        <p className="text-black dark:text-white text-md font-bold">JiuLiu</p>
-                                        <Badge variant="secondary">博客作者</Badge>
-                                    </div>
-                                    <p className="text-neutral-500 text-sm dark:text-neutral-400 mt-2"> 我是一名独立开发者，主要熟悉前后端开发等方面，爱好探险、剪辑、摄影等等，目前正在开发我的博客。</p>
-                                </div>
-                            </div>
-                            <h2 className="text-neutral-500 mb-6 mt-8 sm:mt-10 dark:text-neutral-400 text-xs">Recent
-                                Posts</h2>
-                        </div>
-                        <div>
 
+                        <h2 className="text-black dark:text-white ml-2 text-xl font-bold">用户简介</h2>
+
+                        <div className="px-4 sm:px-6">
+
+
+                            <Card className="relative mx-auto w-full px-4 mt-6">
+                                <div className="flex flex-col sm:flex-row gap-3">
+                                    <div className="shrink-0">
+                                        <Avatar size={60}>
+                                            <AvatarImage src="https://github.com/shadcn.png"/>
+                                            <AvatarFallback>CN</AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex gap-2 items-center flex-wrap">
+                                            <p className="text-black dark:text-white text-md font-bold">JiuLiu</p>
+                                            <Badge variant="secondary">博客作者</Badge>
+                                        </div>
+                                        <p className="text-neutral-500 text-sm dark:text-neutral-400 mt-2"> 我是一名独立开发者，主要熟悉前后端开发等方面，爱好探险、剪辑、摄影等等，目前正在开发我的博客。</p>
+                                    </div>
+                                </div>
+
+                            </Card>
+                        </div>
+
+
+                        <div>
+                            <h2 className="text-neutral-500 mb-6 ml-2 mt-8 sm:mt-10 dark:text-neutral-400 text-xs">Recent
+                                Posts</h2>
 
                             <div className="flex gap-4 px-6 py-4 hover:bg-muted/50">
                                 <div className="min-w-0 flex-1">
