@@ -65,7 +65,7 @@ export default function Links() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
                     <a href="https://amvc.top"
-                       className="group block p-4 bg-neutral-50 border dark:bg-neutral-900  rounded-lg transition-all duration-300"
+                       className="group block p-4 backdrop-blur-xs border  rounded-lg transition-all duration-300"
                        rel="noopener noreferrer" target="_blank">
                         <div className="flex items-center gap-4">
                             <div
@@ -82,7 +82,7 @@ export default function Links() {
 
 
                     <a href="https://amvc.top"
-                       className="group block p-4 bg-neutral-50 border dark:bg-neutral-900  rounded-lg transition-all duration-300"
+                       className="group block p-4 backdrop-blur-xs border  rounded-lg transition-all duration-300"
                        rel="noopener noreferrer" target="_blank">
                         <div className="flex items-center gap-4">
                             <div
