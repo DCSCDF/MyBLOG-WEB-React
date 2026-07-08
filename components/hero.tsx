@@ -5,6 +5,7 @@ import {ThreeDMarquee} from "@/components/ui/3d-marquee";
 import {AppleHelloEnglishEffect} from "@/components/ui/apple-hello-effect";
 import {Button} from "@/components/ui/button";
 import {motion} from "motion/react";
+import { cn } from "@/lib/utils";
 
 export default function Hero({images}: { images: string[] }) {
     return (
@@ -13,7 +14,18 @@ export default function Hero({images}: { images: string[] }) {
                 <ThreeDMarquee images={images}/>
             </div>
 
-            <div className="relative z-10 flex h-full flex-col items-center mt-[26vh] gap-8 mx-3">
+            <div className="absolute inset-0 hidden dark:block">
+                <div
+                    className={cn(
+                        "absolute inset-0",
+                        "[background-size:40px_40px]",
+                        "[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
+                    )}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+            </div>
+
+            <div className="relative z-10 flex h-full flex-col items-center mt-[25vh] gap-8 mx-3">
                 <AppleHelloEnglishEffect className="text-neutral-800 dark:text-neutral-100 h-16"/>
                 {/*<TextAnimate text="Hello" type="rollIn" />*/}
                 <TextAnimate text="I am a Blog Developer" type="rollIn"/>
