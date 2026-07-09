@@ -38,7 +38,7 @@ import {
     ThemeAnimationType,
 } from "react-theme-switch-animation";
 
-const components: { title: string; href: string; description: string }[] = [
+const components: { title: string; href: string; description: string; disabled?: boolean }[] = [
     {
         title: "文章",
         href: "/blog/list",
@@ -50,6 +50,7 @@ const components: { title: string; href: string; description: string }[] = [
         href: "/blog/userlist",
         description:
             "这里可以查看所有文章作者用户，可以查看选中用户的文章。",
+        disabled: true,
     }
 ];
 
@@ -129,6 +130,7 @@ export default function Header() {
                                                         key={component.title}
                                                         title={component.title}
                                                         href={component.href}
+                                                        disabled={component.disabled}
                                                     >
                                                         {component.description}
                                                     </ListItem>
@@ -201,6 +203,7 @@ export default function Header() {
                                 <CommandItem
                                     key={component.title}
                                     value={component.title}
+                                    disabled={component.disabled}
                                     onSelect={() => goTo(component.href)}
                                 >
                                     {component.title}
@@ -230,18 +233,27 @@ function ListItem({
                       title,
                       children,
                       href,
+                      disabled,
                       ...props
-                  }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+                  }: React.ComponentPropsWithoutRef<"li"> & { href: string; disabled?: boolean }) {
     const router = useRouter();
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (disabled) {
+            e.preventDefault();
+            return;
+        }
         e.preventDefault();
         router.push(href);
     };
 
     return (
         <li {...props}>
-            <NavigationMenuLink href={href} onClick={handleClick}>
+            <NavigationMenuLink
+                href={href}
+                onClick={handleClick}
+                className={disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}
+            >
                 <div className="flex flex-col gap-1 text-sm">
                     <div className="leading-none font-medium">{title}</div>
                     <div className="line-clamp-2 text-muted-foreground">{children}</div>
