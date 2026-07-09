@@ -64,7 +64,8 @@ export default function Hero({images}: { images: string[] }) {
                 >
                     <Button
                         onClick={() => window.open("https://github.com/DCSCDF/MYBLOG-Distribution", "_blank")}>Github</Button>
-                    <Button variant="outline" onClick={() => window.open("/myblog")}>我的博客</Button>
+                    <Button className={"dark:backdrop-blur-xs "} variant="outline"
+                            onClick={() => window.open("/myblog")}>我的博客</Button>
                 </motion.div>
 
 

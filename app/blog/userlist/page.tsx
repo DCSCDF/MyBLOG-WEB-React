@@ -103,8 +103,8 @@ export default function blogUserList() {
                 {/*    </div>*/}
                 {/*</div>*/}
 
-                <Card className={"gap-y-0 w-full max-w-4xl"}>
-                    <CardHeader className="px-6 border-b">
+                <Card className={"gap-y-0 w-full max-w-4xl ring-0 bg-transparent"}>
+                    <CardHeader className="px-6 pb-10">
                         <CardTitle className="text-xl font-semibold tracking-tight">
                             用户
                         </CardTitle>
@@ -114,20 +114,13 @@ export default function blogUserList() {
                     </CardHeader>
 
                     <CardContent className="grid grid-cols-1 sm:grid-cols-2 p-0">
-                        {writers.map((writer, index) => {
-                            const totalRows = Math.ceil(writers.length / 2)
-                            const currentRow = Math.floor(index / 2)
-                            const isLastRow = currentRow === totalRows - 1
-                            const isEven = index % 2 === 0
+                        {writers.map((writer,) => {
+
 
                             return (
                                 <div
                                     key={writer.id}
-                                    className={[
-                                        "px-6 py-4 transition-colors hover:bg-muted/50",
-                                        !isLastRow && "border-b",
-                                        isEven && "sm:border-r",
-                                    ].join(" ")}
+                                    className="px-6 py-4 transition-colors hover:bg-muted/50"
                                 >
                                     {/* 头像 + 基本信息 */}
                                     <div className="flex items-center gap-3">
@@ -145,7 +138,7 @@ export default function blogUserList() {
                                             <div
                                                 className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
                                                 <span>{writer.role}</span>
-                                                <Separator orientation="vertical" className="h-3"/>
+                                                <Separator orientation="vertical" className="h-4"/>
                                                 <span>{writer.posts} 篇文章</span>
                                             </div>
                                         </div>
@@ -159,7 +152,7 @@ export default function blogUserList() {
                             )
                         })}
                     </CardContent>
-                    <CardFooter className={"py-2"}>
+                    <CardFooter className={"py-10 bg-transparent border-0"}>
                         <Pagination>
                             <PaginationContent>
                                 <PaginationItem><PaginationPrevious href="#"/></PaginationItem>

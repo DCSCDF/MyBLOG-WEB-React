@@ -294,7 +294,7 @@ export default function BlogList() {
                     ))}
                 </div>
 
-                <CardFooter className={"items-center justify-center py-2"}>
+                <CardFooter className={"items-center justify-center py-2 bg-transparent"}>
 
                     <Pagination>
                         <PaginationContent>
