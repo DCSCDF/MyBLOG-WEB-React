@@ -211,7 +211,7 @@ export default function Header() {
                         <CommandGroup heading="其他">
                             <CommandItem
                                 onSelect={() => {
-                                    toggleSwitchTheme();
+                                    toggleSwitchTheme().then();
                                     setMobileOpen(false);
                                 }}
                             >

@@ -1,7 +1,7 @@
 // import {cn} from "@/lib/utils";
 "use client";
 // import {TypewriterEffectSmooth} from "@/components/ui/typewriter-effect";
-import Link from "next/link";
+// import Link from "next/link";
 import {
     Pagination,
     PaginationContent, PaginationEllipsis,
@@ -16,7 +16,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {Avatar, AvatarFallback} from "@/components/ui/avatar"
-import {Badge} from "@/components/ui/badge"
+// import {Badge} from "@/components/ui/badge"
 import {Separator} from "@/components/ui/separator"
 
 
