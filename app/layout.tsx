@@ -1,6 +1,8 @@
 import "./globals.css";
 import React from "react";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
+
 
 export default function RootLayout({
                                        children,
@@ -35,13 +37,13 @@ export default function RootLayout({
             />
             <title>JIULIUBLOG</title>
         </head>
-        <body className="min-h-full">
+        <body className="min-h-screen flex flex-col">
         <Header/>
-        <main className="w-full">
+        <main className="w-full flex-1">
             {children}
         </main>
 
-
+        <Footer/>
         </body>
         </html>
     );

@@ -62,7 +62,7 @@ export default function Header() {
         getThemeServerSnapshot
     );
 
-    const { ref: themeToggleRef, toggleSwitchTheme } = useModeAnimation({
+    const {ref: themeToggleRef, toggleSwitchTheme} = useModeAnimation({
         animationType: ThemeAnimationType.CIRCLE,
         isDarkMode: theme === "dark",
         onDarkModeChange: (isDark) => syncThemeState(isDark ? "dark" : "light"),
@@ -168,7 +168,7 @@ export default function Header() {
                         <div className={"h-4 border hidden lg:block"}></div>
 
                         <Button className="hidden lg:inline-flex">
-                            <Link href="/login">登入</Link>
+                            <Link href="/login">登入/注册</Link>
                         </Button>
 
                         <Button
@@ -217,7 +217,7 @@ export default function Header() {
                             >
                                 {theme === "dark" ? "切换到浅色模式" : "切换到深色模式"}
                             </CommandItem>
-                            <CommandItem onSelect={() => goTo("/login")}>登入</CommandItem>
+                            <CommandItem onSelect={() => goTo("/login")}>登入/注册</CommandItem>
                         </CommandGroup>
                     </CommandList>
                 </Command>

@@ -46,7 +46,8 @@ export default function Hero({images}: { images: string[] }) {
 
                 {/*<AppleHelloEnglishEffect className="text-neutral-800 dark:text-neutral-100 h-16"/>*/}
                 {/*<TextAnimate text="Hello" type="rollIn" />*/}
-                <TextAnimate text="Hello, I'm a Blog Developer" type="rollIn"/>
+                {/*<TextAnimate text="Welcome" type="rollIn"/>*/}
+                <TextAnimate text="Hey, I'm a Developer" type="rollIn"/>
                 <motion.p
                     className="text-neutral-600 dark:text-neutral-400  max-w-xl text-center"
                     initial={{opacity: 0, y: 20}}
