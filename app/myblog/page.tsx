@@ -198,7 +198,7 @@ export default function Blog() {
                                         </div>
 
                                     </CardContent>
-                                    <CardFooter className={"items-center justify-center py-2 bg-transparent"}>
+                                    <CardFooter className={"items-center justify-center py-6 bg-transparent"}>
 
                                         <Pagination>
                                             <PaginationContent>
