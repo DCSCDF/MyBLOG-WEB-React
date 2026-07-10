@@ -6,11 +6,9 @@ import {useRouter} from "next/navigation";
 import {Moon, Menu, Sun} from "lucide-react";
 import {
     NavigationMenu,
-    NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import {Button} from "@/components/ui/button"
@@ -38,21 +36,21 @@ import {
     ThemeAnimationType,
 } from "react-theme-switch-animation";
 
-const components: { title: string; href: string; description: string; disabled?: boolean }[] = [
-    {
-        title: "文章",
-        href: "/blog/list",
-        description:
-            "这里可以查看该网站其他用户作者的文章，其他用户发表的文章均与本站站长无关。",
-    },
-    {
-        title: "作者",
-        href: "/blog/userlist",
-        description:
-            "这里可以查看所有文章作者用户，可以查看选中用户的文章。",
-        // disabled: true,
-    }
-];
+// const components: { title: string; href: string; description: string; disabled?: boolean }[] = [
+//     {
+//         title: "文章",
+//         href: "/blog/list",
+//         description:
+//             "这里可以查看该网站其他用户作者的文章，其他用户发表的文章均与本站站长无关。",
+//     },
+//     {
+//         title: "作者",
+//         href: "/blog/userlist",
+//         description:
+//             "这里可以查看所有文章作者用户，可以查看选中用户的文章。",
+//         // disabled: true,
+//     }
+// ];
 
 export default function Header() {
     const router = useRouter();
@@ -121,23 +119,32 @@ export default function Header() {
                                             我的博客
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
-                                    <NavigationMenuItem className="hidden md:flex">
-                                        <NavigationMenuTrigger>文章</NavigationMenuTrigger>
-                                        <NavigationMenuContent>
-                                            <ul className="grid w-100 gap-2 md:w-125 md:grid-cols-2 lg:w-150">
-                                                {components.map((component) => (
-                                                    <ListItem
-                                                        key={component.title}
-                                                        title={component.title}
-                                                        href={component.href}
-                                                        disabled={component.disabled}
-                                                    >
-                                                        {component.description}
-                                                    </ListItem>
-                                                ))}
-                                            </ul>
-                                        </NavigationMenuContent>
+                                    <NavigationMenuItem>
+                                        <NavigationMenuLink
+                                            href="/blog/list"
+                                            onClick={(e) => handleNav(e, "/blog/list")}
+                                            className={navigationMenuTriggerStyle()}
+                                        >
+                                            文章
+                                        </NavigationMenuLink>
                                     </NavigationMenuItem>
+                                    {/*<NavigationMenuItem className="hidden md:flex">*/}
+                                    {/*    <NavigationMenuTrigger>文章</NavigationMenuTrigger>*/}
+                                    {/*    <NavigationMenuContent>*/}
+                                    {/*        <ul className="grid w-100 gap-2 md:w-125 md:grid-cols-2 lg:w-150">*/}
+                                    {/*            {components.map((component) => (*/}
+                                    {/*                <ListItem*/}
+                                    {/*                    key={component.title}*/}
+                                    {/*                    title={component.title}*/}
+                                    {/*                    href={component.href}*/}
+                                    {/*                    disabled={component.disabled}*/}
+                                    {/*                >*/}
+                                    {/*                    {component.description}*/}
+                                    {/*                </ListItem>*/}
+                                    {/*            ))}*/}
+                                    {/*        </ul>*/}
+                                    {/*    </NavigationMenuContent>*/}
+                                    {/*</NavigationMenuItem>*/}
 
                                     <NavigationMenuItem>
                                         <NavigationMenuLink
@@ -195,21 +202,22 @@ export default function Header() {
                         <CommandGroup heading="导航">
                             <CommandItem onSelect={() => goTo("/")}>主页</CommandItem>
                             <CommandItem onSelect={() => goTo("/myblog")}>我的博客</CommandItem>
+                            <CommandItem onSelect={() => goTo("/blog/list")}>文章</CommandItem>
                             <CommandItem onSelect={() => goTo("/links")}>友情链接</CommandItem>
                         </CommandGroup>
-                        <CommandSeparator/>
-                        <CommandGroup heading="文章">
-                            {components.map((component) => (
-                                <CommandItem
-                                    key={component.title}
-                                    value={component.title}
-                                    disabled={component.disabled}
-                                    onSelect={() => goTo(component.href)}
-                                >
-                                    {component.title}
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
+                        {/*<CommandSeparator/>*/}
+                        {/*<CommandGroup heading="文章">*/}
+                        {/*    {components.map((component) => (*/}
+                        {/*        <CommandItem*/}
+                        {/*            key={component.title}*/}
+                        {/*            value={component.title}*/}
+                        {/*            disabled={component.disabled}*/}
+                        {/*            onSelect={() => goTo(component.href)}*/}
+                        {/*        >*/}
+                        {/*            {component.title}*/}
+                        {/*        </CommandItem>*/}
+                        {/*    ))}*/}
+                        {/*</CommandGroup>*/}
                         <CommandSeparator/>
                         <CommandGroup heading="其他">
                             <CommandItem
@@ -228,40 +236,40 @@ export default function Header() {
         </>
     );
 }
-
-function ListItem({
-                      title,
-                      children,
-                      href,
-                      disabled,
-                      ...props
-                  }: React.ComponentPropsWithoutRef<"li"> & { href: string; disabled?: boolean }) {
-    const router = useRouter();
-
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (disabled) {
-            e.preventDefault();
-            return;
-        }
-        e.preventDefault();
-        router.push(href);
-    };
-
-    return (
-        <li {...props}>
-            <NavigationMenuLink
-                href={href}
-                onClick={handleClick}
-                className={disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}
-            >
-                <div className="flex flex-col gap-1 text-sm">
-                    <div className="leading-none font-medium">{title}</div>
-                    <div className="line-clamp-2 text-muted-foreground">{children}</div>
-                </div>
-            </NavigationMenuLink>
-        </li>
-    );
-}
+//
+// function ListItem({
+//                       title,
+//                       children,
+//                       href,
+//                       disabled,
+//                       ...props
+//                   }: React.ComponentPropsWithoutRef<"li"> & { href: string; disabled?: boolean }) {
+//     const router = useRouter();
+//
+//     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+//         if (disabled) {
+//             e.preventDefault();
+//             return;
+//         }
+//         e.preventDefault();
+//         router.push(href);
+//     };
+//
+//     return (
+//         <li {...props}>
+//             <NavigationMenuLink
+//                 href={href}
+//                 onClick={handleClick}
+//                 className={disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}
+//             >
+//                 <div className="flex flex-col gap-1 text-sm">
+//                     <div className="leading-none font-medium">{title}</div>
+//                     <div className="line-clamp-2 text-muted-foreground">{children}</div>
+//                 </div>
+//             </NavigationMenuLink>
+//         </li>
+//     );
+// }
 
 
 
