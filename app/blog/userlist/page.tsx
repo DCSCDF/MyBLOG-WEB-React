@@ -103,8 +103,8 @@ export default function blogUserList() {
                 {/*    </div>*/}
                 {/*</div>*/}
 
-                <Card className={"gap-y-0 w-full max-w-4xl ring-0 bg-transparent"}>
-                    <CardHeader className="px-6 pb-10">
+                <Card className={"gap-y-0 w-full max-w-4xl ring-0"}>
+                    <CardHeader className="px-6 pb-3">
                         <CardTitle className="text-xl font-semibold tracking-tight">
                             用户
                         </CardTitle>
@@ -152,7 +152,7 @@ export default function blogUserList() {
                             )
                         })}
                     </CardContent>
-                    <CardFooter className={"py-10 bg-transparent border-0"}>
+                    <CardFooter className={"py-6 bg-transparent border-0"}>
                         <Pagination>
                             <PaginationContent>
                                 <PaginationItem><PaginationPrevious href="#"/></PaginationItem>

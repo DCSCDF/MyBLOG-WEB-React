@@ -50,7 +50,7 @@ const components: { title: string; href: string; description: string; disabled?:
         href: "/blog/userlist",
         description:
             "这里可以查看所有文章作者用户，可以查看选中用户的文章。",
-        disabled: true,
+        // disabled: true,
     }
 ];
 

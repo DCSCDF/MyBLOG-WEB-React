@@ -131,7 +131,7 @@ import {
     Card,
 
     CardFooter,
-    CardHeader,
+    CardHeader, CardTitle,
 } from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge"
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group"
@@ -201,19 +201,18 @@ const posts = [
 export default function BlogList() {
     return (
         <section className="mx-auto w-full max-w-4xl p-4 mt-24">
-            <Card className={"gap-y-0"}>
+            <Card className={"gap-y-0 ring-0"}>
                 {/* 头部：标题 + 筛选 */}
                 <CardHeader className="flex-row items-baseline justify-between px-6 pb-4">
-                    <div>
-                        <h2 className="text-sm font-medium">文章</h2>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                            网站用户编写分享的文章
-                        </p>
-                    </div>
+                    <CardTitle className="text-xl font-semibold tracking-tight">文章</CardTitle>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        网站用户编写分享的文章
+                    </p>
+
                 </CardHeader>
 
                 {/* 筛选 ToggleGroup */}
-                <div className="flex items-center gap-1 px-6 py-3 border-y">
+                <div className="flex items-center gap-1 px-6 py-3">
                     <ToggleGroup defaultValue={["all"]} className="flex-wrap">
 
                         <ToggleGroupItem value="all"
@@ -236,7 +235,7 @@ export default function BlogList() {
                 </div>
 
                 {/* 文章网格 */}
-                <div className="grid gap-px bg-muted  md:grid-cols-2">
+                <div className="grid gap-px bg-transparent  md:grid-cols-2">
                     {posts.map((post) => (
                         <article
                             key={post.title}
@@ -294,7 +293,7 @@ export default function BlogList() {
                     ))}
                 </div>
 
-                <CardFooter className={"items-center justify-center py-2 bg-transparent"}>
+                <CardFooter className={"items-center justify-center py-6 bg-transparent border-t-0"}>
 
                     <Pagination>
                         <PaginationContent>

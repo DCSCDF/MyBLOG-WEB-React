@@ -8,6 +8,13 @@ import {Field, FieldDescription, FieldLabel} from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
 import {Badge} from "@/components/ui/badge";
 import {Separator} from "@/components/ui/separator";
+import {
+    Pagination,
+    PaginationContent, PaginationEllipsis,
+    PaginationItem,
+    PaginationLink, PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination";
 
 export default function SearchPage() {
     const [query, setQuery] = useState("")
@@ -117,7 +124,27 @@ export default function SearchPage() {
                                                 </span>
                                 ))}
                             </div>
+
+
                         </div>
+
+                        <div className={"mt-10"}>
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem><PaginationPrevious href="#"/></PaginationItem>
+                                    <PaginationItem className="hidden sm:inline-flex"><PaginationLink
+                                        href="#">1</PaginationLink></PaginationItem>
+                                    <PaginationItem><PaginationLink href="#"
+                                                                    isActive>2</PaginationLink></PaginationItem>
+                                    <PaginationItem className="hidden sm:inline-flex"><PaginationLink
+                                        href="#">3</PaginationLink></PaginationItem>
+                                    <PaginationItem
+                                        className="hidden sm:inline-flex"><PaginationEllipsis/></PaginationItem>
+                                    <PaginationItem><PaginationNext href="#"/></PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
+
                     </div>
                 </div>
             </div>
