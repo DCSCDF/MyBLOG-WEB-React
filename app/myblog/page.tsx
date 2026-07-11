@@ -101,9 +101,9 @@ export default function Blog() {
                             {/*</div>*/}
 
 
-                            <div className={"mt-20"}>
+                            <div className={"mt-10"}>
                                 <Card className="overflow-hidden mx-4 gap-y-0 ring-0">
-                                    <CardHeader className="flex-row items-baseline justify-between pb-4">
+                                    <CardHeader className="flex-row items-baseline justify-between pb-2">
                                         <div>
                                             <CardTitle className="text-sm">博客</CardTitle>
                                             <CardDescription className="mt-0.5 text-xs">
@@ -134,9 +134,9 @@ export default function Blog() {
 
                                     </CardContent>
 
-                                    <CardContent className=" group gap-y-8 flex flex-col">
+                                    <CardContent className="py-4 group gap-y-8 flex flex-col">
 
-                                        <div className={"py-3"}>
+                                        <div>
                                             <div className="flex items-center gap-2">
                                                 <Badge
                                                     variant="outline"
@@ -168,7 +168,7 @@ export default function Blog() {
                                         </div>
 
 
-                                        <div className={"py-3"}>
+                                        <div>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[10px] text-muted-foreground">
                                                 Engineering

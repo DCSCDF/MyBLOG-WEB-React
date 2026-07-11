@@ -206,7 +206,7 @@ export default function BlogList() {
                 <CardHeader className="flex-row items-baseline justify-between px-6 pb-4">
                     <CardTitle className="text-xl font-semibold tracking-tight">文章</CardTitle>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        网站用户编写分享的文章
+                        这里可以查看该网站其他用户作者的文章，其他用户发表的文章均与本站站长无关。
                     </p>
 
                 </CardHeader>

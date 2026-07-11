@@ -35,13 +35,13 @@ export default function SearchPage() {
                                 type="search"
                                 id="search"
                                 name="search"
-                                placeholder="Search for components, patterns, or tools..."
+                                placeholder="search"
                                 className="h-9 pl-9 pr-9"
                                 value={query}
                                 onChange={(event) => setQuery(event.target.value)}
                             />
                         </div>
-                        <FieldDescription>Enter at least 2 characters to search</FieldDescription>
+                        <FieldDescription>输入关键词来搜索文章、分类、标签...</FieldDescription>
                     </Field>
                     <div className="flex justify-end gap-2">
                         <Button
@@ -50,10 +50,10 @@ export default function SearchPage() {
                             size="lg"
                             onClick={() => setQuery("")}
                         >
-                            Clear
+                            清空
                         </Button>
                         <Button type="submit" size="lg">
-                            Search
+                            搜索
                         </Button>
                     </div>
                 </form>
@@ -61,12 +61,12 @@ export default function SearchPage() {
 
                 <div className={"max-w-4xl mt-10"}>
 
-                    <div className={"mb-6 font-medium text-lg"}>
+                    <div className={"mb-6 font-medium text-sm"}>
                         <h1>123 的搜索结果 :</h1>
                     </div>
 
 
-                    <div>
+                    <div className={"gap-y-8 flex flex-col"}>
                         <div>
                             <div className="flex items-center gap-2">
                                 <Badge
@@ -97,8 +97,6 @@ export default function SearchPage() {
                                 ))}
                             </div>
                         </div>
-
-                        <Separator className={"my-6"}/>
 
 
                         <div>
