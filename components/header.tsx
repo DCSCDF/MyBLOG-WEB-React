@@ -24,6 +24,7 @@ import {
     CommandList,
     CommandSeparator,
 } from "@/components/ui/command";
+import {Avatar, AvatarImage, AvatarFallback, AvatarBadge} from "@/components/ui/avatar";
 
 import {
     subscribeTheme,
@@ -35,6 +36,8 @@ import {
     useModeAnimation,
     ThemeAnimationType,
 } from "react-theme-switch-animation";
+import {useAuth} from "@/lib/auth/useAuth";
+import {getAdminUrl} from "@/lib/env";
 
 // const components: { title: string; href: string; description: string; disabled?: boolean }[] = [
 //     {
@@ -67,6 +70,8 @@ export default function Header() {
         onDarkModeChange: (isDark) => syncThemeState(isDark ? "dark" : "light"),
     });
 
+    const {user, isLoggedIn} = useAuth();
+
     const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
         e.preventDefault();
         router.push(href);
@@ -75,6 +80,15 @@ export default function Header() {
     const goTo = (href: string) => {
         setMobileOpen(false);
         router.push(href);
+    };
+
+    const redirectToAdmin = () => {
+        const adminUrl = getAdminUrl();
+        window.location.href = adminUrl || "/";
+    };
+
+    const getAvatarInitials = (name: string) => {
+        return name.slice(0, 2).toUpperCase();
     };
 
     return (
@@ -176,9 +190,21 @@ export default function Header() {
 
                         <div className={"h-4 border hidden lg:block"}></div>
 
-                        <Button className="hidden lg:inline-flex">
-                            <Link href="/login">登入/注册</Link>
-                        </Button>
+                        {isLoggedIn ? (
+                            <Button variant="ghost" size="icon" className="hidden lg:block hover:bg-transparent"
+                                    onClick={redirectToAdmin}>
+                                <Avatar>
+                                    <AvatarImage src={user?.avatarUrl || undefined}
+                                                 alt={user?.nickname || user?.username || "User"}/>
+                                    <AvatarFallback>{getAvatarInitials(user?.nickname || user?.username || "U")}</AvatarFallback>
+                                    <AvatarBadge className="bg-green-600 dark:bg-green-800"/>
+                                </Avatar>
+                            </Button>
+                        ) : (
+                            <Button className="hidden lg:inline-flex">
+                                <Link href="/login">登入/注册</Link>
+                            </Button>
+                        )}
 
                         <Button
                             variant="outline"
@@ -228,7 +254,16 @@ export default function Header() {
                             >
                                 {theme === "dark" ? "切换到浅色模式" : "切换到深色模式"}
                             </CommandItem>
-                            <CommandItem onSelect={() => goTo("/login")}>登入/注册</CommandItem>
+                            {isLoggedIn ? (
+                                <CommandItem onSelect={() => {
+                                    redirectToAdmin();
+                                    setMobileOpen(false);
+                                }}>
+                                    {user?.nickname || user?.username}-前往仪表盘
+                                </CommandItem>
+                            ) : (
+                                <CommandItem onSelect={() => goTo("/login")}>登入/注册</CommandItem>
+                            )}
                         </CommandGroup>
                     </CommandList>
                 </Command>

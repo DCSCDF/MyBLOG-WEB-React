@@ -14,6 +14,23 @@ export interface TokenResponse {
   code?: number;
 }
 
+export interface UserProfile {
+  id: number;
+  username: string;
+  nickname: string;
+  email: string;
+  createTime: string;
+  updateTime: string;
+  avatarUrl: string | null;
+}
+
+export interface ProfileResponse {
+  success: boolean;
+  data?: UserProfile;
+  errorMsg?: string;
+  code?: number;
+}
+
 export const authApi = {
   getToken: async (code: string, remember: boolean = false): Promise<TokenResponse> => {
     const apiUrl = getApiUrl();
@@ -31,6 +48,20 @@ export const authApi = {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    return response.json();
+  },
+
+  getUserProfile: async (token: string): Promise<ProfileResponse> => {
+    const apiUrl = getApiUrl();
+    const response = await fetch(`${apiUrl}${AUTH_BASE_PATH}/profile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "token": token,
+      },
+      body: JSON.stringify({}),
+    });
 
     return response.json();
   },
