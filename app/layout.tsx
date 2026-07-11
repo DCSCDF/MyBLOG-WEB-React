@@ -2,6 +2,7 @@ import "./globals.css";
 import React from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { PublicEnvScript } from "next-runtime-env";
 
 
 export default function RootLayout({
@@ -12,6 +13,7 @@ export default function RootLayout({
     return (
         <html lang="zh-CN" suppressHydrationWarning>
         <head>
+            <PublicEnvScript />
             <script
                 dangerouslySetInnerHTML={{
                     __html: ` 
