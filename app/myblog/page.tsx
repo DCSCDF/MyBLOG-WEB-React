@@ -24,8 +24,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-import {Separator} from "@/components/ui/separator"
-
 export default function Blog() {
     return (
         <section className="relative min-h-screen overflow-hidden">
@@ -104,7 +102,7 @@ export default function Blog() {
 
 
                             <div className={"mt-20"}>
-                                <Card className="overflow-hidden mx-4 gap-y-0">
+                                <Card className="overflow-hidden mx-4 gap-y-0 ring-0">
                                     <CardHeader className="flex-row items-baseline justify-between pb-4">
                                         <div>
                                             <CardTitle className="text-sm">博客</CardTitle>
@@ -115,7 +113,7 @@ export default function Blog() {
                                     </CardHeader>
                                     <CardContent>
 
-                                        <div className="flex items-center gap-1 border-t py-4 -mx-6 px-6">
+                                        <div className="flex items-center gap-1 py-4 -mx-6 px-6">
                                             <Button size="sm" className="h-7 gap-1.5 text-xs">
                                                 All <span className="opacity-70">6</span>
                                             </Button>
@@ -136,9 +134,9 @@ export default function Blog() {
 
                                     </CardContent>
 
-                                    <CardContent className="px-6 py-3 group gap-y-6 flex flex-col border-t">
+                                    <CardContent className=" group gap-y-8 flex flex-col">
 
-                                        <div>
+                                        <div className={"py-3"}>
                                             <div className="flex items-center gap-2">
                                                 <Badge
                                                     variant="outline"
@@ -169,10 +167,8 @@ export default function Blog() {
                                             </div>
                                         </div>
 
-                                        <Separator/>
 
-
-                                        <div>
+                                        <div className={"py-3"}>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[10px] text-muted-foreground">
                                                 Engineering
@@ -198,7 +194,7 @@ export default function Blog() {
                                         </div>
 
                                     </CardContent>
-                                    <CardFooter className={"items-center justify-center py-6 bg-transparent"}>
+                                    <CardFooter className={"items-center justify-center py-6 bg-transparent border-0"}>
 
                                         <Pagination>
                                             <PaginationContent>
