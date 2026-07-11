@@ -3,7 +3,6 @@
 import {useState, useEffect} from "react";
 import {authApi, type UserProfile} from "@/lib/api/auth";
 import {clearAuthStorage} from "@/lib/auth/storage";
-import {logToServer} from "@/lib/auth/logger";
 
 export interface AuthState {
     user: UserProfile | null;
@@ -25,7 +24,6 @@ export const useAuth = () => {
             const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
             if (!token) {
-                await logToServer("useAuth: 未检测到 token", "info");
                 setAuthState({
                     user: null,
                     isLoggedIn: false,
@@ -35,14 +33,10 @@ export const useAuth = () => {
                 return;
             }
 
-            await logToServer(`useAuth: 检测到 token，长度=${token.length}，尝试获取用户信息`, "info");
-
             try {
                 const response = await authApi.getUserProfile(token);
-                await logToServer(`useAuth: API 响应 - success=${response.success}, code=${response.code}, errorMsg=${response.errorMsg}`, "info");
 
                 if (response.success && response.data) {
-                    await logToServer(`useAuth: 获取用户信息成功 - username=${response.data.username}, nickname=${response.data.nickname}`, "success");
                     setAuthState({
                         user: response.data,
                         isLoggedIn: true,
@@ -50,10 +44,7 @@ export const useAuth = () => {
                         error: null,
                     });
                 } else {
-                    await logToServer(`useAuth: 获取用户信息失败 - code=${response.code}, errorMsg=${response.errorMsg}`, "warn");
-
                     if (response.code === 401) {
-                        await logToServer("useAuth: 401 未授权，执行清除 token", "error");
                         clearAuthStorage();
                         setAuthState({
                             user: null,
@@ -62,7 +53,6 @@ export const useAuth = () => {
                             error: response.errorMsg || "登录已过期",
                         });
                     } else {
-                        await logToServer("useAuth: API 失败但非 401，保留 token", "warn");
                         setAuthState({
                             user: null,
                             isLoggedIn: false,
@@ -71,8 +61,7 @@ export const useAuth = () => {
                         });
                     }
                 }
-            } catch (err) {
-                await logToServer(`useAuth: 获取用户信息异常 - ${(err as Error).message}`, "error");
+            } catch {
                 setAuthState({
                     user: null,
                     isLoggedIn: false,

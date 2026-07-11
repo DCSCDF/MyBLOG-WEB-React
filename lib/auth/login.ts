@@ -9,7 +9,6 @@ import {
   saveToken,
   triggerLoginNotification,
 } from "@/lib/auth/storage";
-import { logToServer } from "@/lib/auth/logger";
 
 export interface LoginParams {
   code: string;
@@ -33,8 +32,6 @@ export const performLogin = async (params: LoginParams): Promise<LoginResult> =>
     existingToken = localStorage.getItem("token") || sessionStorage.getItem("token");
     existingRemember = localStorage.getItem("remember") === "true";
   }
-
-  await logToServer(`performLogin: 开始登录 - code=${code.slice(0, 8)}..., remember=${remember}, existingToken=${existingToken ? '存在(' + existingToken.length + ')' : '不存在'}`, "info");
 
   const tokenResponse = await authApi.getToken(code, remember);
 
@@ -68,12 +65,8 @@ export const performLogin = async (params: LoginParams): Promise<LoginResult> =>
 
   const token = tokenResponse.data.token;
 
-  await logToServer(`performLogin: 获取 token 成功 - token长度=${token.length}`, "success");
-
-  await logToServer(`performLogin: 执行 clearAuthStorage()`, "info");
   clearAuthStorage();
 
-  await logToServer(`performLogin: 执行 saveToken() - remember=${remember}`, "info");
   saveToken(token, remember);
 
   const maxRetries = 3;
@@ -93,7 +86,6 @@ export const performLogin = async (params: LoginParams): Promise<LoginResult> =>
   }
 
   if (!storageValidated) {
-    await logToServer(`performLogin: Token 存储验证失败，恢复旧 token`, "error");
     if (existingToken) {
       const storage = existingRemember ? localStorage : sessionStorage;
       storage.setItem("token", existingToken);
@@ -109,16 +101,11 @@ export const performLogin = async (params: LoginParams): Promise<LoginResult> =>
     };
   }
 
-  await logToServer(`performLogin: Token 存储验证成功`, "success");
-
-  await logToServer(`performLogin: 执行 triggerLoginNotification()`, "info");
   triggerLoginNotification(remember);
 
-  await logToServer(`performLogin: 执行 checkStorageConsistency()`, "info");
   const consistencyChecked = await checkStorageConsistency(token, remember);
   
   if (!consistencyChecked) {
-    await logToServer(`performLogin: 存储一致性检查失败，恢复旧 token`, "error");
     if (existingToken) {
       const storage = existingRemember ? localStorage : sessionStorage;
       storage.setItem("token", existingToken);
@@ -133,8 +120,6 @@ export const performLogin = async (params: LoginParams): Promise<LoginResult> =>
       error: "存储一致性检查失败",
     };
   }
-
-  await logToServer(`performLogin: 登录成功，准备跳转 - redirectUrl=${redirectUrl}`, "success");
 
   return {
     success: true,

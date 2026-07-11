@@ -1,7 +1,5 @@
 "use client";
 
-import {logToServer} from "@/lib/auth/logger";
-
 const STORAGE_KEYS = {
     TOKEN: "token",
     LOGIN_STATUS: "login_status",
@@ -10,7 +8,6 @@ const STORAGE_KEYS = {
 };
 
 export const clearAuthStorage = (): void => {
-    logToServer(`clearAuthStorage: 清除所有认证存储`, "warn").then();
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
     localStorage.removeItem(STORAGE_KEYS.LOGIN_STATUS);
     localStorage.removeItem(STORAGE_KEYS.REMEMBER);
