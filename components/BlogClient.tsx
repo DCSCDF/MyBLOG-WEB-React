@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import {useState, useEffect} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
 import {
     Pagination,
@@ -10,11 +11,12 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Category } from "@/lib/api/category.server";
-import { Article } from "@/lib/api/article.server";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Category} from "@/lib/api/category.server";
+import {Article} from "@/lib/api/article.server";
+import {articleApi} from "@/lib/api/article";
 
 interface BlogClientProps {
     initialCategories: Category[];
@@ -25,18 +27,20 @@ interface BlogClientProps {
 }
 
 export function BlogClient({
-    initialCategories,
-    initialArticles,
-    initialTotalPages,
-    initialCurrentPage,
-    initialSelectedCategoryId
-}: BlogClientProps) {
+                               initialCategories,
+                               initialArticles,
+                               initialTotalPages,
+                               initialCurrentPage,
+                               initialSelectedCategoryId
+                           }: BlogClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    const [articles, setArticles] = useState<Article[]>(initialArticles);
+    const [totalPages, setTotalPages] = useState(initialTotalPages);
+    const [loading, setLoading] = useState(false);
+
     const categories = initialCategories;
-    const articles = initialArticles;
-    const totalPages = initialTotalPages;
 
     const selectedCategoryId = (() => {
         const catId = searchParams.get("categoryId");
@@ -54,6 +58,30 @@ export function BlogClient({
         return initialCurrentPage;
     })();
 
+    useEffect(() => {
+        const fetchArticles = async () => {
+            setLoading(true);
+            try {
+                const result = await articleApi.getArticleList({
+                    currentPage,
+                    pageSize: 6,
+                    categoryId: selectedCategoryId ?? undefined,
+                });
+                if (result) {
+                    setArticles(result.records);
+                    setTotalPages(result.pages);
+                }
+            } catch {
+                setArticles([]);
+                setTotalPages(0);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchArticles().then();
+    }, [currentPage, searchParams, selectedCategoryId]);
+
     const updateUrlParams = (newPage: number, newCategoryId: number | null) => {
         const params = new URLSearchParams();
         if (newCategoryId !== null) {
@@ -62,7 +90,7 @@ export function BlogClient({
         if (newPage > 1) {
             params.set("page", newPage.toString());
         }
-        router.push(`/myblog?${params.toString()}`, { scroll: false });
+        router.push(`/myblog?${params.toString()}`, {scroll: false});
     };
 
     const handleCategoryClick = (categoryId: number | null) => {
@@ -115,34 +143,54 @@ export function BlogClient({
             <CardHeader className="flex-row items-baseline justify-between pb-2">
                 <div>
                     <CardTitle className="text-sm">博客</CardTitle>
-                    <CardDescription
-                        className="mt-0.5 text-xs">我的开发/生活分享</CardDescription>
+                    <CardDescription className="mt-0.5 text-xs">我的开发/生活分享</CardDescription>
                 </div>
             </CardHeader>
             <CardContent>
-                <div
-                    className="flex items-center gap-1 py-4 -mx-6 px-6 overflow-x-auto scrollbar-hide">
-                    <Button size="sm"
-                            variant={selectedCategoryId === null ? "default" : "ghost"}
-                            className={`h-7 gap-1.5 text-xs shrink-0 ${selectedCategoryId === null ? "" : "text-muted-foreground hover:text-foreground"}`}
-                            onClick={() => handleCategoryClick(null)}>
+                <div className="flex items-center gap-1 py-4 -mx-6 px-6 overflow-x-auto scrollbar-hide">
+                    <Button
+                        size="sm"
+                        variant={selectedCategoryId === null ? "default" : "ghost"}
+                        className={`h-7 gap-1.5 text-xs shrink-0 ${selectedCategoryId === null ? "" : "text-muted-foreground hover:text-foreground"}`}
+                        onClick={() => handleCategoryClick(null)}
+                    >
                         All
                     </Button>
                     {categories.map((category) => (
-                        <Button key={category.id}
-                                variant={selectedCategoryId === category.id ? "default" : "ghost"}
-                                size="sm"
-                                className={`h-7 gap-1.5 text-xs shrink-0 ${selectedCategoryId === category.id ? "" : "text-muted-foreground hover:text-foreground"}`}
-                                title={category.description}
-                                onClick={() => handleCategoryClick(category.id)}>
+                        <Button
+                            key={category.id}
+                            variant={selectedCategoryId === category.id ? "default" : "ghost"}
+                            size="sm"
+                            className={`h-7 gap-1.5 text-xs shrink-0 ${selectedCategoryId === category.id ? "" : "text-muted-foreground hover:text-foreground"}`}
+                            title={category.description}
+                            onClick={() => handleCategoryClick(category.id)}
+                        >
                             {category.name}
                         </Button>
                     ))}
                 </div>
-
             </CardContent>
             <CardContent className="py-4 group gap-y-8 flex flex-col">
-                {articles.length === 0 ? (
+                {loading ? (
+                    <div className="flex flex-col divide-y divide-border">
+                        {Array.from({length: 3}).map((_, i) => (
+                            <div key={i} className="py-6 first:pt-0">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-5 w-10 rounded-full bg-muted animate-pulse"/>
+                                    <div className="h-4 w-20 bg-muted rounded animate-pulse"/>
+                                    <div className="h-4 w-24 bg-muted rounded animate-pulse"/>
+                                </div>
+                                <div className="mt-3 h-6 w-3/4 bg-muted rounded animate-pulse"/>
+                                <div className="mt-2 h-4 w-full bg-muted rounded animate-pulse"/>
+                                <div className="mt-2 h-4 w-2/3 bg-muted rounded animate-pulse"/>
+                                <div className="mt-3 flex gap-1.5">
+                                    <div className="h-5 w-12 bg-muted rounded-md animate-pulse"/>
+                                    <div className="h-5 w-10 bg-muted rounded-md animate-pulse"/>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : articles.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground text-sm">
                         暂无文章
                     </div>
@@ -171,23 +219,21 @@ export function BlogClient({
                                     {splitTags(article.tags).map((tag) => (
                                         <span key={tag}
                                               className="rounded-md bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-                                        {tag}
-                                    </span>
+                                            {tag}
+                                        </span>
                                     ))}
                                 </div>
                             </Link>
                         ))}
                     </div>
                 )}
-
             </CardContent>
             {totalPages > 1 && (
-                <CardFooter
-                    className="items-center justify-center py-6 bg-transparent border-0">
+                <CardFooter className="items-center justify-center py-6 bg-transparent border-0">
                     <Pagination>
                         <PaginationContent>
                             <PaginationItem>
-                                <PaginationPrevious 
+                                <PaginationPrevious
                                     href={`/myblog?${getPrevPageUrl()}`}
                                     onClick={(e) => {
                                         e.preventDefault();
@@ -195,22 +241,23 @@ export function BlogClient({
                                     }}
                                 />
                             </PaginationItem>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
                                 <PaginationItem key={page}
                                                 className={page === currentPage ? "" : "hidden sm:inline-flex"}>
-                                    <PaginationLink 
+                                    <PaginationLink
                                         href={`/myblog?${getPageUrl(page)}`}
                                         isActive={page === currentPage}
                                         onClick={(e) => {
                                             e.preventDefault();
                                             handlePageChange(page);
-                                        }}>
+                                        }}
+                                    >
                                         {page}
                                     </PaginationLink>
                                 </PaginationItem>
                             ))}
                             <PaginationItem>
-                                <PaginationNext 
+                                <PaginationNext
                                     href={`/myblog?${getNextPageUrl()}`}
                                     onClick={(e) => {
                                         e.preventDefault();
