@@ -1,4 +1,4 @@
-import {env} from "next-runtime-env";
+import { getApiUrlServer } from "@/lib/env";
 
 const PUBLIC_CONFIG_BASE_PATH = "/api/public/config";
 
@@ -15,10 +15,6 @@ export interface ConfigResponse<T = null> {
     errorMsg: string | null;
     code: number;
 }
-
-export const getApiUrlServer = (): string => {
-    return process.env.NEXT_PUBLIC_API_URL || env("NEXT_PUBLIC_API_URL") || "";
-};
 
 export const getSiteInfoServer = async (): Promise<SiteInfo | null> => {
     try {

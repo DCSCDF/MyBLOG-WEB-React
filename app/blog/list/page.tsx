@@ -1,129 +1,3 @@
-// // import {cn} from "@/lib/utils";
-// // import {TypewriterEffectSmooth} from "@/components/ui/typewriter-effect";
-// import {
-//     Pagination,
-//     PaginationContent, PaginationEllipsis,
-//     PaginationItem,
-//     PaginationLink, PaginationNext,
-//     PaginationPrevious
-// } from "@/components/ui/pagination";
-//
-// export default function blogList() {
-//
-//     return (
-//         <section className={"mt-24"}>
-//             {/*<div*/}
-//             {/*    className={cn(*/}
-//             {/*        "absolute inset-0 -z-10 pointer-events-none",*/}
-//             {/*        "[background-size:20px_20px]",*/}
-//             {/*        "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",*/}
-//             {/*        "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]",*/}
-//             {/*    )}*/}
-//             {/*/>*/}
-//             {/*<div*/}
-//             {/*    className="pointer-events-none absolute inset-0 -z-10 bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-black"></div>*/}
-//
-//             <div className="mx-auto w-full max-w-4xl p-4">
-//                 <div className="overflow-hidden rounded-lg">
-//
-//                     {/*<div className=" px-6 py-5">*/}
-//                     {/*    <h2 className="font-semibold text-xl tracking-tight">*/}
-//                     {/*        用户文章*/}
-//                     {/*    </h2>*/}
-//                     {/*</div>*/}
-//
-//
-//                     <div className="flex gap-4 px-6 py-4 transition-colors hover:bg-muted/50 ">
-//                         <div className="min-w-0 flex-1">
-//                             <div className="flex items-center gap-2"><span data-slot="badge" data-variant="secondary"
-//                                                                            className="inline-flex items-center justify-center rounded-full border border-transparent px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden bg-secondary text-secondary-foreground [a&amp;]:hover:bg-secondary/90 text-xs">Engineering</span><span
-//                                 className="text-xs text-muted-foreground">Mar 10, 2026</span></div>
-//                             <h3 className="mt-1 text-sm font-medium">Autodesk Looks to the Future of 3D Printing with
-//                                 Project Escher</h3><p className="mt-1 text-xs text-muted-foreground line-clamp-1">How
-//                             multi-head 3D printing could transform manufacturing workflows and enable new production
-//                             techniques at scale.</p>
-//                             <div className="mt-2 flex items-center gap-2"><span data-slot="avatar" data-size="default"
-//                                                                                 className="group/avatar relative flex size-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6 h-5 w-5"><img
-//                                 data-slot="avatar-image" className="aspect-square size-full" alt="Ryan Samuel"
-//                                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&amp;h=400&amp;auto=format&amp;fit=crop"/></span><span
-//                                 className="text-xs text-muted-foreground">Ryan Samuel</span></div>
-//                         </div>
-//                     </div>
-//
-//                     <div className="flex gap-4 px-6 py-4 transition-colors hover:bg-muted/50 ">
-//                         <div className="min-w-0 flex-1">
-//                             <div className="flex items-center gap-2"><span data-slot="badge" data-variant="secondary"
-//                                                                            className="inline-flex items-center justify-center rounded-full border border-transparent px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden bg-secondary text-secondary-foreground [a&amp;]:hover:bg-secondary/90 text-xs">Engineering</span><span
-//                                 className="text-xs text-muted-foreground">Mar 10, 2026</span></div>
-//                             <h3 className="mt-1 text-sm font-medium">Autodesk Looks to the Future of 3D Printing with
-//                                 Project Escher</h3><p className="mt-1 text-xs text-muted-foreground line-clamp-1">How
-//                             multi-head 3D printing could transform manufacturing workflows and enable new production
-//                             techniques at scale.</p>
-//                             <div className="mt-2 flex items-center gap-2"><span data-slot="avatar" data-size="default"
-//                                                                                 className="group/avatar relative flex size-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6 h-5 w-5"><img
-//                                 data-slot="avatar-image" className="aspect-square size-full" alt="Ryan Samuel"
-//                                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&amp;h=400&amp;auto=format&amp;fit=crop"/></span><span
-//                                 className="text-xs text-muted-foreground">Ryan Samuel</span></div>
-//                         </div>
-//                     </div>
-//                     <div className="flex gap-4 px-6 py-4 transition-colors hover:bg-muted/50 ">
-//                         <div className="min-w-0 flex-1">
-//                             <div className="flex items-center gap-2"><span data-slot="badge" data-variant="secondary"
-//                                                                            className="inline-flex items-center justify-center rounded-full border border-transparent px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden bg-secondary text-secondary-foreground [a&amp;]:hover:bg-secondary/90 text-xs">Engineering</span><span
-//                                 className="text-xs text-muted-foreground">Mar 10, 2026</span></div>
-//                             <h3 className="mt-1 text-sm font-medium">Autodesk Looks to the Future of 3D Printing with
-//                                 Project Escher</h3><p className="mt-1 text-xs text-muted-foreground line-clamp-1">How
-//                             multi-head 3D printing could transform manufacturing workflows and enable new production
-//                             techniques at scale.</p>
-//                             <div className="mt-2 flex items-center gap-2"><span data-slot="avatar" data-size="default"
-//                                                                                 className="group/avatar relative flex size-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6 h-5 w-5"><img
-//                                 data-slot="avatar-image" className="aspect-square size-full" alt="Ryan Samuel"
-//                                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&amp;h=400&amp;auto=format&amp;fit=crop"/></span><span
-//                                 className="text-xs text-muted-foreground">Ryan Samuel</span></div>
-//                         </div>
-//                     </div>
-//                     <div className="flex gap-4 px-6 py-4 transition-colors hover:bg-muted/50 ">
-//                         <div className="min-w-0 flex-1">
-//                             <div className="flex items-center gap-2"><span data-slot="badge" data-variant="secondary"
-//                                                                            className="inline-flex items-center justify-center rounded-full border border-transparent px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden bg-secondary text-secondary-foreground [a&amp;]:hover:bg-secondary/90 text-xs">Engineering</span><span
-//                                 className="text-xs text-muted-foreground">Mar 10, 2026</span></div>
-//                             <h3 className="mt-1 text-sm font-medium">Autodesk Looks to the Future of 3D Printing with
-//                                 Project Escher</h3><p className="mt-1 text-xs text-muted-foreground line-clamp-1">How
-//                             multi-head 3D printing could transform manufacturing workflows and enable new production
-//                             techniques at scale.</p>
-//                             <div className="mt-2 flex items-center gap-2"><span data-slot="avatar" data-size="default"
-//                                                                                 className="group/avatar relative flex size-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6 h-5 w-5"><img
-//                                 data-slot="avatar-image" className="aspect-square size-full" alt="Ryan Samuel"
-//                                 src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&amp;h=400&amp;auto=format&amp;fit=crop"/></span><span
-//                                 className="text-xs text-muted-foreground">Ryan Samuel</span></div>
-//                         </div>
-//                     </div>
-//
-//
-//                 </div>
-//                 <div className="px-4 sm:px-0 py-10">
-//                     <Pagination>
-//                         <PaginationContent>
-//                             <PaginationItem><PaginationPrevious href="#"/></PaginationItem>
-//                             <PaginationItem className="hidden sm:inline-flex"><PaginationLink
-//                                 href="#">1</PaginationLink></PaginationItem>
-//                             <PaginationItem><PaginationLink href="#"
-//                                                             isActive>2</PaginationLink></PaginationItem>
-//                             <PaginationItem className="hidden sm:inline-flex"><PaginationLink
-//                                 href="#">3</PaginationLink></PaginationItem>
-//                             <PaginationItem
-//                                 className="hidden sm:inline-flex"><PaginationEllipsis/></PaginationItem>
-//                             <PaginationItem><PaginationNext href="#"/></PaginationItem>
-//                         </PaginationContent>
-//                     </Pagination>
-//                 </div>
-//
-//             </div>
-//         </section>
-//     )
-// }
-
-
 "use client"
 
 import {ArrowUpRight} from "lucide-react"
@@ -217,19 +91,19 @@ export default function BlogList() {
 
                         <ToggleGroupItem value="all"
                                          className="text-xs h-auto py-1 data-[state=on]:bg-foreground data-[state=on]:text-background">
-                            All <span className="ml-1 tabular-nums opacity-70">6</span>
+                            All
                         </ToggleGroupItem>
                         <ToggleGroupItem value="engineering" className="text-xs h-auto py-1">
-                            Engineering <span className="ml-1 tabular-nums opacity-60">3</span>
+                            Engineering
                         </ToggleGroupItem>
                         <ToggleGroupItem value="design" className="text-xs h-auto py-1">
-                            Design <span className="ml-1 tabular-nums opacity-60">1</span>
+                            Design
                         </ToggleGroupItem>
                         <ToggleGroupItem value="product" className="text-xs h-auto py-1">
-                            Product <span className="ml-1 tabular-nums opacity-60">1</span>
+                            Product
                         </ToggleGroupItem>
                         <ToggleGroupItem value="culture" className="text-xs h-auto py-1">
-                            Culture <span className="ml-1 tabular-nums opacity-60">1</span>
+                            Culture
                         </ToggleGroupItem>
                     </ToggleGroup>
                 </div>

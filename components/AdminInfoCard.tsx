@@ -5,8 +5,9 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Grid} from "@/components/ui/grid-pattern";
 import {Badge} from "@/components/ui/badge";
 import {Skeleton} from "@/components/ui/skeleton";
-import {adminApi, AdminInfo, PUBLIC_ADMIN_BASE_PATH} from "@/lib/api/admin";
-import {getApiUrl} from "@/lib/env";
+import {adminApi, AdminInfo} from "@/lib/api/admin";
+
+// import {getApiUrl} from "@/lib/env";
 
 export function AdminInfoCard() {
     const [adminInfo, setAdminInfo] = useState<AdminInfo | null>(null);
@@ -16,7 +17,7 @@ export function AdminInfoCard() {
     useEffect(() => {
         const fetchAdminInfo = async () => {
             try {
-                const apiUrl = `${getApiUrl()}${PUBLIC_ADMIN_BASE_PATH}/info`;
+                // const apiUrl = `${getApiUrl()}${PUBLIC_ADMIN_BASE_PATH}/info`;
                 // console.log("Requesting admin info from:", apiUrl);
                 const response = await adminApi.getAdminInfo();
                 // console.log("Admin API Response:", response);
