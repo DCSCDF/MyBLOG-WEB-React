@@ -2,18 +2,22 @@ import "./globals.css";
 import React from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { PublicEnvScript } from "next-runtime-env";
+import {PublicEnvScript} from "next-runtime-env";
+import {getSiteInfoServer} from "@/lib/api/config.server";
 
 
-export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+export default async function RootLayout({
+                                             children,
+                                         }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const siteInfo = await getSiteInfoServer();
+    const siteName = siteInfo?.siteName;
+
     return (
         <html lang="zh-CN" suppressHydrationWarning>
         <head>
-            <PublicEnvScript />
+            <PublicEnvScript/>
             <script
                 dangerouslySetInnerHTML={{
                     __html: ` 
@@ -37,7 +41,10 @@ export default function RootLayout({
                         `,
                 }}
             />
-            <title>JIULIUBLOG</title>
+            <title>{siteName}</title>
+            {siteInfo?.siteDescription && (
+                <meta name="description" content={siteInfo.siteDescription}/>
+            )}
         </head>
         <body className="min-h-screen flex flex-col">
         <Header/>

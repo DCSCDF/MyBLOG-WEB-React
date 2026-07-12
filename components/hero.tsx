@@ -7,8 +7,24 @@ import {Button} from "@/components/ui/button";
 import {motion} from "motion/react";
 import {cn} from "@/lib/utils";
 // import {SquigglyText} from "@/components/ui/squiggly-text";
+import { useState, useEffect } from "react";
+import { configApi } from "@/lib/api/config";
+
+const DEFAULT_DESCRIPTION = "该博客采用后端SpringBoot前端Vue+React开发，如果你想要使用同款博客，前往github查看发行版仓库。";
 
 export default function Hero({images}: { images: string[] }) {
+    const [description, setDescription] = useState(DEFAULT_DESCRIPTION);
+
+    useEffect(() => {
+        configApi.getSiteInfo().then((result) => {
+            if (result.success && result.data?.siteDescription) {
+                setDescription(result.data.siteDescription);
+            }
+        }).catch(() => {
+            setDescription(DEFAULT_DESCRIPTION);
+        });
+    }, []);
+
     return (
         <section className="relative h-screen w-full overflow-hidden">
             <div className="absolute inset-0 dark:hidden">
@@ -54,7 +70,7 @@ export default function Hero({images}: { images: string[] }) {
                     animate={{opacity: 1, y: 0}}
                     transition={{delay: 1, duration: 0.6}}
                 >
-                    该博客采用后端SpringBoot前端Vue+React开发，如果你想要使用同款博客，前往github查看发行版仓库。
+                    {description}
                 </motion.p>
                 <motion.div
                     className="flex gap-4"
