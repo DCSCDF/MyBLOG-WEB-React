@@ -24,6 +24,14 @@ import {Textarea} from "@/components/ui/textarea"
 import {useConfig} from "@/lib/hooks/useConfig"
 import {Skeleton} from "@/components/ui/skeleton"
 import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar"
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination"
 import {FriendLink, SubmitFriendLinkRequest} from "@/lib/api/friend-link.server"
 import {friendLinkApi} from "@/lib/api/friend-link"
 import {useState} from "react"
@@ -34,6 +42,137 @@ function ModalCancelButton() {
         <Button variant="outline" onClick={() => setOpen(false)}>
             取消
         </Button>
+    )
+}
+
+function FriendLinkForm() {
+    const {setOpen} = useModal()
+
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submitError, setSubmitError] = useState("")
+    const [submitSuccess, setSubmitSuccess] = useState("")
+
+    const [formData, setFormData] = useState<SubmitFriendLinkRequest>({
+        name: "",
+        url: "",
+        summary: "",
+        imageUrl: "",
+    })
+
+    const isValidUrl = (url: string): boolean => {
+        try {
+            const parsedUrl = new URL(url)
+            return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:"
+        } catch {
+            return false
+        }
+    }
+
+    const handleSubmit = async () => {
+        if (!formData.name.trim()) {
+            setSubmitError("链接名称不能为空")
+            return
+        }
+        if (!formData.url.trim()) {
+            setSubmitError("URL地址不能为空")
+            return
+        }
+        if (!isValidUrl(formData.url)) {
+            setSubmitError("URL地址格式无效，请输入有效的网址")
+            return
+        }
+        if (formData.imageUrl && formData.imageUrl.trim() && !isValidUrl(formData.imageUrl)) {
+            setSubmitError("站点图片URL格式无效，请输入有效的网址")
+            return
+        }
+
+        setIsSubmitting(true)
+        setSubmitError("")
+        setSubmitSuccess("")
+
+        const result = await friendLinkApi.submitFriendLink(formData)
+
+        if (result.success) {
+            setSubmitSuccess(result.data)
+            setFormData({name: "", url: "", summary: "", imageUrl: ""})
+            setTimeout(() => {
+                setOpen(false)
+            }, 500)
+        } else {
+            setSubmitError(result.errorMsg || "提交失败")
+        }
+
+        setIsSubmitting(false)
+    }
+
+    return (
+        <>
+            <h2 className="text-2xl font-bold mb-2 text-on-surface">申请友链</h2>
+            <p className="text-muted-foreground text-sm mb-6">
+                请填写以下信息，我会尽快审核。
+            </p>
+            {submitError && (
+                <div
+                    className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg">
+                    {submitError}
+                </div>
+            )}
+            {submitSuccess && (
+                <div
+                    className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm rounded-lg">
+                    {submitSuccess}
+                </div>
+            )}
+            <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-on-surface">
+                        站点名称 <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                        placeholder="请输入你的站点名称"
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-on-surface ">
+                        站点链接 <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                        placeholder="https://example.com"
+                        value={formData.url}
+                        onChange={(e) => setFormData({...formData, url: e.target.value})}
+                    />
+                </div>
+                <div className="flex flex-col gap-2 max-h-40">
+                    <label className="text-sm font-medium text-on-surface">
+                        站点描述
+                    </label>
+                    <Textarea
+                        placeholder="简单介绍一下你的网站..."
+                        className="min-h-20"
+                        value={formData.summary}
+                        onChange={(e) => setFormData({...formData, summary: e.target.value})}
+                    />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-on-surface">
+                        站点图片
+                    </label>
+                    <Input
+                        placeholder="输入站点图片链接，确保无跨域问题。"
+                        value={formData.imageUrl}
+                        onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                    />
+                </div>
+            </div>
+            <div className="flex justify-end gap-2 p-4 mt-4">
+                <ModalCancelButton/>
+                <Button onClick={handleSubmit} disabled={isSubmitting}>
+                    {isSubmitting ? "提交中..." : "提交申请"}
+                </Button>
+            </div>
+        </>
     )
 }
 
@@ -69,48 +208,38 @@ function parsePTags(html: string): JSX.Element[] {
 
 interface LinksClientProps {
     initialFriendLinks: FriendLink[]
+    totalPages: number
+    currentPage: number
+    total: number
 }
 
-export default function LinksClient({initialFriendLinks}: LinksClientProps) {
+export default function LinksClient({initialFriendLinks, totalPages, currentPage}: LinksClientProps) {
     const {config, isLoading} = useConfig();
     const {links} = config;
 
-    const [friendLinks] = useState<FriendLink[]>(initialFriendLinks)
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [submitError, setSubmitError] = useState("")
-    const [submitSuccess, setSubmitSuccess] = useState("")
+    const [friendLinks, setFriendLinks] = useState<FriendLink[]>(initialFriendLinks)
+    const [current, setCurrent] = useState(currentPage)
+    const [totalPagesState, setTotalPagesState] = useState(totalPages)
+    const [, setLoading] = useState(false)
 
-    const [formData, setFormData] = useState<SubmitFriendLinkRequest>({
-        name: "",
-        url: "",
-        summary: "",
-        imageUrl: "",
-    })
-
-    const handleSubmit = async () => {
-        if (!formData.name.trim()) {
-            setSubmitError("链接名称不能为空")
-            return
+    const fetchFriendLinks = async (page: number) => {
+        setLoading(true)
+        try {
+            const result = await friendLinkApi.getFriendLinkList({currentPage: page, pageSize: 8})
+            if (result) {
+                setFriendLinks(result.records)
+                setTotalPagesState(result.pages)
+            }
+        } catch {
+        } finally {
+            setLoading(false)
         }
-        if (!formData.url.trim()) {
-            setSubmitError("URL地址不能为空")
-            return
-        }
+    }
 
-        setIsSubmitting(true)
-        setSubmitError("")
-        setSubmitSuccess("")
-
-        const result = await friendLinkApi.submitFriendLink(formData)
-
-        if (result.success) {
-            setSubmitSuccess(result.data)
-            setFormData({name: "", url: "", summary: "", imageUrl: ""})
-        } else {
-            setSubmitError(result.errorMsg || "提交失败")
-        }
-
-        setIsSubmitting(false)
+    const handlePageChange = (page: number) => {
+        if (page === current) return
+        setCurrent(page)
+        fetchFriendLinks(page).then()
     }
 
     return (
@@ -143,11 +272,13 @@ export default function LinksClient({initialFriendLinks}: LinksClientProps) {
                             >
                                 <div className="flex items-center gap-4">
                                     <Avatar className="w-12 h-12 rounded-lg bg-surface-container shrink-0">
-                                        <AvatarImage
-                                            src={link.imageUrl}
-                                            alt={link.name}
-                                            className="object-cover transition-all group-hover:scale-110"
-                                        />
+                                        {link.imageUrl && (
+                                            <AvatarImage
+                                                src={link.imageUrl}
+                                                alt={link.name}
+                                                className="object-cover transition-all group-hover:scale-110"
+                                            />
+                                        )}
                                         <AvatarFallback className="text-xs font-medium">
                                             {link.name.charAt(0)}
                                         </AvatarFallback>
@@ -165,6 +296,36 @@ export default function LinksClient({initialFriendLinks}: LinksClientProps) {
                         ))
                     )}
                 </div>
+
+                {totalPagesState > 1 && (
+                    <div className="mt-8 flex justify-center">
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        onClick={() => handlePageChange(Math.max(1, current - 1))}
+                                    />
+                                </PaginationItem>
+                                {Array.from({length: totalPagesState}, (_, i) => i + 1).map((page) => (
+                                    <PaginationItem key={page}
+                                                    className={page === current ? "" : "hidden sm:inline-flex"}>
+                                        <PaginationLink
+                                            isActive={page === current}
+                                            onClick={() => handlePageChange(page)}
+                                        >
+                                            {page}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                ))}
+                                <PaginationItem>
+                                    <PaginationNext
+                                        onClick={() => handlePageChange(Math.min(totalPagesState, current + 1))}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </div>
+                )}
 
                 <Card className="mx-auto w-full my-10">
                     <CardHeader>
@@ -207,72 +368,8 @@ export default function LinksClient({initialFriendLinks}: LinksClientProps) {
                             </ModalTrigger>
                             <ModalBody>
                                 <ModalContent>
-                                    <h2 className="text-2xl font-bold mb-2 text-on-surface">申请友链</h2>
-                                    <p className="text-muted-foreground text-sm mb-6">
-                                        请填写以下信息，我会尽快审核。
-                                    </p>
-                                    {submitError && (
-                                        <div
-                                            className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg">
-                                            {submitError}
-                                        </div>
-                                    )}
-                                    {submitSuccess && (
-                                        <div
-                                            className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-sm rounded-lg">
-                                            {submitSuccess}
-                                        </div>
-                                    )}
-                                    <div className="flex flex-col gap-4">
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-sm font-medium text-on-surface">
-                                                站点名称 <span className="text-red-500">*</span>
-                                            </label>
-                                            <Input
-                                                placeholder="请输入你的站点名称"
-                                                value={formData.name}
-                                                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                            />
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-sm font-medium text-on-surface">
-                                                站点链接 <span className="text-red-500">*</span>
-                                            </label>
-                                            <Input
-                                                placeholder="https://example.com"
-                                                value={formData.url}
-                                                onChange={(e) => setFormData({...formData, url: e.target.value})}
-                                            />
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-sm font-medium text-on-surface">
-                                                站点描述
-                                            </label>
-                                            <Textarea
-                                                placeholder="简单介绍一下你的网站..."
-                                                className="min-h-20"
-                                                value={formData.summary}
-                                                onChange={(e) => setFormData({...formData, summary: e.target.value})}
-                                            />
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <label className="text-sm font-medium text-on-surface">
-                                                站点图片
-                                            </label>
-                                            <Input
-                                                placeholder="输入站点图片链接，确保无跨域问题。"
-                                                value={formData.imageUrl}
-                                                onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                                            />
-                                        </div>
-                                    </div>
+                                    <FriendLinkForm/>
                                 </ModalContent>
-                                <div className="flex justify-end gap-2 p-4 bg-gray-100 dark:bg-neutral-900">
-                                    <ModalCancelButton/>
-                                    <Button onClick={handleSubmit} disabled={isSubmitting}>
-                                        {isSubmitting ? "提交中..." : "提交申请"}
-                                    </Button>
-                                </div>
                             </ModalBody>
                         </Modal>
                     </CardFooter>

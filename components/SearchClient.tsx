@@ -124,10 +124,9 @@ export function SearchClient() {
     }
 
     return (
-        <section className="mt-24 px-4 py-4 flex justify-center md:mx-8">
-            <div className="flex flex-col w-full max-w-4xl">
-
-                <form className="space-y-6 w-full max-w-4xl" onSubmit={handleSubmit}>
+        <section className="mt-24 px-4 py-4">
+            <div className="max-w-4xl mx-auto">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                     <Field className="gap-3">
                         <FieldLabel htmlFor="search">检索文章</FieldLabel>
                         <div className="relative">
@@ -162,7 +161,7 @@ export function SearchClient() {
                 </form>
 
 
-                <div className="max-w-4xl mt-10">
+                <div className="mt-10">
                     {keyword.trim() ? (
                         <div className="mb-6 font-medium text-sm">
                             <h1>搜索 {keyword} 共 {articles.length} 篇文章</h1>

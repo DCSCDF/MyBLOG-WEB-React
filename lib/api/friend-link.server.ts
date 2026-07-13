@@ -49,6 +49,9 @@ export const getFriendLinkListServer = async (params: FriendLinkListParams): Pro
             return null;
         }
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
         const response = await fetch(`${apiUrl}${PUBLIC_FRIEND_LINK_BASE_PATH}/list`, {
             method: "POST",
             headers: {
@@ -58,10 +61,11 @@ export const getFriendLinkListServer = async (params: FriendLinkListParams): Pro
                 currentPage: params.currentPage,
                 pageSize: params.pageSize,
             }),
-            next: {
-                revalidate: 1800,
-            },
+            cache: "no-store",
+            signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         const result: FriendLinkPageResponse = await response.json();
 
