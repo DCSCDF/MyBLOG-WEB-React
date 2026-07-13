@@ -6,6 +6,38 @@ import { Article, ArticlePageResponse, ArticleListParams } from "./article.serve
 const PUBLIC_ARTICLE_BASE_PATH = "/api/public/article";
 
 export const articleApi = {
+    getPublicArticleList: async (params: ArticleListParams): Promise<ArticlePageResponse["data"] | null> => {
+        try {
+            const apiUrl = getApiUrl();
+            if (!apiUrl) {
+                return null;
+            }
+
+            const response = await fetch(`${apiUrl}${PUBLIC_ARTICLE_BASE_PATH}/list`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    currentPage: params.currentPage,
+                    pageSize: params.pageSize,
+                    keyword: params.keyword || undefined,
+                    categoryId: params.categoryId || undefined,
+                }),
+            });
+
+            const result: ArticlePageResponse = await response.json();
+
+            if (result.success && result.data) {
+                return result.data;
+            }
+
+            return null;
+        } catch {
+            return null;
+        }
+    },
+
     getArticleList: async (params: ArticleListParams): Promise<ArticlePageResponse["data"] | null> => {
         try {
             const apiUrl = getApiUrl();

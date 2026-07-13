@@ -69,6 +69,39 @@ export const getAdminArticleListServer = async (params: ArticleListParams): Prom
     }
 };
 
+export const getPublicArticleListServer = async (params: ArticleListParams): Promise<ArticlePageResponse["data"] | null> => {
+    try {
+        const apiUrl = getApiUrlServer();
+        if (!apiUrl) {
+            return null;
+        }
+
+        const response = await fetch(`${apiUrl}${PUBLIC_ARTICLE_BASE_PATH}/list`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                currentPage: params.currentPage,
+                pageSize: params.pageSize,
+                keyword: params.keyword || undefined,
+                categoryId: params.categoryId || undefined,
+            }),
+            cache: "no-store",
+        });
+
+        const result: ArticlePageResponse = await response.json();
+
+        if (result.success && result.data) {
+            return result.data;
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+};
+
 export const getUserArticleListServer = async (params: ArticleListParams): Promise<ArticlePageResponse["data"] | null> => {
     try {
         const apiUrl = getApiUrlServer();
