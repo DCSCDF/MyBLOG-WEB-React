@@ -52,7 +52,7 @@ export default async function RootLayout({
             {children}
         </main>
 
-        <Footer/>
+                <Footer siteInfo={siteInfo} />
         </body>
         </html>
     );
