@@ -1,7 +1,7 @@
-import { AdminInfoCard } from "@/components/AdminInfoCard";
-import { BlogClient } from "@/components/BlogClient";
-import { getCategoryListServer } from "@/lib/api/category.server";
-import { getAdminArticleListServer } from "@/lib/api/article.server";
+import {AdminInfoCard} from "@/components/AdminInfoCard";
+import {BlogClient} from "@/components/BlogClient";
+import {getCategoryListServer} from "@/lib/api/category.server";
+import {getAdminArticleListServer} from "@/lib/api/article.server";
 
 interface PageProps {
     searchParams: {
@@ -10,9 +10,10 @@ interface PageProps {
     };
 }
 
-export default async function Blog({ searchParams }: PageProps) {
-    const categoryIdParam = searchParams.categoryId;
-    const pageParam = searchParams.page;
+export default async function Blog({searchParams}: PageProps) {
+    const [resolvedSearchParams] = await Promise.all([searchParams]);
+    const categoryIdParam = resolvedSearchParams.categoryId;
+    const pageParam = resolvedSearchParams.page;
 
     const selectedCategoryId = categoryIdParam !== undefined && categoryIdParam !== "null"
         ? parseInt(categoryIdParam, 10)
@@ -37,7 +38,7 @@ export default async function Blog({ searchParams }: PageProps) {
             <div className="relative z-10">
                 <div className="flex flex-col items-center">
                     <div className="my-24 w-full max-w-none sm:max-w-4xl">
-                        <AdminInfoCard />
+                        <AdminInfoCard/>
                         <div>
                             <div className="mt-10">
                                 <BlogClient

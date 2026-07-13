@@ -161,7 +161,7 @@ export function BlogClient({
                             key={category.id}
                             variant={selectedCategoryId === category.id ? "default" : "ghost"}
                             size="sm"
-                            className={`h-7 gap-1.5 text-xs shrink-0 ${selectedCategoryId === category.id ? "" : "text-muted-foreground hover:text-foreground"}`}
+                            className={`h-7 uppercase gap-1.5 text-xs shrink-0 ${selectedCategoryId === category.id ? "" : "text-muted-foreground  hover:text-foreground"}`}
                             title={category.description}
                             onClick={() => handleCategoryClick(category.id)}
                         >
@@ -199,7 +199,7 @@ export function BlogClient({
                         {articles.map((article) => (
                             <Link key={article.id} href={`/article/${article.id}`}
                                   className="block group py-6 first:pt-0">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center uppercase gap-2">
                                     {article.isTop && (
                                         <Badge variant="outline"
                                                className="h-5 rounded-full border-red-500/30 text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</Badge>
