@@ -1,5 +1,6 @@
 "use client"
 
+import React, { JSX } from "react"
 import {Button} from "@/components/ui/button"
 import {BackgroundRippleEffect} from "@/components/ui/background-ripple-effect"
 import {
@@ -20,6 +21,8 @@ import {
 } from "@/components/ui/animated-modal"
 import {Input} from "@/components/ui/input"
 import {Textarea} from "@/components/ui/textarea"
+import { useConfig } from "@/lib/hooks/useConfig"
+import { Skeleton } from "@/components/ui/skeleton"
 
 function ModalCancelButton() {
     const {setOpen} = useModal()
@@ -30,27 +33,47 @@ function ModalCancelButton() {
     )
 }
 
-const mySiteCode = `<!-- 站点链接-->
-<a href="https://myblog.icu" target="_blank" rel="noopener noreferrer">
-  <!-- 图片url-->
-  <img src="https://api.myblog.icu/api/images/66d8abaee825b7d74238c6bc8a58f4a5?size=sm"
-       alt="myblog.icu" />
-  <div>
-     <!-- 网站名称-->
-    <h3>JiuLiuBLOG</h3>
-     <!-- 简介-->
-    <p>一个个人开发的简洁博客，分享开发经验和生活日常。</p>
-  </div>
-</a>`
+function parsePTags(html: string): JSX.Element[] {
+    const pRegex = /<p[^>]*>(.*?)<\/p>/gi
+    const elements: JSX.Element[] = []
+    let match
+    let index = 0
+
+    while ((match = pRegex.exec(html)) !== null) {
+        if (match.index > index) {
+            index = match.index + match[0].length
+            continue
+        }
+        elements.push(
+            <p key={elements.length} className="text-on-surface-variant text-sm leading-relaxed">
+                {match[1]}
+            </p>
+        )
+        index = match.index + match[0].length
+    }
+
+    if (elements.length === 0) {
+        elements.push(
+            <p key={0} className="text-on-surface-variant text-sm leading-relaxed">
+                {html.replace(/<[^>]*>/g, "")}
+            </p>
+        )
+    }
+
+    return elements
+}
 
 
 export default function Links() {
+    const { config, isLoading } = useConfig();
+    const { links } = config;
+
     return (
         <div className="relative flex min-h-screen w-full flex-col items-start justify-start overflow-hidden">
             <div className="pointer-events-none">
                 <BackgroundRippleEffect/>
             </div>
-            <section className="relative z-10 mt-32 px-4 max-w-3xl mx-auto">
+            <section className="relative z-10 mt-32 px-4 w-full  max-w-3xl mx-auto">
                 <div className="mb-10">
                     <h1
                         className="text-4xl font-extrabold text-on-surface tracking-tighter mb-2">
@@ -127,27 +150,31 @@ export default function Links() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="-mb-(--card-spacing)">
-                        <div
-                            className="-mx-(--card-spacing) max-h-72 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4 text-sm leading-relaxed">
-                            <p>
-                                请提前添加本站，我将会很快处理。
-                            </p>
-                            <p>
-                                如果你的站点打不开或者被墙了我将会定期移除， 如果更换了域名请告诉我你之前的域名和更换后的域名以方便我调整。
-                            </p>
-                            <p>
-                                若长时间未审核or评论不了，请加QQ：3209174373，只换个人博客。
-                            </p>
-                            <CodeEditor
-                                lang="html"
-                                title="myblog.icu"
-                                copyButton
-                                writing={false}
-                                className="w-full"
-                            >
-                                {mySiteCode}
-                            </CodeEditor>
-                        </div>
+                        {isLoading ? (
+                            <div
+                                className="-mx-(--card-spacing) space-y-4 border-t bg-muted/50 px-(--card-spacing) py-4">
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-32 w-full" />
+                            </div>
+                        ) : (
+                            <div
+                                className="-mx-(--card-spacing) max-h-72 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4">
+                                {parsePTags(links.content)}
+                                {links.codeInfo && (
+                                    <CodeEditor
+                                        lang="html"
+                                        title="myblog.icu"
+                                        copyButton
+                                        writing={false}
+                                        className="w-full"
+                                    >
+                                            {links.codeInfo.replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n')}
+                                        </CodeEditor>
+                                    )}
+                                </div>
+                        )}
                     </CardContent>
                     <CardFooter className="justify-end gap-2">
                         <Modal>

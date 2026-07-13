@@ -3,7 +3,7 @@ import React from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import {PublicEnvScript} from "next-runtime-env";
-import {getSiteInfoServer} from "@/lib/api/config.server";
+import {getSiteInfoServer, getConfigsByKeysServer} from "@/lib/api/config.server";
 
 
 export default async function RootLayout({
@@ -12,7 +12,10 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const siteInfo = await getSiteInfoServer();
+    const configMap = await getConfigsByKeysServer(["hero.githubLink"]);
     const siteName = siteInfo?.siteName;
+    const githubLink = configMap.get("hero.githubLink") || "https://github.com";
+
 
     return (
         <html lang="zh-CN" suppressHydrationWarning>
@@ -52,7 +55,7 @@ export default async function RootLayout({
             {children}
         </main>
 
-                <Footer siteInfo={siteInfo} />
+        <Footer siteInfo={siteInfo} githubLink={githubLink}/>
         </body>
         </html>
     );
