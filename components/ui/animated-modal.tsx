@@ -3,7 +3,6 @@
 import {AnimatePresence, motion} from "framer-motion"
 import type React from "react"
 import {
-    Children,
     cloneElement,
     createContext,
     isValidElement,
@@ -16,7 +15,7 @@ import {
 } from "react"
 import {createPortal} from "react-dom"
 import {cn} from "@/lib/utils"
-import {useOnClickOutside} from "@/packages/hooks"
+import {useOnClickOutside} from "@/lib/hooks/useOnClickOutside"
 
 interface ModalContextType {
     open: boolean
