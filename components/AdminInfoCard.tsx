@@ -1,45 +1,15 @@
 "use client";
 
-import {useState, useEffect} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Grid} from "@/components/ui/grid-pattern";
 import {Badge} from "@/components/ui/badge";
-import {Skeleton} from "@/components/ui/skeleton";
-import {adminApi, AdminInfo} from "@/lib/api/admin";
+import {AdminInfo} from "@/lib/api/admin.server";
 
-// import {getApiUrl} from "@/lib/env";
+interface AdminInfoCardProps {
+    adminInfo: AdminInfo | null;
+}
 
-export function AdminInfoCard() {
-    const [adminInfo, setAdminInfo] = useState<AdminInfo | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchAdminInfo = async () => {
-            try {
-                // const apiUrl = `${getApiUrl()}${PUBLIC_ADMIN_BASE_PATH}/info`;
-                // console.log("Requesting admin info from:", apiUrl);
-                const response = await adminApi.getAdminInfo();
-                // console.log("Admin API Response:", response);
-                // console.log("response.success:", response.success);
-                // console.log("response.data:", response.data);
-                if (response.success && response.data) {
-                    setAdminInfo(response.data);
-                    setError(null);
-                } else {
-                    setError(response.errorMsg || "获取信息失败");
-                    // console.log("API success false or data null");
-                }
-            } catch (err) {
-                setError("网络请求失败");
-                console.error("Failed to fetch admin info:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAdminInfo().then();
-    }, []);
+export function AdminInfoCard({adminInfo}: AdminInfoCardProps) {
 
     return (
         <div className="px-4">
@@ -48,25 +18,7 @@ export function AdminInfoCard() {
             <div
                 className="relative mx-auto w-full mt-6 bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-6 rounded-3xl overflow-hidden">
                 <Grid size={20}/>
-                {loading ? (
-                    <div className="flex flex-col sm:flex-row gap-3 relative z-20">
-                        <div className="shrink-0">
-                            <Skeleton className="w-[60px] h-[60px] rounded-full"/>
-                        </div>
-                        <div className="flex-1 min-w-0 space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Skeleton className="w-20 h-5"/>
-                                <Skeleton className="w-16 h-5"/>
-                            </div>
-                            <Skeleton className="w-full h-4"/>
-                            <Skeleton className="w-3/4 h-4"/>
-                        </div>
-                    </div>
-                ) : error ? (
-                    <div className="flex items-center justify-center h-24 relative z-20">
-                        <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>
-                    </div>
-                ) : adminInfo ? (
+                {adminInfo ? (
                     <div className="flex flex-col sm:flex-row gap-3 relative z-20">
                         <div className="shrink-0">
                             <Avatar size={60}>

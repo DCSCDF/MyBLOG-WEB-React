@@ -5,13 +5,15 @@ import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import {Button} from "@/components/ui/button";
 import {motion} from "motion/react";
 import {cn} from "@/lib/utils";
-import { useConfig } from "@/lib/hooks/useConfig";
-import { Skeleton } from "@/components/ui/skeleton";
+import { HeroConfig } from "@/lib/hooks/useConfig";
 
+interface HeroProps {
+    images: string[];
+    config: HeroConfig;
+}
 
-export default function Hero({images}: { images: string[] }) {
-    const { config, isLoading } = useConfig();
-    const { hero } = config;
+export default function Hero({images, config}: HeroProps) {
+    const { hero } = { hero: config };
 
     return (
         <section className="relative h-screen w-full overflow-hidden">
@@ -33,38 +35,27 @@ export default function Hero({images}: { images: string[] }) {
 
 
             <div className="relative z-10 flex h-full flex-col items-center mt-[30vh] gap-8 mx-3">
-                {isLoading ? (
-                    <>
-                        <Skeleton className="h-16 w-80" />
-                        <Skeleton className="h-8 w-96" />
-                        <div className="flex gap-4">
-                            <Skeleton className="h-10 w-24" />
-                            <Skeleton className="h-10 w-28" />
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        <TextAnimate text={hero.title} type="rollIn" />
-                        <motion.p
-                                className="text-neutral-600 dark:text-neutral-400 max-w-xl text-center"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 1, duration: 0.6 }}
-                            >
-                                {hero.content}
-                            </motion.p>
-                            <motion.div
-                                className="flex gap-4"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 1.2, duration: 0.6 }}
-                            >
-                                <Button onClick={() => window.open(hero.githubLink, "_blank")}>Github</Button>
-                                <Button className={"dark:backdrop-blur-xs "} variant="outline"
-                                    onClick={() => window.open("/myblog")}>我的博客</Button>
-                            </motion.div>
-                    </>
-                )}
+                <>
+                    <TextAnimate text={hero.title} type="rollIn" />
+                    <motion.p
+                            className="text-neutral-600 dark:text-neutral-400 max-w-xl text-center"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1, duration: 0.6 }}
+                        >
+                            {hero.content}
+                        </motion.p>
+                        <motion.div
+                            className="flex gap-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.2, duration: 0.6 }}
+                        >
+                            <Button onClick={() => window.open(hero.githubLink, "_blank")}>Github</Button>
+                            <Button className={"dark:backdrop-blur-xs "} variant="outline"
+                                onClick={() => window.open("/myblog")}>我的博客</Button>
+                        </motion.div>
+                </>
             </div>
         </section>
     );

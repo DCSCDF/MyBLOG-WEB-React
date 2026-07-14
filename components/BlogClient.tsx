@@ -1,6 +1,5 @@
 "use client";
 
-import {useState, useEffect} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
 import {
@@ -16,7 +15,6 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import type {Category} from "@/lib/api/category.server";
 import type {Article} from "@/lib/api/article.server";
-import {articleApi} from "@/lib/api/article";
 
 
 interface BlogClientProps {
@@ -37,9 +35,8 @@ export function BlogClient({
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [articles, setArticles] = useState<Article[]>(initialArticles);
-    const [totalPages, setTotalPages] = useState(initialTotalPages);
-    const [loading, setLoading] = useState(false);
+    const articles = initialArticles;
+    const totalPages = initialTotalPages;
 
     const categories = initialCategories;
 
@@ -58,30 +55,6 @@ export function BlogClient({
         }
         return initialCurrentPage;
     })();
-
-    useEffect(() => {
-        const fetchArticles = async () => {
-            setLoading(true);
-            try {
-                const result = await articleApi.getArticleList({
-                    currentPage,
-                    pageSize: 6,
-                    categoryId: selectedCategoryId ?? undefined,
-                });
-                if (result) {
-                    setArticles(result.records);
-                    setTotalPages(result.pages);
-                }
-            } catch {
-                setArticles([]);
-                setTotalPages(0);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchArticles().then();
-    }, [currentPage, searchParams, selectedCategoryId]);
 
     const updateUrlParams = (newPage: number, newCategoryId: number | null) => {
         const params = new URLSearchParams();
@@ -172,26 +145,7 @@ export function BlogClient({
                 </div>
             </CardContent>
             <CardContent className="py-4 px-0 group gap-y-8 flex flex-col">
-                {loading ? (
-                    <div className="flex flex-col divide-y divide-border">
-                        {Array.from({length: 3}).map((_, i) => (
-                            <div key={i} className="py-6 first:pt-0">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-5 w-10 rounded-full bg-muted animate-pulse"/>
-                                    <div className="h-4 w-20 bg-muted rounded animate-pulse"/>
-                                    <div className="h-4 w-24 bg-muted rounded animate-pulse"/>
-                                </div>
-                                <div className="mt-3 h-6 w-3/4 bg-muted rounded animate-pulse"/>
-                                <div className="mt-2 h-4 w-full bg-muted rounded animate-pulse"/>
-                                <div className="mt-2 h-4 w-2/3 bg-muted rounded animate-pulse"/>
-                                <div className="mt-3 flex gap-1.5">
-                                    <div className="h-5 w-12 bg-muted rounded-md animate-pulse"/>
-                                    <div className="h-5 w-10 bg-muted rounded-md animate-pulse"/>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : articles.length === 0 ? (
+                {articles.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground text-sm">
                         暂无文章
                     </div>

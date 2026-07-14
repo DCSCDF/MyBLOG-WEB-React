@@ -1,6 +1,5 @@
 "use client";
 
-import {useState, useEffect} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
 import {ArrowUpRight} from "lucide-react";
@@ -18,7 +17,6 @@ import {
 } from "@/components/ui/pagination";
 import type { Category } from "@/lib/api/category.server";
 import type { Article } from "@/lib/api/article.server";
-import {articleApi} from "@/lib/api/article";
 
 interface BlogListClientProps {
     initialCategories: Category[];
@@ -38,9 +36,8 @@ export function BlogListClient({
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [articles, setArticles] = useState<Article[]>(initialArticles);
-    const [totalPages, setTotalPages] = useState(initialTotalPages);
-    const [loading, setLoading] = useState(false);
+    const articles = initialArticles;
+    const totalPages = initialTotalPages;
 
     const categories = initialCategories;
 
@@ -59,30 +56,6 @@ export function BlogListClient({
         }
         return initialCurrentPage;
     })();
-
-    useEffect(() => {
-        const fetchArticles = async () => {
-            setLoading(true);
-            try {
-                const result = await articleApi.getUserArticleList({
-                    currentPage,
-                    pageSize: 6,
-                    categoryId: selectedCategoryId ?? undefined,
-                });
-                if (result) {
-                    setArticles(result.records);
-                    setTotalPages(result.pages);
-                }
-            } catch {
-                setArticles([]);
-                setTotalPages(0);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchArticles().then();
-    }, [currentPage, searchParams, selectedCategoryId]);
 
     const updateUrlParams = (newPage: number, newCategoryId: number | null) => {
         const params = new URLSearchParams();
@@ -160,35 +133,7 @@ export function BlogListClient({
             </div>
 
             <div className="grid gap-px bg-transparent md:grid-cols-2">
-                {loading ? (
-                    Array.from({length: 6}).map((_, i) => (
-                        <div key={i} className="group flex flex-col justify-between bg-card p-5">
-                            <div>
-                                <div className="flex items-center justify-between">
-                                    <div className="h-4 w-16 bg-muted rounded animate-pulse"/>
-                                    <div className="h-4 w-4 bg-muted rounded-full animate-pulse"/>
-                                </div>
-                                <div className="mt-2 h-5 w-3/4 bg-muted rounded animate-pulse"/>
-                                <div className="mt-1.5 h-4 w-full bg-muted rounded animate-pulse"/>
-                            </div>
-                            <div className="mt-4">
-                                <div className="flex flex-wrap gap-1 mb-3">
-                                    <div className="h-4 w-12 bg-muted rounded-md animate-pulse"/>
-                                    <div className="h-4 w-10 bg-muted rounded-md animate-pulse"/>
-                                </div>
-                                <div className="flex items-center justify-between border-t pt-3">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-5 w-5 bg-muted rounded-full animate-pulse"/>
-                                        <div className="h-3 w-20 bg-muted rounded animate-pulse"/>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-16 bg-muted rounded animate-pulse"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                ) : articles.length === 0 ? (
+                {articles.length === 0 ? (
                     <div className="col-span-full text-center py-12 text-muted-foreground text-sm">
                         暂无文章
                     </div>

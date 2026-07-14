@@ -2,6 +2,7 @@ import {AdminInfoCard} from "@/components/AdminInfoCard";
 import {BlogClient} from "@/components/BlogClient";
 import {getCategoryListServer} from "@/lib/api/category.server";
 import {getAdminArticleListServer} from "@/lib/api/article.server";
+import {getAdminInfoServer} from "@/lib/api/admin.server";
 
 interface PageProps {
     searchParams: {
@@ -21,13 +22,14 @@ export default async function Blog({searchParams}: PageProps) {
 
     const currentPage = pageParam !== undefined ? Math.max(1, parseInt(pageParam, 10)) : 1;
 
-    const [categories, articleResult] = await Promise.all([
+    const [categories, articleResult, adminInfo] = await Promise.all([
         getCategoryListServer(),
         getAdminArticleListServer({
             currentPage,
             pageSize: 6,
             categoryId: selectedCategoryId ?? undefined,
         }),
+        getAdminInfoServer(),
     ]);
 
     const articles = articleResult?.records || [];
@@ -38,7 +40,7 @@ export default async function Blog({searchParams}: PageProps) {
             <div className="relative z-10">
                 <div className="flex flex-col items-center">
                     <div className="my-24 w-full max-w-none sm:max-w-4xl">
-                        <AdminInfoCard/>
+                        <AdminInfoCard adminInfo={adminInfo}/>
                         <div>
                             <div className="mt-10">
                                 <BlogClient

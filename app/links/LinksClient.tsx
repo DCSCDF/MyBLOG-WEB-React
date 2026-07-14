@@ -1,6 +1,7 @@
 "use client";
 
-import React, {JSX} from "react"
+import React, { JSX, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import {Button} from "@/components/ui/button"
 import {BackgroundRippleEffect} from "@/components/ui/background-ripple-effect"
 import {
@@ -20,9 +21,7 @@ import {
     useModal,
 } from "@/components/ui/animated-modal"
 import {Input} from "@/components/ui/input"
-import {Textarea} from "@/components/ui/textarea"
-import {useConfig} from "@/lib/hooks/useConfig"
-import {Skeleton} from "@/components/ui/skeleton"
+import { Textarea } from "@/components/ui/textarea"
 import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar"
 import {
     Pagination,
@@ -33,8 +32,7 @@ import {
     PaginationPrevious
 } from "@/components/ui/pagination"
 import {FriendLink, SubmitFriendLinkRequest} from "@/lib/api/friend-link.server"
-import {friendLinkApi} from "@/lib/api/friend-link"
-import {useState} from "react"
+import { friendLinkApi } from "@/lib/api/friend-link"
 
 function ModalCancelButton() {
     const {setOpen} = useModal()
@@ -211,36 +209,38 @@ interface LinksClientProps {
     totalPages: number
     currentPage: number
     total: number
+    linksConfig: {
+        content: string;
+        codeInfo: string;
+    }
 }
 
-export default function LinksClient({initialFriendLinks, totalPages, currentPage}: LinksClientProps) {
-    const {config, isLoading} = useConfig();
-    const {links} = config;
+export default function LinksClient({ initialFriendLinks, totalPages, currentPage, linksConfig }: LinksClientProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-    const [friendLinks, setFriendLinks] = useState<FriendLink[]>(initialFriendLinks)
-    const [current, setCurrent] = useState(currentPage)
-    const [totalPagesState, setTotalPagesState] = useState(totalPages)
-    const [, setLoading] = useState(false)
+    const friendLinks = initialFriendLinks;
+    const current = searchParams.get("page") !== null ? parseInt(searchParams.get("page")!, 10) : currentPage;
+    const totalPagesState = totalPages;
 
-    const fetchFriendLinks = async (page: number) => {
-        setLoading(true)
-        try {
-            const result = await friendLinkApi.getFriendLinkList({currentPage: page, pageSize: 8})
-            if (result) {
-                setFriendLinks(result.records)
-                setTotalPagesState(result.pages)
-            }
-        } catch {
-        } finally {
-            setLoading(false)
+    const links = linksConfig;
+
+    const getPageUrl = (page: number): string => {
+        const params = new URLSearchParams();
+        if (page > 1) {
+            params.set("page", page.toString());
         }
-    }
+        return params.toString();
+    };
 
     const handlePageChange = (page: number) => {
-        if (page === current) return
-        setCurrent(page)
-        fetchFriendLinks(page).then()
-    }
+        if (page === current) return;
+        const params = new URLSearchParams();
+        if (page > 1) {
+            params.set("page", page.toString());
+        }
+        router.push(`/links?${params.toString()}`, { scroll: false });
+    };
 
     return (
         <div className="relative flex min-h-screen w-full flex-col items-start justify-start overflow-hidden">
@@ -303,15 +303,23 @@ export default function LinksClient({initialFriendLinks, totalPages, currentPage
                             <PaginationContent>
                                 <PaginationItem>
                                     <PaginationPrevious
-                                        onClick={() => handlePageChange(Math.max(1, current - 1))}
+                                        href={`/links?${getPageUrl(Math.max(1, current - 1))}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (current > 1) handlePageChange(current - 1);
+                                        }}
                                     />
                                 </PaginationItem>
                                 {Array.from({length: totalPagesState}, (_, i) => i + 1).map((page) => (
                                     <PaginationItem key={page}
                                                     className={page === current ? "" : "hidden sm:inline-flex"}>
                                         <PaginationLink
+                                            href={`/links?${getPageUrl(page)}`}
                                             isActive={page === current}
-                                            onClick={() => handlePageChange(page)}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handlePageChange(page);
+                                            }}
                                         >
                                             {page}
                                         </PaginationLink>
@@ -319,7 +327,11 @@ export default function LinksClient({initialFriendLinks, totalPages, currentPage
                                 ))}
                                 <PaginationItem>
                                     <PaginationNext
-                                        onClick={() => handlePageChange(Math.min(totalPagesState, current + 1))}
+                                        href={`/links?${getPageUrl(Math.min(totalPagesState, current + 1))}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (current < totalPagesState) handlePageChange(current + 1);
+                                        }}
                                     />
                                 </PaginationItem>
                             </PaginationContent>
@@ -335,31 +347,21 @@ export default function LinksClient({initialFriendLinks, totalPages, currentPage
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="-mb-(--card-spacing)">
-                        {isLoading ? (
-                            <div
-                                className="-mx-(--card-spacing) space-y-4 border-t bg-muted/50 px-(--card-spacing) py-4">
-                                <Skeleton className="h-4 w-full"/>
-                                <Skeleton className="h-4 w-full"/>
-                                <Skeleton className="h-4 w-full"/>
-                                <Skeleton className="h-32 w-full"/>
-                            </div>
-                        ) : (
-                            <div
-                                className="-mx-(--card-spacing) max-h-72 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4">
-                                {parsePTags(links.content)}
-                                {links.codeInfo && (
-                                    <CodeEditor
-                                        lang="html"
-                                        title="myblog.icu"
-                                        copyButton
-                                        writing={false}
-                                        className="w-full"
-                                    >
-                                        {links.codeInfo.replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n')}
-                                    </CodeEditor>
-                                )}
-                            </div>
-                        )}
+                        <div
+                            className="-mx-(--card-spacing) max-h-72 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4">
+                            {parsePTags(links.content)}
+                            {links.codeInfo && (
+                                <CodeEditor
+                                    lang="html"
+                                    title="myblog.icu"
+                                    copyButton
+                                    writing={false}
+                                    className="w-full"
+                                >
+                                    {links.codeInfo.replace(/\\n/g, '\n').replace(/<br\s*\/?>/gi, '\n')}
+                                </CodeEditor>
+                            )}
+                        </div>
                     </CardContent>
                     <CardFooter className="justify-end gap-2">
                         <Modal>
