@@ -12,9 +12,10 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const siteInfo = await getSiteInfoServer();
-    const configMap = await getConfigsByKeysServer(["hero.githubLink"]);
+    const configMap = await getConfigsByKeysServer(["hero.githubLink", "header.rss"]);
     const siteName = siteInfo?.siteName;
     const githubLink = configMap.get("hero.githubLink") || "https://github.com";
+    const rssLink = configMap.get("header.rss") || "";
 
 
     return (
@@ -50,7 +51,7 @@ export default async function RootLayout({
             )}
         </head>
         <body className="min-h-screen flex flex-col">
-        <Header/>
+                <Header rssLink={rssLink} />
         <main className="w-full flex-1">
             {children}
         </main>

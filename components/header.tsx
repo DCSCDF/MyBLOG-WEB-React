@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {Moon, Menu, Sun, Search} from "lucide-react";
+import { Moon, Menu, Sun, Search } from "lucide-react";
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -54,7 +54,11 @@ import {getAdminUrl} from "@/lib/env";
 //     }
 // ];
 
-export default function Header() {
+interface HeaderProps {
+    rssLink?: string;
+}
+
+export default function Header({ rssLink }: HeaderProps) {
     const router = useRouter();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const theme = React.useSyncExternalStore(
@@ -168,6 +172,20 @@ export default function Header() {
                                             友情链接
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
+                                    {rssLink && (
+                                        <NavigationMenuItem>
+                                            <NavigationMenuLink
+                                                href={rssLink}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    window.open(rssLink, "_blank");
+                                                }}
+                                                className={navigationMenuTriggerStyle()}
+                                            >
+                                                RSS
+                                            </NavigationMenuLink>
+                                        </NavigationMenuItem>
+                                    )}
                                 </NavigationMenuList>
                             </NavigationMenu>
                         </div>
@@ -260,6 +278,14 @@ export default function Header() {
                             >
                                 {theme === "dark" ? "切换到浅色模式" : "切换到深色模式"}
                             </CommandItem>
+                            {rssLink && (
+                                <CommandItem onSelect={() => {
+                                    window.open(rssLink, "_blank");
+                                    setMobileOpen(false);
+                                }}>
+                                    RSS订阅
+                                </CommandItem>
+                            )}
                             {isLoggedIn ? (
                                 <CommandItem onSelect={() => {
                                     redirectToAdmin();
