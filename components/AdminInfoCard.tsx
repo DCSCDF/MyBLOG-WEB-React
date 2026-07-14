@@ -43,10 +43,10 @@ export function AdminInfoCard({adminInfo}: AdminInfoCardProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="flex gap-2 items-center flex-wrap">
-                                <p className="text-black dark:text-white text-md font-bold">JiuLiu</p>
+                                <p className="text-black dark:text-white text-md font-bold">User</p>
                                 <Badge variant="secondary">博客作者</Badge>
                             </div>
-                            <p className="text-neutral-500 text-sm dark:text-neutral-400 mt-2">我是一名独立开发者，主要熟悉前后端开发等方面，爱好探险、剪辑、摄影等等，目前正在开发我的博客。</p>
+                            <p className="text-neutral-500 text-sm dark:text-neutral-400 mt-2">简介</p>
                         </div>
                     </div>
                 )}
