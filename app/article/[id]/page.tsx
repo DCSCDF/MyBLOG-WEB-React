@@ -1,6 +1,7 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
+import {useParams} from "next/navigation";
 import {
     Card,
     CardContent,
@@ -19,6 +20,9 @@ import {Streamdown} from "streamdown";
 import {code} from "@streamdown/code";
 import {mermaid} from "@streamdown/mermaid";
 import {math} from "@streamdown/math";
+import {articleApi} from "@/lib/api/article";
+
+import type {Article} from "@/lib/api/article.server";
 import "katex/dist/katex.min.css";
 
 interface Comment {
@@ -163,128 +167,43 @@ function CommentItem({
 
 export default function Article() {
     const [activeReplyId, setActiveReplyId] = useState<number | null>(null);
+    const [article, setArticle] = useState<Article | null>(null);
+    const [loading, setLoading] = useState(true);
+    const params = useParams<{ id: string }>();
 
-    // 示例 Markdown 内容（包含 Mermaid 图表和 LaTeX 数学公式）
-    const articleContent = `After three years of scaling a Django monolith, our deploy times stretched past 45 minutes and a single failing test could block the entire team. We did not jump straight to microservices. Instead, we drew service boundaries inside the monolith first, enforcing them with module-level import rules and shared nothing between domains.
+    useEffect(() => {
+        const fetchArticle = async () => {
+            const id = parseInt(params.id || "", 10);
+            if (isNaN(id)) {
+                setLoading(false);
+                return;
+            }
+            const data = await articleApi.getArticleDetail(id);
+            setArticle(data);
+            setLoading(false);
+        };
+        fetchArticle().then();
+    }, [params.id]);
 
-## Architecture Overview
+    if (loading) {
+        return (
+            <section className="mt-24 mx-auto w-full max-w-4xl py-4 px-2 md:px-4">
+                <div className="flex items-center justify-center h-64">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-current"></div>
+                </div>
+            </section>
+        );
+    }
 
-Here's a diagram showing our migration strategy:
-
-\`\`\`mermaid
-graph LR
-    A[Monolith] --> B[Identify Boundaries]
-    B --> C[Extract Billing Domain]
-    C --> D[Internal HTTP Interface]
-    D --> E[Separate Database]
-    E --> F[Reduced Deploy Time: 45min → 3min]
-\`\`\`
-| 关系类型 | 主实体 | 关联实体 | 关系说明 | 基数 |
-|---------|-------|---------|---------|-----|
-| 用户角色 | SysUser | SysUserRole | 用户拥有角色 | 1:N |
-| 角色分配 | SysRole | SysUserRole | 角色分配给用户 | 1:N |
-| 角色权限 | SysRole | SysRolePermission | 角色拥有权限 | 1:N |
-| 权限分配 | SysPermission | SysRolePermission | 权限分配给角色 | 1:N |
-| 角色权限组 | SysRole | SysRolePermissionGroup | 角色拥有权限组 | 1:N |
-| 权限组分配 | SysPermissionGroup | SysRolePermissionGroup | 权限组分配给角色 | 1:N |
-| 权限归属 | SysPermission | SysPermissionGroupItem | 权限属于权限组 | 1:N |
-| 权限组包含 | SysPermissionGroup | SysPermissionGroupItem | 权限组包含权限 | 1:N |
-
-## Key Metrics
-
-The performance improvement was significant:
-
-$$
-\\text{Deploy Time Reduction} = \\frac{45 - 3}{45} \\times 100\\% = 93.3\\%
-$$
-
-We also observed:
-
-$$
-\\text{Success Rate} = \\frac{N_{success}}{N_{total}} = \\frac{987}{1000} = 98.7\\%
-$$
-
-## Technical Implementation
-
-### Code Example
-
-Here's how we structured our service boundaries:
-
-\`\`\`typescript
-// billing.service.ts
-export class BillingService {
-  private apiClient: HttpClient;
-  
-  constructor() {
-    this.apiClient = new HttpClient('/internal/billing');
-  }
-  
-  async createInvoice(data: InvoiceData): Promise<Invoice> {
-    return this.apiClient.post('/invoices', data);
-  }
-  
-  async processPayment(invoiceId: string): Promise<Payment> {
-    return this.apiClient.post(\`/invoices/\${invoiceId}/pay\`);
-  }
-}
-\`\`\`
-
-### Database Migration Timeline
-
-\`\`\`mermaid
-gantt
-    title Billing Domain Migration Timeline
-    dateFormat  YYYY-MM-DD
-    section Phase 1
-    Define API Surface           :a1, 2024-01-01, 30d
-    Implement HTTP Interface     :a2, after a1, 45d
-    section Phase 2
-    Run Dual Write Mode          :b1, after a2, 90d
-    Migrate to Separate DB       :b2, after b1, 30d
-    section Phase 3
-    Remove Old Code              :c1, after b2, 15d
-    Optimize Performance         :c2, after c1, 30d
-\`\`\`
-
-## Mathematical Model
-
-Our deployment success rate follows a binomial distribution:
-
-$$
-P(k \\text{ successes in } n \\text{ trials}) = \\binom{n}{k} p^k (1-p)^{n-k}
-$$
-
-Where:
-- $n$ = total number of deployments
-- $k$ = successful deployments  
-- $p$ = probability of success per deployment
-
-For our billing service migration:
-- $n = 250$ deployments over 6 months
-- $k = 247$ successful deployments
-- $p \\approx 0.987$
-
-$$
-\\mu = np = 250 \\times 0.987 = 246.75
-$$
-
-$$
-\\sigma = \\sqrt{np(1-p)} = \\sqrt{250 \\times 0.987 \\times 0.013} \\approx 1.79
-$$
-
-## Conclusion
-
-The lesson was not that monoliths are bad. The lesson was that **boundaries matter more than infrastructure**. A well-structured monolith with clean domain separation will outperform a distributed system with tangled dependencies every time.
-
-> Start with boundaries, extract services only when you have a concrete operational reason.
-
-### Key Takeaways
-
-- ✅ **Identify clear API surfaces** before extracting services
-- ✅ **Use internal HTTP interfaces** to enforce boundaries
-- ✅ **Migrate databases gradually** to minimize risk
-- ✅ **Measure performance improvements** to justify the effort
-`;
+    if (!article) {
+        return (
+            <section className="mt-24 mx-auto w-full max-w-4xl py-4 px-2 md:px-4">
+                <div className="flex items-center justify-center h-64">
+                    <p className="text-muted-foreground">文章不存在</p>
+                </div>
+            </section>
+        );
+    }
 
     const comments: Comment[] = [
         {
@@ -330,37 +249,47 @@ The lesson was not that monoliths are bad. The lesson was that **boundaries matt
             <CardContent className="py-3 md:px-6 px-4">
                 {/* 顶部标签和日期 */}
                 <div className="flex items-center gap-2">
-                    <Badge variant="secondary">Business</Badge>
+                    {article.categoryName && (
+                        <Badge className={"!rounded-sm text-neutral-600 dark:text-neutral-400"}
+                               variant="secondary">{article.categoryName}</Badge>
+                    )}
+                    {article.isTop && (
+                        <Badge className={"!rounded-sm text-neutral-600 dark:text-neutral-400"}
+                               variant="secondary">置顶</Badge>
+                    )}
                     <span className="text-xs text-muted-foreground">
-                        10 October 2025
+                        {new Date(article.createTime).toLocaleDateString('zh-CN', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}
                     </span>
                 </div>
 
                 {/* 标题 */}
-                <CardTitle className="mt-3 text-xl tracking-tight">
-                    Autodesk Looks to the Future of 3D Printing with Project Escher
+                <CardTitle className="mt-4 text-xl tracking-tight">
+                    {article.title}
                 </CardTitle>
-
-                {/*/!* 描述 *!/*/}
-                {/*<CardDescription className="mt-2 line-clamp-2">*/}
-                {/*    Warner Music Group announced it is acquiring selected assets of the*/}
-                {/*    music platform Songkick, including its concert-finding app and*/}
-                {/*    trademark. The deal closes a prolonged legal dispute between the two*/}
-                {/*    companies.*/}
-                {/*</CardDescription>*/}
 
                 {/* 作者信息 */}
                 <div className="mt-4 flex items-center gap-3">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&auto=format&fit=crop"
-                            alt="Otto Gonzalez"
-                        />
-                        <AvatarFallback>OG</AvatarFallback>
+                        {article.authorAvatar ? (
+                            <AvatarImage
+                                src={article.authorAvatar}
+                                alt={article.authorNickname}
+                            />
+                        ) : (
+                            <AvatarFallback>
+                                {article.authorNickname.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                        )}
                     </Avatar>
                     <div>
-                        <p className="text-sm font-medium">Otto Gonzalez</p>
-                        <p className="text-xs text-muted-foreground">Senior Editor</p>
+                        <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{article.authorNickname}</p>
+                        {/*{article.authorBio && (*/}
+                        {/*    <p className="text-xs text-muted-foreground">{article.authorBio}</p>*/}
+                        {/*)}*/}
                     </div>
                 </div>
 
@@ -376,7 +305,7 @@ The lesson was not that monoliths are bad. The lesson was that **boundaries matt
                             math: math,
                         }}
                     >
-                        {articleContent}
+                        {article.mdContent}
                     </Streamdown>
                 </div>
 
@@ -431,7 +360,7 @@ The lesson was not that monoliths are bad. The lesson was that **boundaries matt
                             评论
                         </CardTitle>
                         <CardDescription className="mt-1">
-                            {comments.length} 个评论在此篇文章
+                            {article.commentCount} 个评论在此篇文章
                         </CardDescription>
                     </CardHeader>
 

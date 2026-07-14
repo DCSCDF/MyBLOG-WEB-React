@@ -1,7 +1,7 @@
 "use client";
 
 import { getApiUrl } from "@/lib/env";
-import { Article, ArticlePageResponse, ArticleListParams } from "./article.server";
+import type { Article, ArticlePageResponse, ArticleListParams } from "./article.server";
 
 const PUBLIC_ARTICLE_BASE_PATH = "/api/public/article";
 

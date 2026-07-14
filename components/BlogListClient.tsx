@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
+import Link from "next/link";
 import {ArrowUpRight} from "lucide-react";
 import {CardFooter} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
@@ -15,8 +16,8 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination";
-import {Category} from "@/lib/api/category.server";
-import {Article} from "@/lib/api/article.server";
+import type { Category } from "@/lib/api/category.server";
+import type { Article } from "@/lib/api/article.server";
 import {articleApi} from "@/lib/api/article";
 
 interface BlogListClientProps {
@@ -193,8 +194,9 @@ export function BlogListClient({
                     </div>
                 ) : (
                     articles.map((post) => (
-                        <article
+                        <Link
                             key={post.id}
+                            href={`/article/${post.id}`}
                             className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50"
                         >
                             <div>
@@ -248,7 +250,7 @@ export function BlogListClient({
                                     </div>
                                 </div>
                             </div>
-                        </article>
+                        </Link>
                     ))
                 )}
             </div>

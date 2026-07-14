@@ -14,8 +14,8 @@ import {
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Category} from "@/lib/api/category.server";
-import {Article} from "@/lib/api/article.server";
+import type {Category} from "@/lib/api/category.server";
+import type {Article} from "@/lib/api/article.server";
 import {articleApi} from "@/lib/api/article";
 
 

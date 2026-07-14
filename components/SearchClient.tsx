@@ -17,7 +17,7 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination"
-import {Article} from "@/lib/api/article.server"
+import type { Article } from "@/lib/api/article.server"
 import {articleApi} from "@/lib/api/article"
 
 export function SearchClient() {

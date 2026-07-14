@@ -5,7 +5,7 @@ const PUBLIC_ARTICLE_BASE_PATH = "/api/public/article";
 export interface Article {
     id: number;
     categoryId: number;
-    categoryName: string;
+    categoryName: string | null;
     title: string;
     summary: string;
     coverImage: string;
@@ -13,6 +13,9 @@ export interface Article {
     commentCount: number;
     isTop: boolean;
     authorNickname: string;
+    authorAvatar: string | null;
+    authorBio: string | null;
+    mdContent: string;
     createTime: string;
 }
 
