@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import { Moon, Menu, Sun, Search } from "lucide-react";
+import {Moon, Menu, Sun, Search} from "lucide-react";
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -11,15 +11,14 @@ import {
     NavigationMenuList,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
 import {TopBlur} from "@/components/ui/edge-blur";
 import {
     Command,
     CommandDialog,
     CommandEmpty,
     CommandGroup,
-    CommandInput,
     CommandItem,
     CommandList,
     CommandSeparator,
@@ -139,7 +138,7 @@ export default function Header() {
                                             onClick={(e) => handleNav(e, "/blog/list")}
                                             className={navigationMenuTriggerStyle()}
                                         >
-                                            文章
+                                            朋友们的文章
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
                                     {/*<NavigationMenuItem className="hidden md:flex">*/}
@@ -174,7 +173,9 @@ export default function Header() {
                         </div>
                     </div>
                     <nav className="flex items-center gap-4">
-                        <Input type="search" placeholder="搜索..." className="hidden lg:inline-flex w-40 cursor-pointer border-none bg-muted hover:bg-muted/80 focus-visible:border-none focus-visible:ring-0" readOnly onClick={() => router.push("/search")} />
+                        <Input type="search" placeholder="搜索..."
+                               className="hidden lg:inline-flex w-40 cursor-pointer border-none bg-muted hover:bg-muted/80 focus-visible:border-none focus-visible:ring-0"
+                               readOnly onClick={() => router.push("/search")}/>
 
                         <div className={"h-4 border hidden lg:block"}></div>
 
@@ -222,8 +223,10 @@ export default function Header() {
             <CommandDialog open={mobileOpen} onOpenChange={setMobileOpen} title="导航菜单"
                            description="搜索并跳转到页面">
                 <Command>
-                    <div className="relative cursor-pointer rounded-md border-none bg-muted hover:bg-muted/80 px-3 py-2 text-sm text-muted-foreground" onClick={() => goTo("/search")}>
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <div
+                        className="relative cursor-pointer rounded-md border-none bg-muted hover:bg-muted/80 px-3 py-2 text-sm text-muted-foreground"
+                        onClick={() => goTo("/search")}>
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"/>
                         <span className="ml-8">搜索...</span>
                     </div>
                     <CommandList>
@@ -231,7 +234,7 @@ export default function Header() {
                         <CommandGroup heading="导航">
                             <CommandItem onSelect={() => goTo("/")}>主页</CommandItem>
                             <CommandItem onSelect={() => goTo("/myblog")}>我的博客</CommandItem>
-                            <CommandItem onSelect={() => goTo("/blog/list")}>文章</CommandItem>
+                            <CommandItem onSelect={() => goTo("/blog/list")}>朋友们的文章</CommandItem>
                             <CommandItem onSelect={() => goTo("/links")}>友情链接</CommandItem>
                         </CommandGroup>
                         {/*<CommandSeparator/>*/}
