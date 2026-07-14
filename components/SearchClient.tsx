@@ -17,7 +17,7 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination"
-import type { Article } from "@/lib/api/article.server"
+import type {Article} from "@/lib/api/article.server"
 import {articleApi} from "@/lib/api/article"
 
 export function SearchClient() {
@@ -136,7 +136,7 @@ export function SearchClient() {
                                 type="search"
                                 id="search"
                                 name="search"
-                                placeholder="Search"
+                                placeholder=""
                                 className="h-9 pl-9 pr-9"
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.target.value)}
