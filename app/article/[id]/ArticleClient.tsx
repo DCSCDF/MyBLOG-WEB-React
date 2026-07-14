@@ -16,6 +16,16 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Textarea} from "@/components/ui/textarea";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {Streamdown} from "streamdown";
 import {code} from "@streamdown/code";
 import {mermaid} from "@streamdown/mermaid";
@@ -25,6 +35,22 @@ import {useAuth} from "@/lib/auth/useAuth";
 import type {Article} from "@/lib/api/article.server";
 import type {CommentVO, SubmitCommentRequest} from "@/lib/api/comment";
 import "katex/dist/katex.min.css";
+
+const validateUrl = (url: string): boolean => {
+    if (!url) return true;
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+const validateEmail = (email: string): boolean => {
+    if (!email) return true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
 
 const getInitials = (name: string): string => {
     if (!name) return "?";
@@ -73,7 +99,7 @@ function CommentItem({
     activeReplyId: number | null;
     setActiveReplyId: (id: number | null) => void;
     isLoggedIn: boolean;
-    onSubmitReply: (parentId: number, data: FormData) => void;
+    onSubmitReply: (parentId: number, data: FormData) => Promise<boolean>;
     submitLoading: boolean;
 }) {
     const showReply = activeReplyId === comment.id;
@@ -95,17 +121,19 @@ function CommentItem({
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmitReply(comment.id, replyFormData);
-        setReplyFormData({
-            username: "",
-            email: "",
-            avatarUrl: "",
-            website: "",
-            content: "",
-        });
-        setActiveReplyId(null);
+        const success = await onSubmitReply(comment.id, replyFormData);
+        if (success) {
+            setReplyFormData({
+                username: "",
+                email: "",
+                avatarUrl: "",
+                website: "",
+                content: "",
+            });
+            setActiveReplyId(null);
+        }
     };
 
     return (
@@ -269,6 +297,8 @@ export default function ArticleClient({initialArticle, initialComments}: Article
         website: "",
         content: "",
     });
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+    const [errorDialogMessage, setErrorDialogMessage] = useState("");
     const params = useParams<{ id: string }>();
     const {isLoggedIn} = useAuth();
 
@@ -279,22 +309,40 @@ export default function ArticleClient({initialArticle, initialComments}: Article
         setComments(data || []);
     }, [params.id]);
 
-    const handleSubmitComment = async (parentId: number = 0, data?: FormData) => {
+    const handleSubmitComment = async (parentId: number = 0, data?: FormData): Promise<boolean> => {
         const id = parseInt(params.id || "", 10);
-        if (isNaN(id)) return;
+        if (isNaN(id)) return false;
 
         const commentData = data || formData;
 
         if (!commentData.content.trim()) {
-            setSubmitMessage("评论内容不能为空");
-            setTimeout(() => setSubmitMessage(null), 3000);
-            return;
+            setErrorDialogMessage("评论内容不能为空");
+            setErrorDialogOpen(true);
+            return false;
         }
 
         if (!isLoggedIn && !commentData.username.trim()) {
-            setSubmitMessage("请输入您的名称");
-            setTimeout(() => setSubmitMessage(null), 3000);
-            return;
+            setErrorDialogMessage("请输入您的名称");
+            setErrorDialogOpen(true);
+            return false;
+        }
+
+        if (!isLoggedIn && !validateEmail(commentData.email)) {
+            setErrorDialogMessage("邮箱格式不正确");
+            setErrorDialogOpen(true);
+            return false;
+        }
+
+        if (!validateUrl(commentData.avatarUrl)) {
+            setErrorDialogMessage("头像URL格式不正确");
+            setErrorDialogOpen(true);
+            return false;
+        }
+
+        if (!validateUrl(commentData.website)) {
+            setErrorDialogMessage("网站链接格式不正确");
+            setErrorDialogOpen(true);
+            return false;
         }
 
         setSubmitLoading(true);
@@ -330,7 +378,8 @@ export default function ArticleClient({initialArticle, initialComments}: Article
         const response = await commentApi.submitComment(requestData, token);
 
         if (response.success) {
-            setSubmitMessage(response.data.message);
+            setErrorDialogMessage(response.data.message || "评论提交成功");
+            setErrorDialogOpen(true);
             if (!data) {
                 setFormData({
                     username: "",
@@ -342,12 +391,14 @@ export default function ArticleClient({initialArticle, initialComments}: Article
             }
             setActiveReplyId(null);
             await refreshComments();
+            setSubmitLoading(false);
+            return true;
         } else {
-            setSubmitMessage(response.errorMsg || "评论提交失败");
+            setErrorDialogMessage(response.errorMsg || "评论提交失败");
+            setErrorDialogOpen(true);
+            setSubmitLoading(false);
+            return false;
         }
-
-        setSubmitLoading(false);
-        setTimeout(() => setSubmitMessage(null), 5000);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -441,7 +492,7 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                         )}
                         <form className="space-y-4 py-6" onSubmit={(e) => {
                             e.preventDefault();
-                            handleSubmitComment(0).then();
+                            handleSubmitComment(0);
                         }}>
                             {!isLoggedIn && (
                                 <div className="grid gap-4 sm:grid-cols-2">
@@ -544,6 +595,20 @@ export default function ArticleClient({initialArticle, initialComments}: Article
 
             </CardContent>
         </Card>
+
+        <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>提示</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        {errorDialogMessage}
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
+                    确定
+                </AlertDialogAction>
+            </AlertDialogContent>
+        </AlertDialog>
 
     </section>)
 }

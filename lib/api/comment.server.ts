@@ -24,90 +24,45 @@ export interface CommentListResponse {
     code: number;
 }
 
-// export interface SubmitCommentRequest {
-//     blogId: number;
-//     parentId: number;
-//     username?: string;
-//     email?: string;
-//     avatarUrl?: string;
-//     website?: string;
-//     content: string;
-// }
-//
-// export interface SubmitCommentResponse {
-//     data: {
-//         id: number;
-//         message: string;
-//     };
-//     success: boolean;
-//     errorMsg: string | null;
-//     code: number;
-// }
-
 export const getCommentListServer = async (blogId: number): Promise<CommentVO[] | null> => {
+    const apiName = "getCommentListServer";
     try {
+        console.log(`[SSR API] ${apiName} - Start with blogId: ${blogId}`);
         const apiUrl = getApiUrlServer();
         if (!apiUrl) {
+            console.log(`[SSR API] ${apiName} - FAILED: API URL is empty!`);
             return null;
         }
 
-        const response = await fetch(`${apiUrl}${PUBLIC_COMMENT_BASE_PATH}/list/${blogId}`, {
+        const fullUrl = `${apiUrl}${PUBLIC_COMMENT_BASE_PATH}/list/${blogId}`;
+        console.log(`[SSR API] ${apiName} - Request URL: ${fullUrl}`);
+        console.log(`[SSR API] ${apiName} - Request Method: GET`);
+        console.log(`[SSR API] ${apiName} - Request Headers:`, JSON.stringify({ "Content-Type": "application/json" }));
+
+        const startTime = Date.now();
+        const response = await fetch(fullUrl, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
             cache: "no-store",
         });
+        const duration = Date.now() - startTime;
+        console.log(`[SSR API] ${apiName} - Response Status: ${response.status} ${response.statusText} (took ${duration}ms)`);
 
         const result: CommentListResponse = await response.json();
+        console.log(`[SSR API] ${apiName} - Response success: ${result.success}, code: ${result.code}, errorMsg: ${result.errorMsg || "none"}`);
+        console.log(`[SSR API] ${apiName} - Response data summary: comments count=${result.data?.length || 0}`);
 
         if (result.success && result.data) {
             return result.data;
         }
 
+        console.log(`[SSR API] ${apiName} - Returning null due to failed response`);
         return null;
-    } catch {
+    } catch (error) {
+        console.error(`[SSR API] ${apiName} - ERROR:`, error);
+        console.error(`[SSR API] ${apiName} - Error stack:`, error instanceof Error ? error.stack : "no stack");
         return null;
     }
 };
-
-// export const submitCommentServer = async (
-//     request: SubmitCommentRequest,
-//     token?: string | null
-// ): Promise<SubmitCommentResponse> => {
-//     try {
-//         const apiUrl = getApiUrlServer();
-//         if (!apiUrl) {
-//             return {
-//                 data: { id: 0, message: "API地址未配置" },
-//                 success: false,
-//                 errorMsg: "API地址未配置",
-//                 code: 500,
-//             };
-//         }
-//
-//         const headers: Record<string, string> = {
-//             "Content-Type": "application/json",
-//         };
-//
-//         if (token) {
-//             headers["token"] = token;
-//         }
-//
-//         const response = await fetch(`${apiUrl}${PUBLIC_COMMENT_BASE_PATH}`, {
-//             method: "POST",
-//             headers,
-//             body: JSON.stringify(request),
-//             cache: "no-store",
-//         });
-//
-//         return response.json();
-//     } catch {
-//         return {
-//             data: { id: 0, message: "网络请求失败" },
-//             success: false,
-//             errorMsg: "网络请求失败",
-//             code: 500,
-//         };
-//     }
-// };
