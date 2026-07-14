@@ -21,154 +21,176 @@ import {code} from "@streamdown/code";
 import {mermaid} from "@streamdown/mermaid";
 import {math} from "@streamdown/math";
 import {articleApi} from "@/lib/api/article";
+import {commentApi} from "@/lib/api/comment";
 
 import type {Article} from "@/lib/api/article.server";
+import type {CommentVO} from "@/lib/api/comment";
 import "katex/dist/katex.min.css";
 
-interface Comment {
-    id: number;
-    author: string;
-    initials: string;
-    time: string;
-    content: string;
-    isAdmin?: boolean;
-    replies?: Comment[];
-}
+const getInitials = (name: string): string => {
+    if (!name) return "?";
+    return name.charAt(0).toUpperCase();
+};
+
+const formatTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+
+    if (hours < 1) return "刚刚";
+    if (hours < 24) return `${hours}小时前`;
+    if (days < 7) return `${days}天前`;
+    return date.toLocaleDateString('zh-CN');
+};
 
 function CommentItem({
                          comment,
-                         isReply = false,
+                         isTopLevel = true,
+                         parentUsername = "",
                          activeReplyId,
                          setActiveReplyId,
                      }: {
-    comment: Comment;
-    isReply?: boolean;
+    comment: CommentVO;
+    isTopLevel?: boolean;
+    parentUsername?: string;
     activeReplyId: number | null;
     setActiveReplyId: (id: number | null) => void;
 }) {
     const showReply = activeReplyId === comment.id;
+    const displayContent = parentUsername ? `@${parentUsername} ${comment.content}` : comment.content;
 
     return (
-        <div className={isReply ? "ml-8 pl-4" : ""}>
-            <div className="flex items-start gap-3 py-3">
-                <Avatar className="size-8 shrink-0">
-                    <AvatarFallback className="bg-muted text-muted-foreground text-xs font-medium">
-                        {comment.initials}
-                    </AvatarFallback>
-                </Avatar>
-                <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{comment.author}</span>
-                        {comment.isAdmin && (
-                            <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
-                                管理员
-                            </Badge>
+        <>
+            <div className={isTopLevel ? "" : "pl-4 md:pl-12"}>
+                <div className="flex items-start gap-3 py-3">
+                    <Avatar className="size-8 shrink-0">
+                        {comment.avatarUrl ? (
+                            <AvatarImage src={comment.avatarUrl} alt={comment.username}/>
+                        ) : (
+                            <AvatarFallback className="bg-muted text-muted-foreground text-xs font-medium">
+                                {getInitials(comment.username)}
+                            </AvatarFallback>
                         )}
-                        <span className="text-xs text-muted-foreground">{comment.time}</span>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{comment.username}</span>
+                            {comment.isAdmin && (
+                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                                    管理员
+                                </Badge>
+                            )}
+                            <span className="text-xs text-muted-foreground">{formatTime(comment.createTime)}</span>
+                        </div>
+                        <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+                            {displayContent}
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => setActiveReplyId(showReply ? null : comment.id)}
+                            className="mt-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            回复
+                        </button>
+                        {showReply && (
+                            <form className="mt-2 space-y-3 p-1">
+                                <div className="grid gap-2 sm:grid-cols-2">
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`reply-name-${comment.id}`} className="text-xs">
+                                            名称
+                                        </Label>
+                                        <Input
+                                            id={`reply-name-${comment.id}`}
+                                            placeholder="Your name"
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`reply-email-${comment.id}`} className="text-xs">
+                                            邮箱
+                                        </Label>
+                                        <Input
+                                            type="email"
+                                            id={`reply-email-${comment.id}`}
+                                            placeholder="your@email.com"
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`reply-avatar-${comment.id}`} className="text-xs">
+                                            头像URL
+                                        </Label>
+                                        <Input
+                                            type="url"
+                                            id={`reply-avatar-${comment.id}`}
+                                            placeholder="https://example.com/img"
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`reply-url-${comment.id}`} className="text-xs">
+                                            网站链接
+                                        </Label>
+                                        <Input
+                                            type="url"
+                                            id={`reply-url-${comment.id}`}
+                                            placeholder="https://example.com"
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <Label htmlFor={`reply-message-${comment.id}`} className="text-xs">
+                                        内容
+                                    </Label>
+                                    <Textarea
+                                        id={`reply-message-${comment.id}`}
+                                        placeholder={`回复 ${comment.username}...`}
+                                        rows={2}
+                                        className="text-xs"
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 text-xs"
+                                        onClick={() => setActiveReplyId(null)}
+                                    >
+                                        取消
+                                    </Button>
+                                    <Button type="button" size="sm" className="h-7 text-xs">
+                                        发送
+                                    </Button>
+                                </div>
+                            </form>
+                        )}
                     </div>
-                    <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                        {comment.content}
-                    </p>
-                    <button
-                        type="button"
-                        onClick={() => setActiveReplyId(showReply ? null : comment.id)}
-                        className="mt-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                        回复
-                    </button>
-                    {showReply && (
-                        <form className="mt-2 space-y-3 p-1">
-                            <div className="grid gap-2 sm:grid-cols-2">
-                                <div className="space-y-1">
-                                    <Label htmlFor={`reply-name-${comment.id}`} className="text-xs">
-                                        名称
-                                    </Label>
-                                    <Input
-                                        id={`reply-name-${comment.id}`}
-                                        placeholder="Your name"
-                                        className="h-8 text-xs"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor={`reply-email-${comment.id}`} className="text-xs">
-                                        邮箱
-                                    </Label>
-                                    <Input
-                                        type="email"
-                                        id={`reply-email-${comment.id}`}
-                                        placeholder="your@email.com"
-                                        className="h-8 text-xs"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor={`reply-avatar-${comment.id}`} className="text-xs">
-                                        头像URL
-                                    </Label>
-                                    <Input
-                                        type="url"
-                                        id={`reply-avatar-${comment.id}`}
-                                        placeholder="https://example.com/img"
-                                        className="h-8 text-xs"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <Label htmlFor={`reply-url-${comment.id}`} className="text-xs">
-                                        网站链接
-                                    </Label>
-                                    <Input
-                                        type="url"
-                                        id={`reply-url-${comment.id}`}
-                                        placeholder="https://example.com"
-                                        className="h-8 text-xs"
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor={`reply-message-${comment.id}`} className="text-xs">
-                                    内容
-                                </Label>
-                                <Textarea
-                                    id={`reply-message-${comment.id}`}
-                                    placeholder={`回复 ${comment.author}...`}
-                                    rows={2}
-                                    className="text-xs"
-                                />
-                            </div>
-                            <div className="flex justify-end gap-2">
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-7 text-xs"
-                                    onClick={() => setActiveReplyId(null)}
-                                >
-                                    取消
-                                </Button>
-                                <Button type="button" size="sm" className="h-7 text-xs">
-                                    发送
-                                </Button>
-                            </div>
-                        </form>
-                    )}
                 </div>
             </div>
-            {comment.replies?.map((reply) => (
+            {comment.children?.map((child) => (
                 <CommentItem
-                    key={reply.id}
-                    comment={reply}
-                    isReply
+                    key={child.id}
+                    comment={child}
+                    isTopLevel={false}
+                    parentUsername={comment.username}
                     activeReplyId={activeReplyId}
                     setActiveReplyId={setActiveReplyId}
                 />
             ))}
-        </div>
+        </>
     );
 }
 
 export default function Article() {
     const [activeReplyId, setActiveReplyId] = useState<number | null>(null);
     const [article, setArticle] = useState<Article | null>(null);
+    const [comments, setComments] = useState<CommentVO[]>([]);
     const [loading, setLoading] = useState(true);
+    const [commentsLoading, setCommentsLoading] = useState(true);
     const params = useParams<{ id: string }>();
 
     useEffect(() => {
@@ -183,6 +205,20 @@ export default function Article() {
             setLoading(false);
         };
         fetchArticle().then();
+    }, [params.id]);
+
+    useEffect(() => {
+        const fetchComments = async () => {
+            const id = parseInt(params.id || "", 10);
+            if (isNaN(id)) {
+                setCommentsLoading(false);
+                return;
+            }
+            const data = await commentApi.getCommentList(id);
+            setComments(data || []);
+            setCommentsLoading(false);
+        };
+        fetchComments().then();
     }, [params.id]);
 
     if (loading) {
@@ -204,44 +240,6 @@ export default function Article() {
             </section>
         );
     }
-
-    const comments: Comment[] = [
-        {
-            id: 1,
-            author: "Elena Vasquez",
-            initials: "EV",
-            time: "2 hours ago",
-            isAdmin: true,
-            content:
-                "Great breakdown of server components. The mental model shift from client-first to server-first is the hardest part for teams adopting this pattern.",
-            replies: [
-                {
-                    id: 2,
-                    author: "David Kim",
-                    initials: "DK",
-                    time: "1 hour ago",
-                    content:
-                        "Agreed. We found that starting with server components by default and only adding 'use client' when needed made the transition much smoother.",
-                },
-            ],
-        },
-        {
-            id: 3,
-            author: "Raj Patel",
-            initials: "RP",
-            time: "5 hours ago",
-            content:
-                "Would love a follow-up on how this integrates with existing state management libraries. We use Zustand heavily and the boundary between server and client state is still unclear.",
-        },
-        {
-            id: 4,
-            author: "Mia Thompson",
-            initials: "MT",
-            time: "Yesterday",
-            content:
-                "The performance comparison at the end was really helpful. Seeing the before and after bundle sizes made the case for our team to prioritize the migration.",
-        },
-    ];
 
     return (<section className={"mt-24 mx-auto w-full max-w-4xl py-4 px-2 md:px-4"}>
 
@@ -365,14 +363,24 @@ export default function Article() {
                     </CardHeader>
 
                     <CardContent className="md:px-6 px-0 py-0">
-                        {comments.map((comment) => (
-                            <CommentItem
-                                key={comment.id}
-                                comment={comment}
-                                activeReplyId={activeReplyId}
-                                setActiveReplyId={setActiveReplyId}
-                            />
-                        ))}
+                        {commentsLoading ? (
+                            <div className="flex items-center justify-center h-16">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
+                            </div>
+                        ) : comments.length === 0 ? (
+                            <div className="flex items-center justify-center h-16">
+                                <p className="text-sm text-muted-foreground">暂无评论</p>
+                            </div>
+                        ) : (
+                            comments.map((comment) => (
+                                <CommentItem
+                                    key={comment.id}
+                                    comment={comment}
+                                    activeReplyId={activeReplyId}
+                                    setActiveReplyId={setActiveReplyId}
+                                />
+                            ))
+                        )}
                     </CardContent>
 
                 </div>
