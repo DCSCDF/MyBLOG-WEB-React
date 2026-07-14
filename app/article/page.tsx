@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useState} from "react";
 import {
     Card,
     CardContent,
@@ -8,13 +8,18 @@ import {
     CardTitle,
     CardDescription,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import {Badge} from "@/components/ui/badge";
+import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar";
+import {Separator} from "@/components/ui/separator";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Textarea} from "@/components/ui/textarea";
+import {Streamdown} from "streamdown";
+import {code} from "@streamdown/code";
+import {mermaid} from "@streamdown/mermaid";
+import {math} from "@streamdown/math";
+import "katex/dist/katex.min.css";
 
 interface Comment {
     id: number;
@@ -27,11 +32,11 @@ interface Comment {
 }
 
 function CommentItem({
-    comment,
-    isReply = false,
-    activeReplyId,
-    setActiveReplyId,
-}: {
+                         comment,
+                         isReply = false,
+                         activeReplyId,
+                         setActiveReplyId,
+                     }: {
     comment: Comment;
     isReply?: boolean;
     activeReplyId: number | null;
@@ -159,6 +164,128 @@ function CommentItem({
 export default function Article() {
     const [activeReplyId, setActiveReplyId] = useState<number | null>(null);
 
+    // 示例 Markdown 内容（包含 Mermaid 图表和 LaTeX 数学公式）
+    const articleContent = `After three years of scaling a Django monolith, our deploy times stretched past 45 minutes and a single failing test could block the entire team. We did not jump straight to microservices. Instead, we drew service boundaries inside the monolith first, enforcing them with module-level import rules and shared nothing between domains.
+
+## Architecture Overview
+
+Here's a diagram showing our migration strategy:
+
+\`\`\`mermaid
+graph LR
+    A[Monolith] --> B[Identify Boundaries]
+    B --> C[Extract Billing Domain]
+    C --> D[Internal HTTP Interface]
+    D --> E[Separate Database]
+    E --> F[Reduced Deploy Time: 45min → 3min]
+\`\`\`
+| 关系类型 | 主实体 | 关联实体 | 关系说明 | 基数 |
+|---------|-------|---------|---------|-----|
+| 用户角色 | SysUser | SysUserRole | 用户拥有角色 | 1:N |
+| 角色分配 | SysRole | SysUserRole | 角色分配给用户 | 1:N |
+| 角色权限 | SysRole | SysRolePermission | 角色拥有权限 | 1:N |
+| 权限分配 | SysPermission | SysRolePermission | 权限分配给角色 | 1:N |
+| 角色权限组 | SysRole | SysRolePermissionGroup | 角色拥有权限组 | 1:N |
+| 权限组分配 | SysPermissionGroup | SysRolePermissionGroup | 权限组分配给角色 | 1:N |
+| 权限归属 | SysPermission | SysPermissionGroupItem | 权限属于权限组 | 1:N |
+| 权限组包含 | SysPermissionGroup | SysPermissionGroupItem | 权限组包含权限 | 1:N |
+
+## Key Metrics
+
+The performance improvement was significant:
+
+$$
+\\text{Deploy Time Reduction} = \\frac{45 - 3}{45} \\times 100\\% = 93.3\\%
+$$
+
+We also observed:
+
+$$
+\\text{Success Rate} = \\frac{N_{success}}{N_{total}} = \\frac{987}{1000} = 98.7\\%
+$$
+
+## Technical Implementation
+
+### Code Example
+
+Here's how we structured our service boundaries:
+
+\`\`\`typescript
+// billing.service.ts
+export class BillingService {
+  private apiClient: HttpClient;
+  
+  constructor() {
+    this.apiClient = new HttpClient('/internal/billing');
+  }
+  
+  async createInvoice(data: InvoiceData): Promise<Invoice> {
+    return this.apiClient.post('/invoices', data);
+  }
+  
+  async processPayment(invoiceId: string): Promise<Payment> {
+    return this.apiClient.post(\`/invoices/\${invoiceId}/pay\`);
+  }
+}
+\`\`\`
+
+### Database Migration Timeline
+
+\`\`\`mermaid
+gantt
+    title Billing Domain Migration Timeline
+    dateFormat  YYYY-MM-DD
+    section Phase 1
+    Define API Surface           :a1, 2024-01-01, 30d
+    Implement HTTP Interface     :a2, after a1, 45d
+    section Phase 2
+    Run Dual Write Mode          :b1, after a2, 90d
+    Migrate to Separate DB       :b2, after b1, 30d
+    section Phase 3
+    Remove Old Code              :c1, after b2, 15d
+    Optimize Performance         :c2, after c1, 30d
+\`\`\`
+
+## Mathematical Model
+
+Our deployment success rate follows a binomial distribution:
+
+$$
+P(k \\text{ successes in } n \\text{ trials}) = \\binom{n}{k} p^k (1-p)^{n-k}
+$$
+
+Where:
+- $n$ = total number of deployments
+- $k$ = successful deployments  
+- $p$ = probability of success per deployment
+
+For our billing service migration:
+- $n = 250$ deployments over 6 months
+- $k = 247$ successful deployments
+- $p \\approx 0.987$
+
+$$
+\\mu = np = 250 \\times 0.987 = 246.75
+$$
+
+$$
+\\sigma = \\sqrt{np(1-p)} = \\sqrt{250 \\times 0.987 \\times 0.013} \\approx 1.79
+$$
+
+## Conclusion
+
+The lesson was not that monoliths are bad. The lesson was that **boundaries matter more than infrastructure**. A well-structured monolith with clean domain separation will outperform a distributed system with tangled dependencies every time.
+
+> Start with boundaries, extract services only when you have a concrete operational reason.
+
+### Key Takeaways
+
+- ✅ **Identify clear API surfaces** before extracting services
+- ✅ **Use internal HTTP interfaces** to enforce boundaries
+- ✅ **Migrate databases gradually** to minimize risk
+- ✅ **Measure performance improvements** to justify the effort
+`;
+
     const comments: Comment[] = [
         {
             id: 1,
@@ -197,10 +324,10 @@ export default function Article() {
         },
     ];
 
-    return (<section className={"mt-24 mx-auto w-full max-w-4xl p-4"}>
+    return (<section className={"mt-24 mx-auto w-full max-w-4xl py-4 px-2 md:px-4"}>
 
         <Card>
-            <CardContent className="p-3 px-6">
+            <CardContent className="py-3 md:px-6 px-4">
                 {/* 顶部标签和日期 */}
                 <div className="flex items-center gap-2">
                     <Badge variant="secondary">Business</Badge>
@@ -237,30 +364,24 @@ export default function Article() {
                     </div>
                 </div>
 
-                <Separator className={"mt-8 mb-12"} />
+                <Separator className={"mt-8 mb-12"}/>
 
 
-                <p className={"text-neutral-600 dark:text-neutral-400"}>
-                    After three years of scaling a Django monolith, our deploy times stretched past 45 minutes and a
-                    single failing test could block the entire team. We did not jump straight to microservices. Instead,
-                    we drew service boundaries inside the monolith first, enforcing them with module-level import rules
-                    and shared nothing between domains.
-                    <br />
-                    <br />
-                    The first boundary we extracted was the billing domain. It had the clearest API surface: create
-                    invoice, process payment, issue refund. We moved it behind an internal HTTP interface, kept the same
-                    database for six months, then migrated to its own PostgreSQL instance once we trusted the boundary.
-                    Deploys for billing went from 45 minutes to under 3.
-                    <br />
-                    <br />
-                    The lesson was not that monoliths are bad. The lesson was that boundaries matter more than
-                    infrastructure. A well-structured monolith with clean domain separation will outperform a
-                    distributed system with tangled dependencies every time. Start with boundaries, extract services
-                    only when you have a concrete operational reason.
-                </p>
+                <div className={"text-neutral-600 dark:text-neutral-400"}>
+                    <Streamdown
+                        mode="static"
+                        plugins={{
+                            code: code,
+                            mermaid: mermaid,
+                            math: math,
+                        }}
+                    >
+                        {articleContent}
+                    </Streamdown>
+                </div>
 
 
-                <Separator className={"mt-12 mb-8"} />
+                <Separator className={"mt-12 mb-8"}/>
 
                 {/* 联系表单 */}
                 <section className="mx-auto w-full">
@@ -275,24 +396,24 @@ export default function Article() {
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">名称</Label>
-                                    <Input id="name" placeholder="Your name" />
+                                    <Input id="name" placeholder="Your name"/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="email">邮箱</Label>
-                                    <Input type="email" id="email" placeholder="your@email.com" />
+                                    <Input type="email" id="email" placeholder="your@email.com"/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="avatar">头像URL</Label>
-                                    <Input type="url" id="avatar" placeholder="https://example.com/img" />
+                                    <Input type="url" id="avatar" placeholder="https://example.com/img"/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="url">网站链接</Label>
-                                    <Input type="url" id="url" placeholder="https://example.com" />
+                                    <Input type="url" id="url" placeholder="https://example.com"/>
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="message">内容</Label>
-                                <Textarea id="message" placeholder="content" rows={4} />
+                                <Textarea id="message" placeholder="content" rows={4}/>
                             </div>
                             <div className="flex justify-end">
                                 <Button type="button" className="w-full max-w-40">
