@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import {useParams} from "next/navigation";
 import {
     Card,
@@ -22,9 +22,10 @@ import {mermaid} from "@streamdown/mermaid";
 import {math} from "@streamdown/math";
 import {articleApi} from "@/lib/api/article";
 import {commentApi} from "@/lib/api/comment";
+import {useAuth} from "@/lib/auth/useAuth";
 
 import type {Article} from "@/lib/api/article.server";
-import type {CommentVO} from "@/lib/api/comment";
+import type {CommentVO, SubmitCommentRequest} from "@/lib/api/comment";
 import "katex/dist/katex.min.css";
 
 const getInitials = (name: string): string => {
@@ -45,18 +46,36 @@ const formatTime = (dateString: string): string => {
     return date.toLocaleDateString('zh-CN');
 };
 
+interface FormData {
+    username: string;
+    email: string;
+    avatarUrl: string;
+    website: string;
+    content: string;
+}
+
 function CommentItem({
                          comment,
                          isTopLevel = true,
                          parentUsername = "",
                          activeReplyId,
                          setActiveReplyId,
+                         isLoggedIn,
+                         onSubmitReply,
+                         submitLoading,
+                         formData,
+                         onInputChange,
                      }: {
     comment: CommentVO;
     isTopLevel?: boolean;
     parentUsername?: string;
     activeReplyId: number | null;
     setActiveReplyId: (id: number | null) => void;
+    isLoggedIn: boolean;
+    onSubmitReply: (parentId: number) => void;
+    submitLoading: boolean;
+    formData: FormData;
+    onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }) {
     const showReply = activeReplyId === comment.id;
     const displayContent = parentUsername ? `@${parentUsername} ${comment.content}` : comment.content;
@@ -78,7 +97,8 @@ function CommentItem({
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-medium">{comment.username}</span>
                             {comment.isAdmin && (
-                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                                <Badge variant="secondary"
+                                       className={"!rounded-sm text-neutral-600 dark:text-neutral-400"}>
                                     管理员
                                 </Badge>
                             )}
@@ -95,58 +115,81 @@ function CommentItem({
                             回复
                         </button>
                         {showReply && (
-                            <form className="mt-2 space-y-3 p-1">
-                                <div className="grid gap-2 sm:grid-cols-2">
-                                    <div className="space-y-1">
-                                        <Label htmlFor={`reply-name-${comment.id}`} className="text-xs">
-                                            名称
-                                        </Label>
-                                        <Input
-                                            id={`reply-name-${comment.id}`}
-                                            placeholder="Your name"
-                                            className="h-8 text-xs"
-                                        />
+                            <form
+                                className="mt-2 space-y-3 p-1"
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    onSubmitReply(comment.id);
+                                }}
+                            >
+                                {!isLoggedIn && (
+                                    <div className="grid gap-2 sm:grid-cols-2">
+                                        <div className="space-y-1">
+                                            <Label htmlFor={`reply-name-${comment.id}`} className="text-xs">
+                                                名称 *
+                                            </Label>
+                                            <Input
+                                                id={`reply-name-${comment.id}`}
+                                                name="username"
+                                                value={formData.username}
+                                                onChange={onInputChange}
+                                                className="h-8 text-xs"
+                                                placeholder="您的名称"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Label htmlFor={`reply-email-${comment.id}`} className="text-xs">
+                                                邮箱
+                                            </Label>
+                                            <Input
+                                                type="email"
+                                                id={`reply-email-${comment.id}`}
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={onInputChange}
+                                                className="h-8 text-xs"
+                                                placeholder="your@email.com"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Label htmlFor={`reply-avatar-${comment.id}`} className="text-xs">
+                                                头像URL
+                                            </Label>
+                                            <Input
+                                                type="url"
+                                                id={`reply-avatar-${comment.id}`}
+                                                name="avatarUrl"
+                                                value={formData.avatarUrl}
+                                                onChange={onInputChange}
+                                                className="h-8 text-xs"
+                                                placeholder="https://example.com/img"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <Label htmlFor={`reply-url-${comment.id}`} className="text-xs">
+                                                网站链接
+                                            </Label>
+                                            <Input
+                                                type="url"
+                                                id={`reply-url-${comment.id}`}
+                                                name="website"
+                                                value={formData.website}
+                                                onChange={onInputChange}
+                                                className="h-8 text-xs"
+                                                placeholder="https://example.com"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor={`reply-email-${comment.id}`} className="text-xs">
-                                            邮箱
-                                        </Label>
-                                        <Input
-                                            type="email"
-                                            id={`reply-email-${comment.id}`}
-                                            placeholder="your@email.com"
-                                            className="h-8 text-xs"
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor={`reply-avatar-${comment.id}`} className="text-xs">
-                                            头像URL
-                                        </Label>
-                                        <Input
-                                            type="url"
-                                            id={`reply-avatar-${comment.id}`}
-                                            placeholder="https://example.com/img"
-                                            className="h-8 text-xs"
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <Label htmlFor={`reply-url-${comment.id}`} className="text-xs">
-                                            网站链接
-                                        </Label>
-                                        <Input
-                                            type="url"
-                                            id={`reply-url-${comment.id}`}
-                                            placeholder="https://example.com"
-                                            className="h-8 text-xs"
-                                        />
-                                    </div>
-                                </div>
+                                )}
                                 <div className="space-y-1">
                                     <Label htmlFor={`reply-message-${comment.id}`} className="text-xs">
-                                        内容
+                                        内容 *
                                     </Label>
                                     <Textarea
                                         id={`reply-message-${comment.id}`}
+                                        name="content"
+                                        value={formData.content}
+                                        onChange={onInputChange}
                                         placeholder={`回复 ${comment.username}...`}
                                         rows={2}
                                         className="text-xs"
@@ -162,8 +205,8 @@ function CommentItem({
                                     >
                                         取消
                                     </Button>
-                                    <Button type="button" size="sm" className="h-7 text-xs">
-                                        发送
+                                    <Button type="submit" size="sm" className="h-7 text-xs" disabled={submitLoading}>
+                                        {submitLoading ? "发送中..." : "发送"}
                                     </Button>
                                 </div>
                             </form>
@@ -179,6 +222,11 @@ function CommentItem({
                     parentUsername={comment.username}
                     activeReplyId={activeReplyId}
                     setActiveReplyId={setActiveReplyId}
+                    isLoggedIn={isLoggedIn}
+                    onSubmitReply={onSubmitReply}
+                    submitLoading={submitLoading}
+                    formData={formData}
+                    onInputChange={onInputChange}
                 />
             ))}
         </>
@@ -191,7 +239,17 @@ export default function Article() {
     const [comments, setComments] = useState<CommentVO[]>([]);
     const [loading, setLoading] = useState(true);
     const [commentsLoading, setCommentsLoading] = useState(true);
+    const [submitLoading, setSubmitLoading] = useState(false);
+    const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+    const [formData, setFormData] = useState({
+        username: "",
+        email: "",
+        avatarUrl: "",
+        website: "",
+        content: "",
+    });
     const params = useParams<{ id: string }>();
+    const {isLoggedIn} = useAuth();
 
     useEffect(() => {
         const fetchArticle = async () => {
@@ -207,19 +265,96 @@ export default function Article() {
         fetchArticle().then();
     }, [params.id]);
 
-    useEffect(() => {
-        const fetchComments = async () => {
-            const id = parseInt(params.id || "", 10);
-            if (isNaN(id)) {
-                setCommentsLoading(false);
-                return;
-            }
-            const data = await commentApi.getCommentList(id);
-            setComments(data || []);
-            setCommentsLoading(false);
-        };
-        fetchComments().then();
+    const refreshComments = useCallback(async () => {
+        const id = parseInt(params.id || "", 10);
+        if (isNaN(id)) return;
+        setCommentsLoading(true);
+        const data = await commentApi.getCommentList(id);
+        setComments(data || []);
+        setCommentsLoading(false);
     }, [params.id]);
+
+    useEffect(() => {
+        const loadComments = async () => {
+            await refreshComments();
+        };
+        loadComments();
+    }, [refreshComments]);
+
+    const handleSubmitComment = async (parentId: number = 0) => {
+        const id = parseInt(params.id || "", 10);
+        if (isNaN(id)) return;
+
+        if (!formData.content.trim()) {
+            setSubmitMessage("评论内容不能为空");
+            setTimeout(() => setSubmitMessage(null), 3000);
+            return;
+        }
+
+        if (!isLoggedIn && !formData.username.trim()) {
+            setSubmitMessage("请输入您的名称");
+            setTimeout(() => setSubmitMessage(null), 3000);
+            return;
+        }
+
+        setSubmitLoading(true);
+        setSubmitMessage(null);
+
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+        const requestData: SubmitCommentRequest = {
+            blogId: id,
+            parentId,
+            content: formData.content.trim(),
+        };
+
+        if (!isLoggedIn) {
+            const username = formData.username.trim();
+            if (username) {
+                requestData.username = username;
+            }
+            const email = formData.email.trim();
+            if (email) {
+                requestData.email = email;
+            }
+            const avatarUrl = formData.avatarUrl.trim();
+            if (avatarUrl) {
+                requestData.avatarUrl = avatarUrl;
+            }
+            const website = formData.website.trim();
+            if (website) {
+                requestData.website = website;
+            }
+        }
+
+        const response = await commentApi.submitComment(requestData, token);
+
+        if (response.success) {
+            setSubmitMessage(response.data.message);
+            setFormData({
+                username: "",
+                email: "",
+                avatarUrl: "",
+                website: "",
+                content: "",
+            });
+            setActiveReplyId(null);
+            await refreshComments();
+        } else {
+            setSubmitMessage(response.errorMsg || "评论提交失败");
+        }
+
+        setSubmitLoading(false);
+        setTimeout(() => setSubmitMessage(null), 5000);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const {name, value} = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
     if (loading) {
         return (
@@ -310,41 +445,80 @@ export default function Article() {
 
                 <Separator className={"mt-12 mb-8"}/>
 
-                {/* 联系表单 */}
+                {/* 评论表单 */}
                 <section className="mx-auto w-full">
                     <div className="overflow-hidden rounded-lg bg-card">
-                        {/*<div className="md:px-6 px-0 py-5">*/}
-                        {/*    <h2 className="text-sm font-medium">回复</h2>*/}
-                        {/*    <p className="mt-1 text-xs text-muted-foreground">*/}
-                        {/*        回复后将进行审核才可见.*/}
-                        {/*    </p>*/}
-                        {/*</div>*/}
-                        <form className="space-y-4 md:px-6 px-0 py-6">
-                            <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">名称</Label>
-                                    <Input id="name" placeholder="Your name"/>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">邮箱</Label>
-                                    <Input type="email" id="email" placeholder="your@email.com"/>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="avatar">头像URL</Label>
-                                    <Input type="url" id="avatar" placeholder="https://example.com/img"/>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="url">网站链接</Label>
-                                    <Input type="url" id="url" placeholder="https://example.com"/>
-                                </div>
+                        {submitMessage && (
+                            <div
+                                className={`text-center py-2 text-sm ${submitMessage.includes('成功') ? 'text-green-600' : 'text-red-600'}`}>
+                                {submitMessage}
                             </div>
+                        )}
+                        <form className="space-y-4 py-6" onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSubmitComment(0).then();
+                        }}>
+                            {!isLoggedIn && (
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="username">名称 *</Label>
+                                        <Input
+                                            id="username"
+                                            name="username"
+                                            value={formData.username}
+                                            onChange={handleInputChange}
+                                            placeholder="您的名称"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email">邮箱</Label>
+                                        <Input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            placeholder="your@email.com"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="avatarUrl">头像URL</Label>
+                                        <Input
+                                            type="url"
+                                            id="avatarUrl"
+                                            name="avatarUrl"
+                                            value={formData.avatarUrl}
+                                            onChange={handleInputChange}
+                                            placeholder="https://example.com/img"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="website">网站链接</Label>
+                                        <Input
+                                            type="url"
+                                            id="website"
+                                            name="website"
+                                            value={formData.website}
+                                            onChange={handleInputChange}
+                                            placeholder="https://example.com"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                             <div className="space-y-2">
-                                <Label htmlFor="message">内容</Label>
-                                <Textarea id="message" placeholder="content" rows={4}/>
+                                <Label htmlFor="content">内容 *</Label>
+                                <Textarea
+                                    id="content"
+                                    name="content"
+                                    value={formData.content}
+                                    onChange={handleInputChange}
+                                    placeholder={isLoggedIn ? "写下您的评论..." : "写下您的评论..."}
+                                    rows={4}
+                                />
                             </div>
                             <div className="flex justify-end">
-                                <Button type="button" className="w-full max-w-40">
-                                    发送评论
+                                <Button type="submit" className="w-full max-w-40" disabled={submitLoading}>
+                                    {submitLoading ? "发送中..." : "发送评论"}
                                 </Button>
                             </div>
                         </form>
@@ -353,7 +527,7 @@ export default function Article() {
 
                 {/* 评论区域 */}
                 <div className="overflow-hidden rounded-lg bg-card">
-                    <CardHeader className="md:px-6 px-0 pb-5">
+                    <CardHeader className="px-0 pb-5">
                         <CardTitle className="font-semibold text-xl tracking-tight">
                             评论
                         </CardTitle>
@@ -362,7 +536,7 @@ export default function Article() {
                         </CardDescription>
                     </CardHeader>
 
-                    <CardContent className="md:px-6 px-0 py-0">
+                    <CardContent className="px-0 py-0">
                         {commentsLoading ? (
                             <div className="flex items-center justify-center h-16">
                                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
@@ -378,6 +552,11 @@ export default function Article() {
                                     comment={comment}
                                     activeReplyId={activeReplyId}
                                     setActiveReplyId={setActiveReplyId}
+                                    isLoggedIn={isLoggedIn}
+                                    onSubmitReply={handleSubmitComment}
+                                    submitLoading={submitLoading}
+                                    formData={formData}
+                                    onInputChange={handleInputChange}
                                 />
                             ))
                         )}
