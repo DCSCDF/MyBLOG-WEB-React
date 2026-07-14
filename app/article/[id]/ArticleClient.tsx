@@ -19,12 +19,10 @@ import {Textarea} from "@/components/ui/textarea";
 import {
     AlertDialog,
     AlertDialogAction,
-    AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {Streamdown} from "streamdown";
 import {code} from "@streamdown/code";
@@ -421,8 +419,8 @@ export default function ArticleClient({initialArticle, initialComments}: Article
 
     return (<section className={"mt-24 mx-auto w-full max-w-4xl py-4 px-2 md:px-4"}>
 
-        <Card>
-            <CardContent className="py-3 md:px-6 px-4">
+        <Card className="ring-0">
+            <CardContent className="py-3  md:px-6 px-4">
                 <div className="flex items-center gap-2">
                     {article.categoryName && (
                         <Badge className={"!rounded-sm text-neutral-600 dark:text-neutral-400"}
@@ -463,7 +461,7 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                     </div>
                 </div>
 
-                <Separator className={"mt-8 mb-12"}/>
+                <div className={"mt-8 border-t mb-12"}/>
 
 
                 <div className={"text-neutral-600 dark:text-neutral-400"}>
@@ -480,7 +478,7 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                 </div>
 
 
-                <Separator className={"mt-12 mb-8"}/>
+                <div className={"mt-8 border-t mb-12"}/>
 
                 <section className="mx-auto w-full">
                     <div className="overflow-hidden rounded-lg bg-card">
