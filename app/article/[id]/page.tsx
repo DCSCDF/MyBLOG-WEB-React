@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {useParams} from "next/navigation";
 import {
     Card,
@@ -278,7 +278,7 @@ export default function Article() {
         const loadComments = async () => {
             await refreshComments();
         };
-        loadComments();
+        loadComments().then();
     }, [refreshComments]);
 
     const handleSubmitComment = async (parentId: number = 0) => {
