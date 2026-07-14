@@ -199,10 +199,16 @@ export function BlogListClient({
                         >
                             <div>
                                 <div className="flex items-center justify-between">
-                                    <span
-                                        className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                                        {post.categoryName || "未分类"}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        {post.isTop && (
+                                            <span
+                                                className="border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
+                                        )}
+                                        <span
+                                            className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                            {post.categoryName || "未分类"}
+                                        </span>
+                                    </div>
                                     <ArrowUpRight
                                         className="size-3.5 text-muted-foreground/0 transition-all group-hover:text-muted-foreground"/>
                                 </div>
@@ -218,7 +224,7 @@ export function BlogListClient({
                                 <div className="flex flex-wrap gap-1 mb-3">
                                     {splitTags(post.tags).map((t) => (
                                         <Badge key={t} variant="secondary"
-                                               className="rounded px-1.5 py-0.5 text-[10px]">
+                                            className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
                                             {t}
                                         </Badge>
                                     ))}

@@ -201,8 +201,8 @@ export function BlogClient({
                                   className="block group py-6 first:pt-0">
                                 <div className="flex items-center uppercase gap-2">
                                     {article.isTop && (
-                                        <Badge variant="outline"
-                                               className="h-5 rounded-full border-red-500/30 text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</Badge>
+                                        <span
+                                            className=" border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
                                     )}
                                     <span
                                         className="text-[10px] text-muted-foreground shrink-0">{article.categoryName || "未分类"}</span>
@@ -217,10 +217,10 @@ export function BlogClient({
                                 </p>
                                 <div className="mt-3 flex flex-wrap gap-1.5">
                                     {splitTags(article.tags).map((tag) => (
-                                        <span key={tag}
-                                              className="rounded-md bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+                                        <Badge key={tag} variant="secondary"
+                                               className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
                                             {tag}
-                                        </span>
+                                        </Badge>
                                     ))}
                                 </div>
                             </Link>
