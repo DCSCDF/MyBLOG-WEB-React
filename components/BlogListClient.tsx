@@ -205,7 +205,7 @@ export function BlogListClient({
                                                 className="border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
                                         )}
                                         <span
-                                            className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                            className="uppercase text-[10px] text-muted-foreground shrink-0">
                                             {post.categoryName || "未分类"}
                                         </span>
                                     </div>
@@ -224,7 +224,7 @@ export function BlogListClient({
                                 <div className="flex flex-wrap gap-1 mb-3">
                                     {splitTags(post.tags).map((t) => (
                                         <Badge key={t} variant="secondary"
-                                            className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                                               className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
                                             {t}
                                         </Badge>
                                     ))}

@@ -18,6 +18,7 @@ import {Category} from "@/lib/api/category.server";
 import {Article} from "@/lib/api/article.server";
 import {articleApi} from "@/lib/api/article";
 
+
 interface BlogClientProps {
     initialCategories: Category[];
     initialArticles: Article[];
@@ -139,7 +140,7 @@ export function BlogClient({
     };
 
     return (
-        <Card className="overflow-hidden mx-4 gap-y-0 ring-0">
+        <Card className="overflow-hidden md:mx-4 mx-0 gap-y-0 ring-0">
             <CardHeader className="flex-row items-baseline justify-between pb-2">
                 <div>
                     <CardTitle className="text-sm">博客</CardTitle>
@@ -170,7 +171,7 @@ export function BlogClient({
                     ))}
                 </div>
             </CardContent>
-            <CardContent className="py-4 group gap-y-8 flex flex-col">
+            <CardContent className="py-4 px-0 group gap-y-8 flex flex-col">
                 {loading ? (
                     <div className="flex flex-col divide-y divide-border">
                         {Array.from({length: 3}).map((_, i) => (
@@ -195,10 +196,10 @@ export function BlogClient({
                         暂无文章
                     </div>
                 ) : (
-                    <div className="flex flex-col divide-y divide-border">
+                    <div className="flex flex-col">
                         {articles.map((article) => (
                             <Link key={article.id} href={`/article/${article.id}`}
-                                  className="block group py-6 first:pt-0">
+                                  className="block group py-6 hover:bg-muted/50 px-4">
                                 <div className="flex items-center uppercase gap-2">
                                     {article.isTop && (
                                         <span
