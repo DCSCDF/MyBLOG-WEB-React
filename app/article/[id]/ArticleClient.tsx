@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
 import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar";
-import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -488,9 +487,9 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                                 {submitMessage}
                             </div>
                         )}
-                        <form className="space-y-4 py-6" onSubmit={(e) => {
+                        <form className="space-y-4 py-6 px-1" onSubmit={(e) => {
                             e.preventDefault();
-                            handleSubmitComment(0);
+                            handleSubmitComment(0).then();
                         }}>
                             {!isLoggedIn && (
                                 <div className="grid gap-4 sm:grid-cols-2">
