@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react"
 
 export interface ThreeDMarqueeProps {
   images?: string[]
@@ -10,67 +11,95 @@ export interface ThreeDMarqueeProps {
   reverse?: boolean
 }
 
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  return isMobile
+}
+
 export const ThreeDMarquee = ({
   images,
   colors,
   className,
   reverse = false,
 }: ThreeDMarqueeProps) => {
+  const isMobile = useIsMobile()
   const items = colors || images || []
   const useColors = !!colors
 
-  // Split into 4 columns
-  const columns: string[][] = [[], [], [], []]
+  const columnCount = isMobile ? 2 : 4
+  const containerSize = isMobile ? "150vmax" : "300vmax"
+  const animationDuration = isMobile ? 35 : 20
+  const gapPixels = isMobile ? "12px" : "24px"
+  const minHeight = isMobile ? "12vmax" : "20vmax"
+
+  const columns: string[][] = Array.from({ length: columnCount }, () => [])
   items.forEach((item, i) => {
-    columns[i % 4].push(item)
+    columns[i % columnCount].push(item)
   })
 
   return (
     <div className={cn("relative h-full w-full overflow-hidden", className)}>
-      {/* Perspective container - centered with large overflow */}
       <div
         className="absolute left-1/2 top-1/2"
         style={{
-          perspective: "1000px",
+          perspective: isMobile ? "800px" : "1000px",
           transform: "translate(-50%, -50%)",
         }}
       >
-        {/* 3D transformed grid - made very large to cover after rotation */}
         <div
-          className="grid grid-cols-4 gap-6"
+          className="grid"
           style={{
-            transform: `rotateX(60deg) rotateZ(${reverse ? "45deg" : "-45deg"})`,
+            gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+            gap: gapPixels,
+            transform: `rotateX(${isMobile ? 50 : 60}deg) rotateZ(${reverse ? "45deg" : "-45deg"})`,
             transformStyle: "preserve-3d",
-            width: "300vmax",
-            height: "300vmax",
+            width: containerSize,
+            height: containerSize,
           }}
         >
           {columns.map((column, colIndex) => (
             <motion.div
               key={colIndex}
-              className="flex flex-col gap-6"
+              className="flex flex-col"
+              style={{ gap: gapPixels }}
               animate={{
                 y: colIndex % 2 === 0 ? ["0%", "-50%"] : ["-50%", "0%"],
               }}
               transition={{
-                duration: colIndex % 2 === 0 ? 20 : 25,
+                duration: colIndex % 2 === 0 ? animationDuration : animationDuration + 5,
                 repeat: Number.POSITIVE_INFINITY,
                 ease: "linear",
               }}
             >
-              {/* Triple items for seamless loop */}
               {[...column, ...column, ...column].map((item, itemIndex) => (
                 <motion.div
                   key={itemIndex}
-                  className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-2xl shadow-xl"
+                  className={cn(
+                    "relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-2xl",
+                    !isMobile && "shadow-xl"
+                  )}
                   style={{
                     backgroundColor: useColors ? item : undefined,
-                    minHeight: "20vmax",
+                    minHeight,
                   }}
-
                 >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {!useColors && <img src={item} alt="" className="size-full object-cover" />}
+                  {!useColors && <img
+                    src={item}
+                    alt=""
+                    className="size-full object-cover"
+                    loading="lazy"
+                  />}
                 </motion.div>
               ))}
             </motion.div>
@@ -78,7 +107,6 @@ export const ThreeDMarquee = ({
         </div>
       </div>
 
-      {/* Gradient overlays for fade effect */}
       <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-background via-transparent to-background" />
       <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-background via-transparent to-background" />
     </div>
