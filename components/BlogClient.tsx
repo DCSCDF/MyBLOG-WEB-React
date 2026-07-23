@@ -15,6 +15,7 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import type {Category} from "@/lib/api/category.server";
 import type {Article} from "@/lib/api/article.server";
+import { formatDate } from "@/lib/utils/time";
 
 
 interface BlogClientProps {
@@ -76,14 +77,7 @@ export function BlogClient({
         updateUrlParams(page, selectedCategoryId);
     };
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString("zh-CN", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
+
 
     const splitTags = (tags: string) => {
         if (!tags) return [];

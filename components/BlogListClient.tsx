@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/pagination";
 import type { Category } from "@/lib/api/category.server";
 import type { Article } from "@/lib/api/article.server";
+import { formatDate } from "@/lib/utils/time";
 
 interface BlogListClientProps {
     initialCategories: Category[];
@@ -96,15 +97,6 @@ export function BlogListClient({
     const splitTags = (tags: string) => {
         if (!tags) return [];
         return [...new Set(tags.split(",").filter((tag) => tag.trim()))];
-    };
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString("zh-CN", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
     };
 
     return (
