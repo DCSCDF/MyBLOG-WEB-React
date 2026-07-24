@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/pagination"
 import type {Article} from "@/lib/api/article.server"
 import {articleApi} from "@/lib/api/article"
-import { formatDate } from "@/lib/utils/time"
 
 export function SearchClient() {
     const router = useRouter()
@@ -113,6 +112,15 @@ export function SearchClient() {
     const splitTags = (tags: string) => {
         if (!tags) return []
         return [...new Set(tags.split(",").filter((tag) => tag.trim()))]
+    }
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString)
+        return date.toLocaleDateString("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        })
     }
 
     return (

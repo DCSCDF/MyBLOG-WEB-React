@@ -31,7 +31,6 @@ import {commentApi} from "@/lib/api/comment";
 import {useAuth} from "@/lib/auth/useAuth";
 import type {Article} from "@/lib/api/article.server";
 import type {CommentVO, SubmitCommentRequest} from "@/lib/api/comment";
-import { formatTime, formatDate } from "@/lib/utils/time";
 import "katex/dist/katex.min.css";
 
 const validateUrl = (url: string): boolean => {
@@ -53,6 +52,19 @@ const validateEmail = (email: string): boolean => {
 const getInitials = (name: string): string => {
     if (!name) return "?";
     return name.charAt(0).toUpperCase();
+};
+
+const formatTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+
+    if (hours < 1) return "刚刚";
+    if (hours < 24) return `${hours}小时前`;
+    if (days < 7) return `${days}天前`;
+    return date.toLocaleDateString('zh-CN');
 };
 
 interface FormData {
@@ -418,7 +430,11 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                                variant="secondary">置顶</Badge>
                     )}
                     <span className="text-xs text-muted-foreground">
-                        {formatDate(article.createTime)}
+                        {new Date(article.createTime).toLocaleDateString('zh-CN', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}
                     </span>
                 </div>
 
