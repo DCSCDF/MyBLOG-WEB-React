@@ -1,6 +1,7 @@
 "use client";
 
-import {useRouter, useSearchParams} from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
     Pagination,
@@ -10,11 +11,13 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import type {Category} from "@/lib/api/category.server";
-import type {Article} from "@/lib/api/article.server";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getApiUrl } from "@/lib/env";
+import type { Category } from "@/lib/api/category.server";
+import type { Article } from "@/lib/api/article.server";
 
 
 interface BlogClientProps {
@@ -25,18 +28,38 @@ interface BlogClientProps {
     initialSelectedCategoryId: number | null;
 }
 
+async function fetchArticleList(currentPage: number, pageSize: number, categoryId?: number) {
+    const apiUrl = getApiUrl();
+    if (!apiUrl) return { records: [], pages: 0 };
+
+    const fullUrl = `${apiUrl}/api/public/article/admin/list`;
+    const response = await fetch(fullUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPage, pageSize, categoryId: categoryId ?? undefined }),
+        cache: "no-store",
+    });
+    const result = await response.json();
+    if (result?.success && result?.data) {
+        return { records: result.data.records, pages: result.data.pages };
+    }
+    return { records: [], pages: 0 };
+}
+
 export function BlogClient({
-                               initialCategories,
-                               initialArticles,
-                               initialTotalPages,
-                               initialCurrentPage,
-                               initialSelectedCategoryId
-                           }: BlogClientProps) {
+    initialCategories,
+    initialArticles,
+    initialTotalPages,
+    initialCurrentPage,
+    initialSelectedCategoryId
+}: BlogClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const articles = initialArticles;
-    const totalPages = initialTotalPages;
+    const [articles, setArticles] = useState<Article[]>(initialArticles);
+    const [totalPages, setTotalPages] = useState<number>(initialTotalPages);
+    const [loading, setLoading] = useState(false);
+    const [contentKey, setContentKey] = useState(0);
 
     const categories = initialCategories;
 
@@ -56,6 +79,20 @@ export function BlogClient({
         return initialCurrentPage;
     })();
 
+    const loadData = useCallback(async (page: number, categoryId: number | null) => {
+        setLoading(true);
+        setContentKey(prev => prev + 1);
+        const result = await fetchArticleList(page, 6, categoryId ?? undefined);
+        setArticles(result.records);
+        setTotalPages(result.pages);
+        setLoading(false);
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadData(currentPage, selectedCategoryId).then();
+    }, [currentPage, selectedCategoryId, loadData]);
+
     const updateUrlParams = (newPage: number, newCategoryId: number | null) => {
         const params = new URLSearchParams();
         if (newCategoryId !== null) {
@@ -64,7 +101,7 @@ export function BlogClient({
         if (newPage > 1) {
             params.set("page", newPage.toString());
         }
-        router.push(`/myblog?${params.toString()}`, {scroll: false});
+        router.push(`/myblog?${params.toString()}`, { scroll: false });
     };
 
     const handleCategoryClick = (categoryId: number | null) => {
@@ -112,6 +149,72 @@ export function BlogClient({
         return getPageUrl(currentPage + 1);
     };
 
+    const renderArticleList = () => {
+        if (loading) {
+            return (
+                <div className="space-y-6">
+                    {Array.from({ length: 3 }, (_, i) => (
+                        <div key={i} className="px-4 space-y-3">
+                            <div className="flex items-center gap-2">
+                                <Skeleton className="h-3 w-20" />
+                                <Skeleton className="h-3 w-28" />
+                            </div>
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <div className="flex gap-1.5">
+                                <Skeleton className="h-3 w-12" />
+                                <Skeleton className="h-3 w-16" />
+                                <Skeleton className="h-3 w-10" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        if (articles.length === 0) {
+            return (
+                <div className="text-center py-12 text-muted-foreground text-sm">
+                    暂无文章
+                </div>
+            );
+        }
+
+        return (
+            <div key={contentKey} className="flex flex-col animate-fade-in">
+                {articles.map((article) => (
+                    <Link key={article.id} href={`/article/${article.id}`}
+                        className="block group py-6 hover:bg-muted/50 px-4">
+                        <div className="flex items-center uppercase gap-2">
+                            {article.isTop && (
+                                <span
+                                    className=" border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
+                            )}
+                            <span
+                                className="text-[10px] text-muted-foreground shrink-0">{article.categoryName || "未分类"}</span>
+                            <span
+                                className="text-[10px] text-muted-foreground shrink-0">{formatDate(article.createTime)}</span>
+                        </div>
+                        <h3 className="mt-3 text-base font-medium leading-snug tracking-tight group-hover:text-primary transition-colors">
+                            {article.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                            {article.summary}
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                            {splitTags(article.tags).map((tag) => (
+                                <Badge key={tag} variant="secondary"
+                                    className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                                    {tag}
+                                </Badge>
+                            ))}
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        );
+    };
+
     return (
         <Card className="overflow-hidden md:mx-4 mx-0 gap-y-0 ring-0">
             <CardHeader className="flex-row items-baseline justify-between pb-2">
@@ -145,43 +248,7 @@ export function BlogClient({
                 </div>
             </CardContent>
             <CardContent className="py-4 px-0 group gap-y-8 flex flex-col">
-                {articles.length === 0 ? (
-                    <div className="text-center py-12 text-muted-foreground text-sm">
-                        暂无文章
-                    </div>
-                ) : (
-                    <div className="flex flex-col">
-                        {articles.map((article) => (
-                            <Link key={article.id} href={`/article/${article.id}`}
-                                  className="block group py-6 hover:bg-muted/50 px-4">
-                                <div className="flex items-center uppercase gap-2">
-                                    {article.isTop && (
-                                        <span
-                                            className=" border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
-                                    )}
-                                    <span
-                                        className="text-[10px] text-muted-foreground shrink-0">{article.categoryName || "未分类"}</span>
-                                    <span
-                                        className="text-[10px] text-muted-foreground shrink-0">{formatDate(article.createTime)}</span>
-                                </div>
-                                <h3 className="mt-3 text-base font-medium leading-snug tracking-tight group-hover:text-primary transition-colors">
-                                    {article.title}
-                                </h3>
-                                <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                                    {article.summary}
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-1.5">
-                                    {splitTags(article.tags).map((tag) => (
-                                        <Badge key={tag} variant="secondary"
-                                               className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                                            {tag}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                {renderArticleList()}
             </CardContent>
             {totalPages > 1 && (
                 <CardFooter className="items-center justify-center py-6 bg-transparent border-0">
@@ -196,9 +263,9 @@ export function BlogClient({
                                     }}
                                 />
                             </PaginationItem>
-                            {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                                 <PaginationItem key={page}
-                                                className={page === currentPage ? "" : "hidden sm:inline-flex"}>
+                                    className={page === currentPage ? "" : "hidden sm:inline-flex"}>
                                     <PaginationLink
                                         href={`/myblog?${getPageUrl(page)}`}
                                         isActive={page === currentPage}

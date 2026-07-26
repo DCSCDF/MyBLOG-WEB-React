@@ -296,6 +296,8 @@ export default function ArticleClient({initialArticle, initialComments}: Article
     });
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorDialogMessage, setErrorDialogMessage] = useState("");
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const [successDialogMessage, setSuccessDialogMessage] = useState("");
     const params = useParams<{ id: string }>();
     const {isLoggedIn} = useAuth();
 
@@ -375,8 +377,8 @@ export default function ArticleClient({initialArticle, initialComments}: Article
         const response = await commentApi.submitComment(requestData, token);
 
         if (response.success) {
-            setErrorDialogMessage(response.data.message || "评论提交成功");
-            setErrorDialogOpen(true);
+            setSuccessDialogMessage(response.data.message || "评论提交成功");
+            setSuccessDialogOpen(true);
             if (!data) {
                 setFormData({
                     username: "",
@@ -602,6 +604,20 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
+                    确定
+                </AlertDialogAction>
+            </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>成功</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        {successDialogMessage}
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogAction onClick={() => setSuccessDialogOpen(false)}>
                     确定
                 </AlertDialogAction>
             </AlertDialogContent>

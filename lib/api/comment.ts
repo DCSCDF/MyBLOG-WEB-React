@@ -101,10 +101,39 @@ export const commentApi = {
                 method: "POST",
                 headers,
                 body: JSON.stringify(request),
-                signal: AbortSignal.timeout(5000),
             });
 
-            return response.json();
+            if (!response.ok) {
+                return {
+                    data: { id: 0, message: `请求失败: ${response.status}` },
+                    success: false,
+                    errorMsg: `请求失败: ${response.status}`,
+                    code: response.status,
+                };
+            }
+
+            let result: SubmitCommentResponse;
+            try {
+                result = await response.json();
+            } catch {
+                return {
+                    data: { id: 0, message: "响应解析失败" },
+                    success: false,
+                    errorMsg: "响应解析失败",
+                    code: 500,
+                };
+            }
+
+            if (result.success === undefined || result.success === null) {
+                return {
+                    data: { id: result.data?.id || 0, message: result.data?.message || "提交成功" },
+                    success: true,
+                    errorMsg: null,
+                    code: result.code || 200,
+                };
+            }
+
+            return result;
         } catch {
             return {
                 data: { id: 0, message: "网络请求失败" },
