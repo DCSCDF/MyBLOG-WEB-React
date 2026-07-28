@@ -150,15 +150,16 @@ export function SearchClient() {
                         <FieldDescription>输入关键词搜索文章、分类、标签......</FieldDescription>
                     </Field>
                     <div className="flex justify-end gap-2">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="lg"
-                            onClick={handleClear}
-                            disabled={!inputValue.trim()}
-                        >
-                            清空
-                        </Button>
+                        {(articles.length > 0 || keyword.trim()) && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="lg"
+                                onClick={handleClear}
+                            >
+                                清空
+                            </Button>
+                        )}
                         <Button type="submit" size="lg" disabled={!inputValue.trim()}>
                             搜索
                         </Button>
