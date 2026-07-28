@@ -1,7 +1,7 @@
 "use client";
 
-import {useRouter, useSearchParams} from "next/navigation";
-import Link from "next/link";
+import { Link as TransitionLink, useTransitionRouter } from "next-view-transitions";
+import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import {ArrowUpRight} from "lucide-react";
 import {CardFooter} from "@/components/ui/card";
@@ -34,7 +34,7 @@ export function BlogListClient({
                                    initialCurrentPage,
                                    initialSelectedCategoryId
                                }: BlogListClientProps) {
-    const router = useRouter();
+    const router = useTransitionRouter();
     const searchParams = useSearchParams();
 
     const articles = initialArticles;
@@ -162,7 +162,7 @@ export function BlogListClient({
                                     }
                                 }}
                             >
-                                <Link
+                                <TransitionLink
                                     href={`/article/${post.id}`}
                                     className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50"
                                 >
@@ -217,7 +217,7 @@ export function BlogListClient({
                                             </div>
                                         </div>
                                     </div>
-                                </Link>
+                                </TransitionLink>
                             </motion.div>
                         ))}
                     </motion.div>

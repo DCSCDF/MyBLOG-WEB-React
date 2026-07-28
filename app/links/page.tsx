@@ -1,4 +1,3 @@
-import { Suspense } from "react"
 import { getFriendLinkListServer } from "@/lib/api/friend-link.server"
 import { getConfigsByKeysServer } from "@/lib/api/config.server"
 import LinksClient from "./LinksClient"
@@ -30,23 +29,12 @@ export default async function Links({ searchParams }: PageProps) {
     };
 
     return (
-        <Suspense fallback={
-            <div className="mt-32 px-4 w-full max-w-3xl mx-auto">
-                <div className="h-8 bg-muted rounded animate-pulse mb-4" />
-                <div className="space-y-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="h-24 bg-muted rounded animate-pulse" />
-                    ))}
-                </div>
-            </div>
-        }>
-            <LinksClient
-                initialFriendLinks={initialFriendLinks?.records || []}
-                totalPages={initialFriendLinks?.pages || 0}
-                currentPage={currentPage}
-                total={initialFriendLinks?.total || 0}
-                linksConfig={linksConfig}
-            />
-        </Suspense>
+        <LinksClient
+            initialFriendLinks={initialFriendLinks?.records || []}
+            totalPages={initialFriendLinks?.pages || 0}
+            currentPage={currentPage}
+            total={initialFriendLinks?.total || 0}
+            linksConfig={linksConfig}
+        />
     )
 }

@@ -5,7 +5,7 @@ import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import {Button} from "@/components/ui/button";
 import {motion} from "motion/react";
 import {cn} from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { useTransitionRouter } from "next-view-transitions";
 import { HeroConfig } from "@/lib/hooks/useConfig";
 
 interface HeroProps {
@@ -15,7 +15,7 @@ interface HeroProps {
 
 export default function Hero({images, config}: HeroProps) {
     const { hero } = { hero: config };
-    const router = useRouter();
+    const router = useTransitionRouter();
 
     return (
         <section className="relative h-screen w-full overflow-hidden">

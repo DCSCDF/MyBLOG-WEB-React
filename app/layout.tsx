@@ -1,5 +1,6 @@
 import "./globals.css";
 import React from "react";
+import { ViewTransitions } from "next-view-transitions";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import {PublicEnvScript} from "next-runtime-env";
@@ -51,12 +52,14 @@ export default async function RootLayout({
             )}
         </head>
         <body className="min-h-screen flex flex-col">
+            <ViewTransitions>
                 <Header rssLink={rssLink} />
-        <main className="w-full flex-1">
-            {children}
-        </main>
+                <main className="w-full flex-1">
+                    {children}
+                </main>
 
-        <Footer siteInfo={siteInfo} githubLink={githubLink}/>
+                <Footer siteInfo={siteInfo} githubLink={githubLink}/>
+            </ViewTransitions>
         </body>
         </html>
     );

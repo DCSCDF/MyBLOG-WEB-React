@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import {useRouter} from "next/navigation";
+import { Link as TransitionLink, useTransitionRouter } from "next-view-transitions";
 import { Moon, Menu, Sun, Search } from "lucide-react";
 import {
     NavigationMenu,
@@ -59,7 +58,7 @@ interface HeaderProps {
 }
 
 export default function Header({ rssLink }: HeaderProps) {
-    const router = useRouter();
+    const router = useTransitionRouter();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const theme = React.useSyncExternalStore(
         subscribeTheme,
@@ -100,7 +99,7 @@ export default function Header({ rssLink }: HeaderProps) {
             <header className="fixed top-0 left-0 right-0 z-50 w-full">
                 <div className=" mx-auto flex h-14 items-center justify-between px-4 md:px-6">
                     <div className="flex items-center">
-                        <Link href="/" className="text-lg font-semibold">
+                        <TransitionLink href="/" className="text-lg font-semibold">
                             <div className="flex flex-wrap items-center gap-2 md:flex-row">
                                 {/*<Button size="icon-lg"  variant="ghost" >*/}
                                 {/*    <svg className="icon" height={"24"} p-id="1320" d="1777084112424" version="1.1" viewBox="0 0 1024 1024" width="30" xmlns="http://www.w3.org/2000/svg" data-v-00d6f774=""><path d="M447.7 62H94.1C76.4 62 62 74.6 62 90.1v478.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1V90.1c0.1-15.5-14.3-28.1-32.1-28.1z m-32.1 478.1H126.3V118.3h289.3v421.8z" fill="#37B1C9" p-id="1321" data-v-00d6f774=""></path><path d="M447.7 652.6H94.1c-17.8 0-32.1 12.6-32.1 28.1v253.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1v-253c0.1-15.6-14.3-28.2-32.1-28.2z m-32.1 253.2H126.3V708.9h289.3v196.9zM929.9 62H576.3c-17.8 0-32.1 12.6-32.1 28.1v253.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1V90.1c0-15.5-14.4-28.1-32.1-28.1z m-32.2 253.1H608.4V118.3h289.3v196.8z" fill="#9BD8E4" p-id="1322" data-v-00d6f774=""></path><path d="M929.9 427.6H576.3c-17.8 0-32.1 12.6-32.1 28.1v478.1c0 15.5 14.4 28.1 32.1 28.1h353.6c17.8 0 32.1-12.6 32.1-28.1v-478c0-15.6-14.4-28.2-32.1-28.2z m-32.2 478.2H608.4V483.9h289.3v421.9z" fill="#37B1C9" p-id="1323" data-v-00d6f774=""></path></svg>*/}
@@ -114,7 +113,7 @@ export default function Header({ rssLink }: HeaderProps) {
                                 </svg>
                             </div>
 
-                        </Link>
+                        </TransitionLink>
                         <div className="mx-6 hidden lg:block">
                             <NavigationMenu>
                                 <NavigationMenuList>
@@ -221,7 +220,7 @@ export default function Header({ rssLink }: HeaderProps) {
                             </Button>
                         ) : (
                             <Button className="hidden lg:inline-flex">
-                                <Link href="/login">登入/注册</Link>
+                                <TransitionLink href="/login">登入/注册</TransitionLink>
                             </Button>
                         )}
 

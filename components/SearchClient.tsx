@@ -1,9 +1,9 @@
 "use client"
 
-import {useState, useEffect} from "react"
+import {useState, useEffect, useRef} from "react"
 import {Search} from "lucide-react"
-import Link from "next/link"
-import {useRouter, useSearchParams} from "next/navigation"
+import { Link as TransitionLink, useTransitionRouter } from "next-view-transitions"
+import { useSearchParams } from "next/navigation"
 
 import {Button} from "@/components/ui/button"
 import {Field, FieldDescription, FieldLabel} from "@/components/ui/field"
@@ -21,13 +21,14 @@ import type {Article} from "@/lib/api/article.server"
 import {articleApi} from "@/lib/api/article"
 
 export function SearchClient() {
-    const router = useRouter()
+    const router = useTransitionRouter()
     const searchParams = useSearchParams()
 
     const [inputValue, setInputValue] = useState(searchParams.get("keyword") || "")
     const [articles, setArticles] = useState<Article[]>([])
     const [totalPages, setTotalPages] = useState(0)
     const [loading, setLoading] = useState(false)
+    const isFirstMount = useRef(true)
 
     const keyword = searchParams.get("keyword") || ""
 
@@ -47,7 +48,11 @@ export function SearchClient() {
                 return
             }
 
-            setLoading(true)
+            if (!isFirstMount.current) {
+                setLoading(true)
+            }
+            isFirstMount.current = false
+
             try {
                 const result = await articleApi.getPublicArticleList({
                     currentPage,
@@ -69,7 +74,7 @@ export function SearchClient() {
             }
         }
 
-        fetchArticles().then()
+        fetchArticles()
     }, [currentPage, keyword])
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -207,7 +212,7 @@ export function SearchClient() {
                             </div>
                         ) : articles.length > 0 ? (
                             articles.map((post) => (
-                                <Link
+                                <TransitionLink
                                     key={post.id}
                                     href={`/article/${post.id}`}
                                     className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50"
@@ -255,7 +260,7 @@ export function SearchClient() {
                                             <span>{post.commentCount} comments</span>
                                         </div>
                                     </div>
-                                </Link>
+                                </TransitionLink>
                             ))
                         ) : null}
 

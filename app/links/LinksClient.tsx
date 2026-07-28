@@ -1,7 +1,9 @@
 "use client";
 
 import React, { JSX, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { motion } from "motion/react"
+import { useTransitionRouter } from "next-view-transitions"
+import { useSearchParams } from "next/navigation"
 import {Button} from "@/components/ui/button"
 import {BackgroundRippleEffect} from "@/components/ui/background-ripple-effect"
 import {
@@ -216,7 +218,7 @@ interface LinksClientProps {
 }
 
 export default function LinksClient({ initialFriendLinks, totalPages, currentPage, linksConfig }: LinksClientProps) {
-    const router = useRouter();
+    const router = useTransitionRouter();
     const searchParams = useSearchParams();
 
     const friendLinks = initialFriendLinks;
@@ -256,19 +258,38 @@ export default function LinksClient({ initialFriendLinks, totalPages, currentPag
                         Curation of Excellent Technical Blogs &amp; Links
                     </p>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <motion.div
+                    key={current}
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+                    variants={{
+                        hidden: {},
+                        visible: {
+                            transition: { staggerChildren: 0.06 }
+                        }
+                    }}
+                    initial="hidden"
+                    animate="visible"
+                >
                     {friendLinks.length === 0 ? (
                         <div className="col-span-1 lg:col-span-2 py-8 text-center">
                             <p className="text-muted-foreground text-sm">暂无友链</p>
                         </div>
                     ) : (
                         friendLinks.map((link, index) => (
-                            <a
-                                key={index}
+                            <motion.a
+                                key={`${current}-${index}`}
                                 href={link.url}
-                                className="group block p-4 backdrop-blur-xs border rounded-lg transition-all duration-300 hover:shadow-lg"
+                                className="group block p-4 backdrop-blur-xs border rounded-lg transition-colors duration-300 hover:shadow-lg"
                                 rel="noopener noreferrer"
                                 target="_blank"
+                                variants={{
+                                    hidden: { opacity: 0, y: 8 },
+                                    visible: {
+                                        opacity: 1,
+                                        y: 0,
+                                        transition: { duration: 0.4, ease: "easeOut" as const }
+                                    }
+                                }}
                             >
                                 <div className="flex items-center gap-4">
                                     <Avatar className="w-12 h-12 rounded-lg bg-surface-container shrink-0">
@@ -292,10 +313,10 @@ export default function LinksClient({ initialFriendLinks, totalPages, currentPag
                                         </p>
                                     </div>
                                 </div>
-                            </a>
+                            </motion.a>
                         ))
                     )}
-                </div>
+                </motion.div>
 
                 {totalPagesState > 1 && (
                     <div className="mt-8 flex justify-center">
