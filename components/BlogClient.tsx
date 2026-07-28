@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { motion } from "motion/react";
 import {
     Pagination,
     PaginationContent,
@@ -184,39 +185,62 @@ export function BlogClient({
             );
         }
 
+        const listVariants = {
+            hidden: {},
+            visible: {
+                transition: { staggerChildren: 0.06 }
+            }
+        };
+
+        const itemVariants = {
+            hidden: { opacity: 0, y: 8 },
+            visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.4, ease: "easeOut" as const }
+            }
+        };
+
         return (
-            <div key={contentKey} className="flex flex-col">
-                {articles.map((article, index) => (
-                    <Link key={article.id} href={`/article/${article.id}`}
-                        className="block group py-6 hover:bg-muted/50 px-4 animate-fade-in-up"
-                        style={{ animationDelay: `${index * 60}ms` }}>
-                        <div className="flex items-center uppercase gap-2">
-                            {article.isTop && (
+            <motion.div
+                key={contentKey}
+                className="flex flex-col"
+                variants={listVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                {articles.map((article) => (
+                    <motion.div key={article.id} variants={itemVariants}>
+                        <Link href={`/article/${article.id}`}
+                            className="block group py-6 hover:bg-muted/50 px-4">
+                            <div className="flex items-center uppercase gap-2">
+                                {article.isTop && (
+                                    <span
+                                        className=" border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
+                                )}
                                 <span
-                                    className=" border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
-                            )}
-                            <span
-                                className="text-[10px] text-muted-foreground shrink-0">{article.categoryName || "未分类"}</span>
-                            <span
-                                className="text-[10px] text-muted-foreground shrink-0">{formatDate(article.createTime)}</span>
-                        </div>
-                        <h3 className="mt-3 text-base font-medium leading-snug tracking-tight group-hover:text-primary transition-colors">
-                            {article.title}
-                        </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                            {article.summary}
-                        </p>
-                        <div className="mt-3 flex flex-wrap gap-1.5">
-                            {splitTags(article.tags).map((tag) => (
-                                <Badge key={tag} variant="secondary"
-                                    className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                                    {tag}
-                                </Badge>
-                            ))}
-                        </div>
-                    </Link>
+                                    className="text-[10px] text-muted-foreground shrink-0">{article.categoryName || "未分类"}</span>
+                                <span
+                                    className="text-[10px] text-muted-foreground shrink-0">{formatDate(article.createTime)}</span>
+                            </div>
+                            <h3 className="mt-3 text-base font-medium leading-snug tracking-tight group-hover:text-primary transition-colors">
+                                {article.title}
+                            </h3>
+                            <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                                {article.summary}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1.5">
+                                {splitTags(article.tags).map((tag) => (
+                                    <Badge key={tag} variant="secondary"
+                                        className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </Link>
+                    </motion.div>
                 ))}
-            </div>
+            </motion.div>
         );
     };
 
