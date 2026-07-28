@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Link as TransitionLink, useTransitionRouter } from "next-view-transitions";
-import { Moon, Menu, Sun, Search } from "lucide-react";
+import {Link as TransitionLink, useTransitionRouter} from "next-view-transitions";
+import {Moon, Menu, Sun, Search} from "lucide-react";
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -57,9 +57,21 @@ interface HeaderProps {
     rssLink?: string;
 }
 
-export default function Header({ rssLink }: HeaderProps) {
+export default function Header({rssLink}: HeaderProps) {
     const router = useTransitionRouter();
     const [mobileOpen, setMobileOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        const mql = window.matchMedia("(min-width: 1024px)");
+        const handleResize = () => {
+            if (mql.matches) {
+                setMobileOpen(false);
+            }
+        };
+        mql.addEventListener("change", handleResize);
+        return () => mql.removeEventListener("change", handleResize);
+    }, []);
+
     const theme = React.useSyncExternalStore(
         subscribeTheme,
         getThemeSnapshot,
