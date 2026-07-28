@@ -132,17 +132,18 @@ export function BlogListClient({
                 ))}
             </div>
 
-            <div className="grid gap-px bg-transparent md:grid-cols-2">
+            <div key={`${currentPage}-${selectedCategoryId ?? "all"}`} className="grid gap-px bg-transparent md:grid-cols-2">
                 {articles.length === 0 ? (
                     <div className="col-span-full text-center py-12 text-muted-foreground text-sm">
                         暂无文章
                     </div>
                 ) : (
-                    articles.map((post) => (
+                    articles.map((post, index) => (
                         <Link
                             key={post.id}
                             href={`/article/${post.id}`}
-                            className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50"
+                            className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50 animate-fade-in-up"
+                            style={{ animationDelay: `${index * 60}ms` }}
                         >
                             <div>
                                 <div className="flex items-center justify-between">

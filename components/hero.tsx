@@ -5,6 +5,7 @@ import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import {Button} from "@/components/ui/button";
 import {motion} from "motion/react";
 import {cn} from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import { HeroConfig } from "@/lib/hooks/useConfig";
 
 interface HeroProps {
@@ -14,6 +15,7 @@ interface HeroProps {
 
 export default function Hero({images, config}: HeroProps) {
     const { hero } = { hero: config };
+    const router = useRouter();
 
     return (
         <section className="relative h-screen w-full overflow-hidden">
@@ -53,7 +55,7 @@ export default function Hero({images, config}: HeroProps) {
                         >
                             <Button onClick={() => window.open(hero.githubLink, "_blank")}>Github</Button>
                             <Button className={"dark:backdrop-blur-xs "} variant="outline"
-                                onClick={() => window.open("/myblog")}>我的博客</Button>
+                                onClick={() => router.push("/myblog")}>我的博客</Button>
                         </motion.div>
                 </>
             </div>

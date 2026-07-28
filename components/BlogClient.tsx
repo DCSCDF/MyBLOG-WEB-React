@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -60,6 +60,7 @@ export function BlogClient({
     const [totalPages, setTotalPages] = useState<number>(initialTotalPages);
     const [loading, setLoading] = useState(false);
     const [contentKey, setContentKey] = useState(0);
+    const isInitialMount = useRef(true);
 
     const categories = initialCategories;
 
@@ -89,7 +90,10 @@ export function BlogClient({
     }, []);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
         loadData(currentPage, selectedCategoryId).then();
     }, [currentPage, selectedCategoryId, loadData]);
 
@@ -181,10 +185,11 @@ export function BlogClient({
         }
 
         return (
-            <div key={contentKey} className="flex flex-col animate-fade-in">
-                {articles.map((article) => (
+            <div key={contentKey} className="flex flex-col">
+                {articles.map((article, index) => (
                     <Link key={article.id} href={`/article/${article.id}`}
-                        className="block group py-6 hover:bg-muted/50 px-4">
+                        className="block group py-6 hover:bg-muted/50 px-4 animate-fade-in-up"
+                        style={{ animationDelay: `${index * 60}ms` }}>
                         <div className="flex items-center uppercase gap-2">
                             {article.isTop && (
                                 <span

@@ -12,7 +12,7 @@ interface AdminInfoCardProps {
 export function AdminInfoCard({adminInfo}: AdminInfoCardProps) {
 
     return (
-        <div className="px-4">
+        <div className="px-3">
             <h2 className="text-black dark:text-white text-xl font-bold">用户简介</h2>
 
             <div
