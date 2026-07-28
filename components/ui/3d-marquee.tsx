@@ -62,7 +62,7 @@ export const ThreeDMarquee = ({
               {[...column, ...column, ...column].map((item, itemIndex) => (
                 <motion.div
                   key={itemIndex}
-                  className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-2xl shadow-xl"
+                  className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-2xl sm:shadow-xl"
                   style={{
                     backgroundColor: useColors ? item : undefined,
                     minHeight: "20vmax",

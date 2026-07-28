@@ -1,8 +1,8 @@
 "use client";
 
-import { Link as TransitionLink, useTransitionRouter } from "next-view-transitions";
-import { useSearchParams } from "next/navigation";
-import { motion } from "motion/react";
+import {Link as TransitionLink, useTransitionRouter} from "next-view-transitions";
+import {useSearchParams} from "next/navigation";
+import {motion} from "motion/react";
 import {ArrowUpRight} from "lucide-react";
 import {CardFooter} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
@@ -16,8 +16,8 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination";
-import type { Category } from "@/lib/api/category.server";
-import type { Article } from "@/lib/api/article.server";
+import type {Category} from "@/lib/api/category.server";
+import type {Article} from "@/lib/api/article.server";
 
 interface BlogListClientProps {
     initialCategories: Category[];
@@ -110,7 +110,7 @@ export function BlogListClient({
 
     return (
         <>
-            <div className="flex items-center gap-1 px-6 py-3 flex-wrap">
+            <div className="flex items-center gap-1 px-[20px] py-3 flex-wrap">
                 <Button
                     size="sm"
                     variant={selectedCategoryId === null ? "default" : "ghost"}
@@ -135,92 +135,92 @@ export function BlogListClient({
 
             {articles.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground text-sm">
-                        暂无文章
-                    </div>
-                ) : (
-                    <motion.div
-                        key={`${currentPage}-${selectedCategoryId ?? "all"}`}
-                        className="grid gap-px bg-transparent md:grid-cols-2"
-                        variants={{
-                            hidden: {},
-                            visible: {
-                                transition: { staggerChildren: 0.06 }
-                            }
-                        }}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        {articles.map((post) => (
-                            <motion.div
-                                key={post.id}
-                                variants={{
-                                    hidden: { opacity: 0, y: 8 },
-                                    visible: {
-                                        opacity: 1,
-                                        y: 0,
-                                        transition: { duration: 0.4, ease: "easeOut" as const }
-                                    }
-                                }}
+                    暂无文章
+                </div>
+            ) : (
+                <motion.div
+                    key={`${currentPage}-${selectedCategoryId ?? "all"}`}
+                    className="grid gap-px bg-transparent md:grid-cols-2"
+                    variants={{
+                        hidden: {},
+                        visible: {
+                            transition: {staggerChildren: 0.06}
+                        }
+                    }}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    {articles.map((post) => (
+                        <motion.div
+                            key={post.id}
+                            variants={{
+                                hidden: {opacity: 0, y: 8},
+                                visible: {
+                                    opacity: 1,
+                                    y: 0,
+                                    transition: {duration: 0.4, ease: "easeOut" as const}
+                                }
+                            }}
+                        >
+                            <TransitionLink
+                                href={`/article/${post.id}`}
+                                className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50"
                             >
-                                <TransitionLink
-                                    href={`/article/${post.id}`}
-                                    className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50"
-                                >
-                                    <div>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                {post.isTop && (
-                                                    <span
-                                                        className="border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
-                                                )}
+                                <div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            {post.isTop && (
                                                 <span
-                                                    className="uppercase text-[10px] text-muted-foreground shrink-0">
+                                                    className="border-none text-[10px] text-red-600 dark:text-red-400 shrink-0">置顶</span>
+                                            )}
+                                            <span
+                                                className="uppercase text-[10px] text-muted-foreground shrink-0">
                                                     {post.categoryName || "未分类"}
                                                 </span>
-                                            </div>
-                                            <ArrowUpRight
-                                                className="size-3.5 text-muted-foreground/0 transition-all group-hover:text-muted-foreground" />
                                         </div>
-                                        <h3 className="mt-2 text-sm font-medium leading-snug">
-                                            {post.title}
-                                        </h3>
-                                        <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                                            {post.summary}
-                                        </p>
+                                        <ArrowUpRight
+                                            className="size-3.5 text-muted-foreground/0 transition-all group-hover:text-muted-foreground"/>
+                                    </div>
+                                    <h3 className="mt-2 text-sm font-medium leading-snug">
+                                        {post.title}
+                                    </h3>
+                                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                                        {post.summary}
+                                    </p>
+                                </div>
+
+                                <div className="mt-4">
+                                    <div className="flex flex-wrap gap-1 mb-3">
+                                        {splitTags(post.tags).map((t) => (
+                                            <Badge key={t} variant="secondary"
+                                                   className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                                                {t}
+                                            </Badge>
+                                        ))}
                                     </div>
 
-                                    <div className="mt-4">
-                                        <div className="flex flex-wrap gap-1 mb-3">
-                                            {splitTags(post.tags).map((t) => (
-                                                <Badge key={t} variant="secondary"
-                                                    className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                                                    {t}
-                                                </Badge>
-                                            ))}
-                                        </div>
-
-                                        <div className="flex items-center justify-between border-t pt-3">
-                                            <div className="flex items-center gap-2">
-                                                <Avatar className="size-5">
-                                                    <AvatarFallback className="text-[8px]">
-                                                        {post.authorNickname?.charAt(0) || "U"}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <span className="text-[10px] text-muted-foreground">
+                                    <div className="flex items-center justify-between border-t pt-3">
+                                        <div className="flex items-center gap-2">
+                                            <Avatar className="size-5">
+                                                <AvatarFallback className="text-[8px]">
+                                                    {post.authorNickname?.charAt(0) || "U"}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span className="text-[10px] text-muted-foreground">
                                                     {post.authorNickname || "未知"}
                                                 </span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                                                <span>{formatDate(post.createTime)}</span>
-                                                <span className="size-0.5 rounded-full bg-muted-foreground/40" />
-                                                <span>{post.commentCount} comments</span>
-                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                                            <span>{formatDate(post.createTime)}</span>
+                                            <span className="size-0.5 rounded-full bg-muted-foreground/40"/>
+                                            <span>{post.commentCount} comments</span>
                                         </div>
                                     </div>
-                                </TransitionLink>
-                            </motion.div>
-                        ))}
-                    </motion.div>
+                                </div>
+                            </TransitionLink>
+                        </motion.div>
+                    ))}
+                </motion.div>
             )}
 
             <CardFooter className="items-center justify-center py-6 bg-transparent border-t-0">

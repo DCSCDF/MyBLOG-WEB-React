@@ -40,9 +40,9 @@ export default async function BlogList({searchParams}: PageProps) {
     const totalPages = articleResult?.pages || 0;
 
     return (
-        <section className="mx-auto w-full max-w-4xl p-4 mt-24">
+        <section className="mx-auto w-full max-w-4xl mt-24">
             <Card className="gap-y-0 ring-0">
-                <CardHeader className="flex-row items-baseline justify-between px-6 pb-4">
+                <CardHeader className="flex-row items-baseline justify-between px-[20px] pb-4">
                     <CardTitle className="text-xl font-semibold tracking-tight">文章</CardTitle>
                     <p className="mt-1 text-sm text-muted-foreground">
                         这里可以查看该网站其他用户作者的文章，其他用户发表的文章均与本站站长无关。
