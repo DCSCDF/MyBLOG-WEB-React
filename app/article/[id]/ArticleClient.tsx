@@ -26,11 +26,11 @@ import {
 import {Streamdown} from "streamdown";
 import {code} from "@streamdown/code";
 import {mermaid} from "@streamdown/mermaid";
-import {math} from "@streamdown/math";
+import { createMathPlugin } from "@streamdown/math";
 import {commentApi} from "@/lib/api/comment";
 import {useAuth} from "@/lib/auth/useAuth";
-import type {Article} from "@/lib/api/article.server";
-import type {CommentVO, SubmitCommentRequest} from "@/lib/api/comment";
+import type {Article} from "@/lib/types";
+import type {CommentVO, SubmitCommentRequest} from "@/lib/types";
 import "katex/dist/katex.min.css";
 
 const validateUrl = (url: string): boolean => {
@@ -118,7 +118,7 @@ function CommentItem({
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
         const success = await onSubmitReply(comment.id, replyFormData);
         if (success) {
@@ -471,7 +471,7 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                         plugins={{
                             code: code,
                             mermaid: mermaid,
-                            math: math,
+                            math: createMathPlugin({ singleDollarTextMath: true }),
                         }}
                     >
                         {article.mdContent}

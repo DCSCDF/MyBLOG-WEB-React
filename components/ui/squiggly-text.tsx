@@ -29,10 +29,9 @@ export function SquigglyText({
 }: SquigglyTextProps) {
   const reactId = useId();
   const safeId = reactId.replace(/[:_]/g, "");
-  const filterId = (i: number) => `squiggly-${safeId}-${i}`;
 
   const filters = React.useMemo(
-    () => Array.from({ length: steps }, (_, i) => `url(#${filterId(i)})`),
+    () => Array.from({ length: steps }, (_, i) => `url(#squiggly-${safeId}-${i})`),
     [steps, safeId],
   );
 
@@ -59,7 +58,7 @@ export function SquigglyText({
       >
         <defs>
           {Array.from({ length: steps }).map((_, i) => (
-            <filter id={filterId(i)} key={i}>
+            <filter id={`squiggly-${safeId}-${i}`} key={i}>
               <feTurbulence
                 baseFrequency={baseFrequency}
                 numOctaves={numOctaves}

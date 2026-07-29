@@ -1,7 +1,8 @@
 "use client";
 
 import {useState, useEffect} from "react";
-import {authApi, type UserProfile} from "@/lib/api/auth";
+import {authApi} from "@/lib/api/auth";
+import type {UserProfile} from "@/lib/types";
 import {clearAuthStorage} from "@/lib/auth/storage";
 
 export interface AuthState {

@@ -1,50 +1,9 @@
 "use client";
 
 import { getApiUrl } from "@/lib/env";
+import type { CommentVO, CommentListResponse, SubmitCommentRequest, SubmitCommentResponse } from "@/lib/types";
 
 const PUBLIC_COMMENT_BASE_PATH = "/api/public/comment";
-
-export interface CommentVO {
-    id: number;
-    parentId: number;
-    username: string;
-    email: string;
-    avatarUrl: string | null;
-    website: string | null;
-    content: string;
-    isAdmin: boolean;
-    deviceInfo: string;
-    createTime: string;
-    updateTime: string;
-    children: CommentVO[];
-}
-
-export interface CommentListResponse {
-    data: CommentVO[];
-    success: boolean;
-    errorMsg: string | null;
-    code: number;
-}
-
-export interface SubmitCommentRequest {
-    blogId: number;
-    parentId: number;
-    username?: string;
-    email?: string;
-    avatarUrl?: string;
-    website?: string;
-    content: string;
-}
-
-export interface SubmitCommentResponse {
-    data: {
-        id: number;
-        message: string;
-    };
-    success: boolean;
-    errorMsg: string | null;
-    code: number;
-}
 
 export const commentApi = {
     getCommentList: async (blogId: number): Promise<CommentVO[] | null> => {
@@ -61,6 +20,10 @@ export const commentApi = {
                 },
                 signal: AbortSignal.timeout(5000),
             });
+
+            if (!response.ok) {
+                return null;
+            }
 
             const result: CommentListResponse = await response.json();
 

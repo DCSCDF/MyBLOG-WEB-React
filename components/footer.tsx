@@ -1,5 +1,5 @@
 import React from "react";
-import {SiteInfo} from "@/lib/api/config.server";
+import type {SiteInfo} from "@/lib/types";
 
 interface FooterProps {
     siteInfo?: SiteInfo | null;

@@ -1,7 +1,8 @@
 "use client";
 
 import {useState, useEffect} from "react";
-import {configApi, ConfigItem} from "@/lib/api/config";
+import {configApi} from "@/lib/api/config";
+import type {ConfigItem} from "@/lib/types";
 
 export interface HeroConfig {
     title: string;

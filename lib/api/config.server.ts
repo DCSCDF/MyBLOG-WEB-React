@@ -1,32 +1,7 @@
 import { getApiUrlServer } from "@/lib/env";
+import type { SiteInfo, ConfigItem, ConfigResponse, BatchConfigResponse } from "@/lib/types";
 
 const PUBLIC_CONFIG_BASE_PATH = "/api/public/config";
-
-export interface SiteInfo {
-    siteName: string;
-    siteDomain: string;
-    siteDescription: string;
-    recordNumber: string;
-}
-
-export interface ConfigItem {
-    configKey: string;
-    configValue: string;
-}
-
-export interface ConfigResponse<T = null> {
-    data: T;
-    success: boolean;
-    errorMsg: string | null;
-    code: number;
-}
-
-export interface BatchConfigResponse {
-    data: ConfigItem[];
-    success: boolean;
-    errorMsg: string | null;
-    code: number;
-}
 
 export const getSiteInfoServer = async (): Promise<SiteInfo | null> => {
     try {
@@ -45,6 +20,10 @@ export const getSiteInfoServer = async (): Promise<SiteInfo | null> => {
             cache: "no-store",
         });
 
+        if (!response.ok) {
+            return null;
+        }
+
         const result: ConfigResponse<SiteInfo> = await response.json();
 
         if (result.success && result.data) {
@@ -52,7 +31,7 @@ export const getSiteInfoServer = async (): Promise<SiteInfo | null> => {
         }
 
         return null;
-    } catch (error) {
+    } catch {
         return null;
     }
 };
@@ -76,18 +55,22 @@ export const getConfigsByKeysServer = async (keys: string[]): Promise<Map<string
             cache: "no-store",
         });
 
+        if (!response.ok) {
+            return new Map();
+        }
+
         const result: BatchConfigResponse = await response.json();
 
         if (result.success && result.data) {
             const configMap = new Map<string, string>();
-            result.data.forEach((item) => {
+            result.data.forEach((item: ConfigItem) => {
                 configMap.set(item.configKey, item.configValue);
             });
             return configMap;
         }
 
         return new Map();
-    } catch (error) {
+    } catch {
         return new Map();
     }
 };

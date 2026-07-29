@@ -1,7 +1,7 @@
 "use client"
 
-import {FC, useEffect, useRef} from "react"
-import {HTMLMotionProps, motion, useAnimation, useInView} from "motion/react"
+import {FC, useRef} from "react"
+import {HTMLMotionProps, motion, useInView} from "motion/react"
 
 type AnimationType =
     | "fadeIn"
@@ -26,7 +26,7 @@ const animationVariants = {
             hidden: {opacity: 0},
             visible: (i: number = 1) => ({
                 opacity: 1,
-                transition: {staggerChildren: 0.05, delayChildren: i * 0.3},
+                transition: {staggerChildren: 0.05, delayChildren: i * 0.3} as never,
             }),
         },
         child: {
@@ -47,7 +47,7 @@ const animationVariants = {
             hidden: {opacity: 0},
             visible: {
                 opacity: 1,
-                transition: {staggerChildren: 0.1, delayChildren: 0.2},
+                transition: {staggerChildren: 0.1, delayChildren: 0.2} as never,
             },
         },
         child: {
@@ -60,7 +60,7 @@ const animationVariants = {
             hidden: {scale: 0},
             visible: {
                 scale: 1,
-                transition: {staggerChildren: 0.05, delayChildren: 0.2},
+                transition: {staggerChildren: 0.05, delayChildren: 0.2} as never,
             },
         },
         child: {
@@ -76,7 +76,7 @@ const animationVariants = {
         container: {
             hidden: {},
             visible: (i: number = 1) => ({
-                transition: {staggerChildren: 0.01, delayChildren: 0.2 * i},
+                transition: {staggerChildren: 0.01, delayChildren: 0.2 * i} as never,
             }),
         },
         child: {
@@ -104,7 +104,7 @@ const animationVariants = {
         container: {
             hidden: {},
             visible: (i: number = 1) => ({
-                transition: {staggerChildren: 0.01, delayChildren: 0.2 * i},
+                transition: {staggerChildren: 0.01, delayChildren: 0.2 * i} as never,
             }),
         },
         child: {
@@ -129,7 +129,7 @@ const animationVariants = {
         container: {
             hidden: {},
             visible: (i: number = 1) => ({
-                transition: {staggerChildren: 0.01, delayChildren: 0.2 * i},
+                transition: {staggerChildren: 0.01, delayChildren: 0.2 * i} as never,
             }),
         },
         child: {
@@ -208,21 +208,10 @@ const TextAnimate: FC<Props> = ({
     //   });
 
     const ref = useRef(null)
-    const isInView = useInView(ref, {once: true})
+    useInView(ref, {once: true})
 
     const letters = Array.from(text)
     const {container, child} = animationVariants[type]
-
-    const ctrls = useAnimation()
-
-    //   useEffect(() => {
-    //     if (isInView) {
-    //       ctrls.start("visible");
-    //     }
-    //     if (!isInView) {
-    //       ctrls.start("hidden");
-    //     }
-    //   }, [ctrls, isInView]);
 
     if (type === "rollIn" || type === "whipIn") {
         return (
@@ -240,7 +229,7 @@ const TextAnimate: FC<Props> = ({
                             transition={{
                                 delayChildren: index * 0.13,
                                 // delayChildren: index * 0.35,
-                                staggerChildren: 0.025,
+                                staggerChildren: 0.025 as never,
                                 // staggerChildren: 0.05,
                             }}
                         >

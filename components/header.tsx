@@ -153,7 +153,7 @@ export default function Header({rssLink}: HeaderProps) {
                                             onClick={(e) => handleNav(e, "/blog/list")}
                                             className={navigationMenuTriggerStyle()}
                                         >
-                                            朋友们的文章
+                                            用户的文章
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
                                     {/*<NavigationMenuItem className="hidden md:flex">*/}
@@ -263,7 +263,7 @@ export default function Header({rssLink}: HeaderProps) {
                         <CommandGroup heading="导航">
                             <CommandItem onSelect={() => goTo("/")}>主页</CommandItem>
                             <CommandItem onSelect={() => goTo("/myblog")}>我的博客</CommandItem>
-                            <CommandItem onSelect={() => goTo("/blog/list")}>朋友们的文章</CommandItem>
+                            <CommandItem onSelect={() => goTo("/blog/list")}>用户的文章</CommandItem>
                             <CommandItem onSelect={() => goTo("/links")}>友情链接</CommandItem>
                         </CommandGroup>
                         {/*<CommandSeparator/>*/}

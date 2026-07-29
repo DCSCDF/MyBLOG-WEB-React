@@ -2,8 +2,8 @@
 
 import {useState, useEffect, useRef} from "react"
 import {Search} from "lucide-react"
-import { Link as TransitionLink, useTransitionRouter } from "next-view-transitions"
-import { useSearchParams } from "next/navigation"
+import {Link as TransitionLink, useTransitionRouter} from "next-view-transitions"
+import {useSearchParams} from "next/navigation"
 
 import {Button} from "@/components/ui/button"
 import {Field, FieldDescription, FieldLabel} from "@/components/ui/field"
@@ -17,7 +17,7 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination"
-import type {Article} from "@/lib/api/article.server"
+import type {Article} from "@/lib/types";
 import {articleApi} from "@/lib/api/article"
 
 export function SearchClient() {
@@ -74,10 +74,10 @@ export function SearchClient() {
             }
         }
 
-        fetchArticles()
+        fetchArticles().then()
     }, [currentPage, keyword])
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: { preventDefault: () => void }) => {
         event.preventDefault()
         updateUrlParams(1, inputValue)
     }
@@ -216,7 +216,7 @@ export function SearchClient() {
                                 <TransitionLink
                                     key={post.id}
                                     href={`/article/${post.id}`}
-                                    className="group flex flex-col justify-between bg-card p-5 cursor-pointer transition-colors hover:bg-muted/50"
+                                    className="group flex flex-col justify-between bg-card p-2 md:p-5 cursor-pointer transition-colors hover:bg-muted/50"
                                 >
                                     <div>
                                         <div className="flex items-center uppercase gap-2">

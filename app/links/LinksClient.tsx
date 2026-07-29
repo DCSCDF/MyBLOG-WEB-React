@@ -1,9 +1,9 @@
 "use client";
 
-import React, { JSX, useState } from "react"
-import { motion } from "motion/react"
-import { useTransitionRouter } from "next-view-transitions"
-import { useSearchParams } from "next/navigation"
+import React, {JSX, useState} from "react"
+import {motion} from "motion/react"
+import {useTransitionRouter} from "next-view-transitions"
+import {useSearchParams} from "next/navigation"
 import {Button} from "@/components/ui/button"
 import {BackgroundRippleEffect} from "@/components/ui/background-ripple-effect"
 import {
@@ -23,7 +23,7 @@ import {
     useModal,
 } from "@/components/ui/animated-modal"
 import {Input} from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import {Textarea} from "@/components/ui/textarea"
 import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar"
 import {
     Pagination,
@@ -33,8 +33,8 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination"
-import {FriendLink, SubmitFriendLinkRequest} from "@/lib/api/friend-link.server"
-import { friendLinkApi } from "@/lib/api/friend-link"
+import type {FriendLink, SubmitFriendLinkRequest} from "@/lib/types";
+import {friendLinkApi} from "@/lib/api/friend-link"
 
 function ModalCancelButton() {
     const {setOpen} = useModal()
@@ -217,7 +217,7 @@ interface LinksClientProps {
     }
 }
 
-export default function LinksClient({ initialFriendLinks, totalPages, currentPage, linksConfig }: LinksClientProps) {
+export default function LinksClient({initialFriendLinks, totalPages, currentPage, linksConfig}: LinksClientProps) {
     const router = useTransitionRouter();
     const searchParams = useSearchParams();
 
@@ -241,7 +241,7 @@ export default function LinksClient({ initialFriendLinks, totalPages, currentPag
         if (page > 1) {
             params.set("page", page.toString());
         }
-        router.push(`/links?${params.toString()}`, { scroll: false });
+        router.push(`/links?${params.toString()}`, {scroll: false});
     };
 
     return (
@@ -264,7 +264,7 @@ export default function LinksClient({ initialFriendLinks, totalPages, currentPag
                     variants={{
                         hidden: {},
                         visible: {
-                            transition: { staggerChildren: 0.06 }
+                            transition: {staggerChildren: 0.06} as never
                         }
                     }}
                     initial="hidden"
@@ -283,11 +283,11 @@ export default function LinksClient({ initialFriendLinks, totalPages, currentPag
                                 rel="noopener noreferrer"
                                 target="_blank"
                                 variants={{
-                                    hidden: { opacity: 0, y: 8 },
+                                    hidden: {opacity: 0, y: 8},
                                     visible: {
                                         opacity: 1,
                                         y: 0,
-                                        transition: { duration: 0.4, ease: "easeOut" as const }
+                                        transition: {duration: 0.4, ease: "easeOut" as const}
                                     }
                                 }}
                             >

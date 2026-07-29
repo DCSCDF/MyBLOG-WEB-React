@@ -3,7 +3,7 @@
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Grid} from "@/components/ui/grid-pattern";
 import {Badge} from "@/components/ui/badge";
-import {AdminInfo} from "@/lib/api/admin.server";
+import type {AdminInfo} from "@/lib/types";
 
 interface AdminInfoCardProps {
     adminInfo: AdminInfo | null;
@@ -13,7 +13,7 @@ export function AdminInfoCard({adminInfo}: AdminInfoCardProps) {
 
     return (
         <div className="px-4">
-            <h2 className="text-black dark:text-white text-xl font-bold">用户简介</h2>
+            <h2 className="text-black dark:text-white text-xl font-bold mt-5">用户简介</h2>
 
             <div
                 className="relative mx-auto w-full mt-6 bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-6 rounded-3xl overflow-hidden">

@@ -16,8 +16,7 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination";
-import type {Category} from "@/lib/api/category.server";
-import type {Article} from "@/lib/api/article.server";
+import type {Category, Article} from "@/lib/types";
 
 interface BlogListClientProps {
     initialCategories: Category[];
@@ -144,7 +143,7 @@ export function BlogListClient({
                     variants={{
                         hidden: {},
                         visible: {
-                            transition: {staggerChildren: 0.06}
+                            transition: {staggerChildren: 0.06} as never
                         }
                     }}
                     initial="hidden"

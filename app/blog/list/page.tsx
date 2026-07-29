@@ -40,7 +40,7 @@ export default async function BlogList({searchParams}: PageProps) {
     const totalPages = articleResult?.pages || 0;
 
     return (
-        <section className="mx-auto w-full max-w-4xl mt-24">
+        <section className="mx-auto w-full max-w-4xl my-24">
             <Card className="gap-y-0 ring-0">
                 <CardHeader className="flex-row items-baseline justify-between px-[20px] pb-4">
                     <CardTitle className="text-xl font-semibold tracking-tight">文章</CardTitle>

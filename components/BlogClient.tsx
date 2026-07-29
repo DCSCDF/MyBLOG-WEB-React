@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import {useState, useEffect, useCallback, useRef} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
-import { motion } from "motion/react";
+import {motion} from "motion/react";
 import {
     Pagination,
     PaginationContent,
@@ -12,13 +12,12 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/ui/pagination";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getApiUrl } from "@/lib/env";
-import type { Category } from "@/lib/api/category.server";
-import type { Article } from "@/lib/api/article.server";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Skeleton} from "@/components/ui/skeleton";
+import {articleApi} from "@/lib/api/article";
+import type {Category, Article} from "@/lib/types";
 
 
 interface BlogClientProps {
@@ -30,30 +29,24 @@ interface BlogClientProps {
 }
 
 async function fetchArticleList(currentPage: number, pageSize: number, categoryId?: number) {
-    const apiUrl = getApiUrl();
-    if (!apiUrl) return { records: [], pages: 0 };
-
-    const fullUrl = `${apiUrl}/api/public/article/admin/list`;
-    const response = await fetch(fullUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPage, pageSize, categoryId: categoryId ?? undefined }),
-        cache: "no-store",
+    const result = await articleApi.getArticleList({
+        currentPage,
+        pageSize,
+        categoryId,
     });
-    const result = await response.json();
-    if (result?.success && result?.data) {
-        return { records: result.data.records, pages: result.data.pages };
+    if (result) {
+        return {records: result.records, pages: result.pages};
     }
-    return { records: [], pages: 0 };
+    return {records: [], pages: 0};
 }
 
 export function BlogClient({
-    initialCategories,
-    initialArticles,
-    initialTotalPages,
-    initialCurrentPage,
-    initialSelectedCategoryId
-}: BlogClientProps) {
+                               initialCategories,
+                               initialArticles,
+                               initialTotalPages,
+                               initialCurrentPage,
+                               initialSelectedCategoryId
+                           }: BlogClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -106,7 +99,7 @@ export function BlogClient({
         if (newPage > 1) {
             params.set("page", newPage.toString());
         }
-        router.push(`/myblog?${params.toString()}`, { scroll: false });
+        router.push(`/myblog?${params.toString()}`, {scroll: false});
     };
 
     const handleCategoryClick = (categoryId: number | null) => {
@@ -158,18 +151,18 @@ export function BlogClient({
         if (loading) {
             return (
                 <div className="space-y-6">
-                    {Array.from({ length: 3 }, (_, i) => (
+                    {Array.from({length: 3}, (_, i) => (
                         <div key={i} className="px-4 space-y-3">
                             <div className="flex items-center gap-2">
-                                <Skeleton className="h-3 w-20" />
-                                <Skeleton className="h-3 w-28" />
+                                <Skeleton className="h-3 w-20"/>
+                                <Skeleton className="h-3 w-28"/>
                             </div>
-                            <Skeleton className="h-5 w-full" />
-                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-5 w-full"/>
+                            <Skeleton className="h-4 w-3/4"/>
                             <div className="flex gap-1.5">
-                                <Skeleton className="h-3 w-12" />
-                                <Skeleton className="h-3 w-16" />
-                                <Skeleton className="h-3 w-10" />
+                                <Skeleton className="h-3 w-12"/>
+                                <Skeleton className="h-3 w-16"/>
+                                <Skeleton className="h-3 w-10"/>
                             </div>
                         </div>
                     ))}
@@ -188,16 +181,16 @@ export function BlogClient({
         const listVariants = {
             hidden: {},
             visible: {
-                transition: { staggerChildren: 0.06 }
+                transition: {staggerChildren: 0.06} as never
             }
         };
 
         const itemVariants = {
-            hidden: { opacity: 0, y: 8 },
+            hidden: {opacity: 0, y: 8},
             visible: {
                 opacity: 1,
                 y: 0,
-                transition: { duration: 0.4, ease: "easeOut" as const }
+                transition: {duration: 0.4, ease: "easeOut" as const}
             }
         };
 
@@ -212,7 +205,7 @@ export function BlogClient({
                 {articles.map((article) => (
                     <motion.div key={article.id} variants={itemVariants}>
                         <Link href={`/article/${article.id}`}
-                            className="block group py-6 hover:bg-muted/50 px-4">
+                              className="block group py-6 hover:bg-muted/50 px-4">
                             <div className="flex items-center uppercase gap-2">
                                 {article.isTop && (
                                     <span
@@ -232,7 +225,7 @@ export function BlogClient({
                             <div className="mt-3 flex flex-wrap gap-1.5">
                                 {splitTags(article.tags).map((tag) => (
                                     <Badge key={tag} variant="secondary"
-                                        className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                                           className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground">
                                         {tag}
                                     </Badge>
                                 ))}
@@ -292,9 +285,9 @@ export function BlogClient({
                                     }}
                                 />
                             </PaginationItem>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
                                 <PaginationItem key={page}
-                                    className={page === currentPage ? "" : "hidden sm:inline-flex"}>
+                                                className={page === currentPage ? "" : "hidden sm:inline-flex"}>
                                     <PaginationLink
                                         href={`/myblog?${getPageUrl(page)}`}
                                         isActive={page === currentPage}
