@@ -39,30 +39,14 @@ export const commentApi = {
 
     submitComment: async (
         request: SubmitCommentRequest,
-        token?: string | null
     ): Promise<SubmitCommentResponse> => {
         try {
-            const apiUrl = getApiUrl();
-            if (!apiUrl) {
-                return {
-                    data: { id: 0, message: "API地址未配置" },
-                    success: false,
-                    errorMsg: "API地址未配置",
-                    code: 500,
-                };
-            }
-
-            const headers: Record<string, string> = {
-                "Content-Type": "application/json",
-            };
-
-            if (token) {
-                headers["token"] = token;
-            }
-
-            const response = await fetch(`${apiUrl}${PUBLIC_COMMENT_BASE_PATH}`, {
+            const response = await fetch(`/api/comment`, {
                 method: "POST",
-                headers,
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(request),
             });
 

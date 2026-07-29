@@ -1,15 +1,14 @@
 "use client";
 
-import { getApiUrl } from "@/lib/env";
 import type { TokenResponse, ProfileResponse } from "@/lib/types";
 
-const AUTH_BASE_PATH = "/api/auth";
+const AUTH_PROXY_PATH = "/api/auth";
 
 export const authApi = {
     getToken: async (code: string, remember: boolean = false): Promise<TokenResponse> => {
-        const apiUrl = getApiUrl();
-        const response = await fetch(`${apiUrl}${AUTH_BASE_PATH}/oauth/token`, {
+        const response = await fetch(`${AUTH_PROXY_PATH}`, {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -26,17 +25,27 @@ export const authApi = {
         return response.json();
     },
 
-    getUserProfile: async (token: string): Promise<ProfileResponse> => {
-        const apiUrl = getApiUrl();
-        const response = await fetch(`${apiUrl}${AUTH_BASE_PATH}/profile`, {
+    getUserProfile: async (): Promise<ProfileResponse> => {
+        const response = await fetch(`${AUTH_PROXY_PATH}?action=profile`, {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "token": token,
             },
             body: JSON.stringify({}),
         });
 
         return response.json();
+    },
+
+    logout: async (): Promise<void> => {
+        await fetch(`${AUTH_PROXY_PATH}?action=logout`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({}),
+        });
     },
 };

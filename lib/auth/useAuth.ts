@@ -22,20 +22,8 @@ export const useAuth = () => {
 
     useEffect(() => {
         const initAuth = async () => {
-            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-
-            if (!token) {
-                setAuthState({
-                    user: null,
-                    isLoggedIn: false,
-                    isLoading: false,
-                    error: null,
-                });
-                return;
-            }
-
             try {
-                const response = await authApi.getUserProfile(token);
+                const response = await authApi.getUserProfile();
 
                 if (response.success && response.data) {
                     setAuthState({
@@ -76,12 +64,14 @@ export const useAuth = () => {
     }, []);
 
     const logout = () => {
-        clearAuthStorage();
-        setAuthState({
-            user: null,
-            isLoggedIn: false,
-            isLoading: false,
-            error: null,
+        authApi.logout().finally(() => {
+            clearAuthStorage();
+            setAuthState({
+                user: null,
+                isLoggedIn: false,
+                isLoading: false,
+                error: null,
+            });
         });
     };
 

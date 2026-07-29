@@ -347,8 +347,6 @@ export default function ArticleClient({initialArticle, initialComments}: Article
         setSubmitLoading(true);
         setSubmitMessage(null);
 
-        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-
         const requestData: SubmitCommentRequest = {
             blogId: id,
             parentId,
@@ -374,7 +372,7 @@ export default function ArticleClient({initialArticle, initialComments}: Article
             }
         }
 
-        const response = await commentApi.submitComment(requestData, token);
+        const response = await commentApi.submitComment(requestData);
 
         if (response.success) {
             setSuccessDialogMessage(response.data.message || "评论提交成功");

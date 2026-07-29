@@ -4,9 +4,6 @@ import { authApi } from "@/lib/api/auth";
 import { getAdminUrl } from "@/lib/env";
 import {
   clearAuthStorage,
-  validateTokenStorage,
-  checkStorageConsistency,
-  saveToken,
   triggerLoginNotification,
 } from "@/lib/auth/storage";
 
@@ -25,111 +22,52 @@ export interface LoginResult {
 export const performLogin = async (params: LoginParams): Promise<LoginResult> => {
   const { code, redirectUrl, remember = false } = params;
 
-  let existingToken: string | null = null;
-  let existingRemember = false;
+  try {
+    const tokenResponse = await authApi.getToken(code, remember);
 
-  if (typeof window !== "undefined") {
-    existingToken = localStorage.getItem("token") || sessionStorage.getItem("token");
-    existingRemember = localStorage.getItem("remember") === "true";
-  }
-
-  const tokenResponse = await authApi.getToken(code, remember);
-
-  if (!tokenResponse) {
-    return {
-      success: false,
-      error: "未收到响应",
-    };
-  }
-
-  if (!tokenResponse.success) {
-    return {
-      success: false,
-      error: tokenResponse.errorMsg || tokenResponse.message || "登录失败",
-    };
-  }
-
-  if (!tokenResponse.data) {
-    return {
-      success: false,
-      error: "缺少数据",
-    };
-  }
-
-  if (!tokenResponse.data.token) {
-    return {
-      success: false,
-      error: "无效的 Token",
-    };
-  }
-
-  const token = tokenResponse.data.token;
-
-  clearAuthStorage();
-
-  saveToken(token, remember);
-
-  const maxRetries = 3;
-  const retryInterval = 300;
-  let storageValidated = false;
-
-  for (let i = 0; i < maxRetries; i++) {
-    if (validateTokenStorage(token, remember)) {
-      storageValidated = true;
-      break;
+    if (!tokenResponse) {
+      return {
+        success: false,
+        error: "未收到响应",
+      };
     }
 
-    if (i < maxRetries - 1) {
-      await new Promise((resolve) => setTimeout(resolve, retryInterval));
-      saveToken(token, remember);
+    if (!tokenResponse.success) {
+      return {
+        success: false,
+        error: tokenResponse.errorMsg || tokenResponse.message || "登录失败",
+      };
     }
-  }
 
-  if (!storageValidated) {
-    if (existingToken) {
-      const storage = existingRemember ? localStorage : sessionStorage;
-      storage.setItem("token", existingToken);
-      if (existingRemember) {
-        localStorage.setItem("remember", "true");
-      } else {
-        localStorage.removeItem("remember");
-      }
+    if (!tokenResponse.data || !tokenResponse.data.token) {
+      return {
+        success: false,
+        error: "无效的 Token",
+      };
     }
+
+    clearAuthStorage();
+
+    triggerLoginNotification(remember);
+
+    return {
+      success: true,
+      redirectUrl,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "登录请求失败";
     return {
       success: false,
-      error: "Token 存储验证失败",
+      error: message,
     };
   }
-
-  triggerLoginNotification(remember);
-
-  const consistencyChecked = await checkStorageConsistency(token, remember);
-  
-  if (!consistencyChecked) {
-    if (existingToken) {
-      const storage = existingRemember ? localStorage : sessionStorage;
-      storage.setItem("token", existingToken);
-      if (existingRemember) {
-        localStorage.setItem("remember", "true");
-      } else {
-        localStorage.removeItem("remember");
-      }
-    }
-    return {
-      success: false,
-      error: "存储一致性检查失败",
-    };
-  }
-
-  return {
-    success: true,
-    redirectUrl,
-  };
 };
 
 export const handleLogout = (): void => {
-  clearAuthStorage();
-  window.location.href = "/";
+  authApi.logout().finally(() => {
+    clearAuthStorage();
+    window.location.href = "/";
+  });
 };
 
 export const handleBack = (): void => {

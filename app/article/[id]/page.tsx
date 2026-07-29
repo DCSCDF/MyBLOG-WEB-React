@@ -9,8 +9,7 @@ interface PageProps {
 export const dynamic = "force-dynamic";
 
 export default async function ArticlePage({params}: PageProps) {
-    const resolvedParams = await params;
-    const id = parseInt(resolvedParams.id || "", 10);
+    const id = parseInt(params.id || "", 10);
 
     if (isNaN(id)) {
         return (
