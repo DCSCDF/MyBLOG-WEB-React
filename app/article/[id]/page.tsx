@@ -3,13 +3,14 @@ import {getArticleDetailServer} from "@/lib/api/article.server";
 import {getCommentListServer} from "@/lib/api/comment.server";
 
 interface PageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export const dynamic = "force-dynamic";
 
 export default async function ArticlePage({params}: PageProps) {
-    const id = parseInt(params.id || "", 10);
+    const { id: idStr } = await params;
+    const id = parseInt(idStr || "", 10);
 
     if (isNaN(id)) {
         return (
