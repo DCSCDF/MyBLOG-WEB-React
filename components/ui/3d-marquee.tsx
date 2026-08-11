@@ -1,88 +1,90 @@
 "use client"
 
-import { motion } from "motion/react"
-import { cn } from "@/lib/utils"
+import {motion} from "motion/react"
+import {cn} from "@/lib/utils"
 
 export interface ThreeDMarqueeProps {
-  images?: string[]
-  colors?: string[]
-  className?: string
-  reverse?: boolean
+    images?: string[]
+    colors?: string[]
+    className?: string
+    reverse?: boolean
 }
 
 export const ThreeDMarquee = ({
-  images,
-  colors,
-  className,
-  reverse = false,
-}: ThreeDMarqueeProps) => {
-  const items = colors || images || []
-  const useColors = !!colors
+                                  images,
+                                  colors,
+                                  className,
+                                  reverse = false,
+                              }: ThreeDMarqueeProps) => {
+    const items = colors || images || []
+    const useColors = !!colors
 
-  // Split into 4 columns
-  const columns: string[][] = [[], [], [], []]
-  items.forEach((item, i) => {
-    columns[i % 4].push(item)
-  })
+    // Split into 4 columns
+    const columns: string[][] = [[], [], [], []]
+    items.forEach((item, i) => {
+        columns[i % 4].push(item)
+    })
 
-  return (
-    <div className={cn("relative h-full w-full overflow-hidden", className)}>
-      {/* Perspective container - centered with large overflow */}
-      <div
-        className="absolute left-1/2 top-1/2"
-        style={{
-          perspective: "1000px",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        {/* 3D transformed grid - made very large to cover after rotation */}
-        <div
-          className="grid grid-cols-4 gap-6"
-          style={{
-            transform: `rotateX(60deg) rotateZ(${reverse ? "45deg" : "-45deg"})`,
-            transformStyle: "preserve-3d",
-            width: "300vmax",
-            height: "300vmax",
-          }}
-        >
-          {columns.map((column, colIndex) => (
-            <motion.div
-              key={colIndex}
-              className="flex flex-col gap-6"
-              animate={{
-                y: colIndex % 2 === 0 ? ["0%", "-50%"] : ["-50%", "0%"],
-              }}
-              transition={{
-                duration: colIndex % 2 === 0 ? 20 : 25,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
-              }}
+    return (
+        <div className={cn("relative h-full w-full overflow-hidden", className)}>
+            {/* Perspective container - centered with large overflow */}
+            <div
+                className="absolute left-1/2 top-1/2"
+                style={{
+                    perspective: "1000px",
+                    transform: "translate(-50%, -50%)",
+                }}
             >
-              {/* Triple items for seamless loop */}
-              {[...column, ...column, ...column].map((item, itemIndex) => (
-                <motion.div
-                  key={itemIndex}
-                  className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-2xl sm:shadow-xl"
-                  style={{
-                    backgroundColor: useColors ? item : undefined,
-                    minHeight: "20vmax",
-                  }}
-
+                {/* 3D transformed grid - made very large to cover after rotation */}
+                <div
+                    className="grid grid-cols-4 gap-6"
+                    style={{
+                        transform: `rotateX(60deg) rotateZ(${reverse ? "45deg" : "-45deg"})`,
+                        transformStyle: "preserve-3d",
+                        width: "300vmax",
+                        height: "300vmax",
+                    }}
                 >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {!useColors && <img src={item} alt="" className="size-full object-cover" />}
-                </motion.div>
-              ))}
-            </motion.div>
-          ))}
-        </div>
-      </div>
+                    {columns.map((column, colIndex) => (
+                        <motion.div
+                            key={colIndex}
+                            className="flex flex-col gap-6"
+                            animate={{
+                                y: colIndex % 2 === 0 ? ["0%", "-50%"] : ["-50%", "0%"],
+                            }}
+                            transition={{
+                                duration: colIndex % 2 === 0 ? 20 : 25,
+                                repeat: Number.POSITIVE_INFINITY,
+                                ease: "linear",
+                            }}
+                        >
+                            {/* Triple items for seamless loop */}
+                            {[...column, ...column, ...column].map((item, itemIndex) => (
+                                <motion.div
+                                    key={itemIndex}
+                                    className="relative aspect-4/3 w-full shrink-0 overflow-hidden rounded-2xl"
+                                    style={{
+                                        backgroundColor: useColors ? item : undefined,
+                                        minHeight: "20vmax",
+                                    }}
 
-      {/* Gradient overlays for fade effect */}
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-background via-transparent to-background" />
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-background via-transparent to-background" />
-    </div>
-  )
+                                >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    {!useColors && <img src={item} alt="" className="size-full object-cover"/>}
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Gradient overlays for fade effect */}
+            <div
+                className="pointer-events-none absolute inset-0 bg-linear-to-t from-background via-transparent to-background"/>
+            <div
+                className="pointer-events-none absolute inset-0 bg-linear-to-r from-background via-transparent to-background"/>
+        </div>
+    )
 }
 
 // // Demo
