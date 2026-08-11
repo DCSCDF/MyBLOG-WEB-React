@@ -4,10 +4,18 @@ import TextAnimate from "@/components/ui/text-animate";
 import {ThreeDMarquee} from "@/components/ui/3d-marquee";
 import {Button} from "@/components/ui/button";
 import {motion} from "motion/react";
-import {cn} from "@/lib/utils";
+// import {cn} from "@/lib/utils";
 import {useTransitionRouter} from "next-view-transitions";
 import {HeroConfig} from "@/lib/hooks/useConfig";
-import {BackgroundBeams} from "../components/ui/background-beams";
+// import {BackgroundBeams} from "../components/ui/background-beams";
+// import {Boxes} from "@/components/ui/background-boxes";
+// import {BackgroundRippleEffect} from "@/components/ui/background-ripple-effect";
+
+import {ShootingStars} from "@/components/ui/shooting-stars";
+import {StarsBackground} from "@/components/ui/stars-background";
+
+
+import React from "react";
 
 interface HeroProps {
     images: string[];
@@ -24,8 +32,12 @@ export default function Hero({images, config}: HeroProps) {
                 <ThreeDMarquee images={images}/>
             </div>
 
-            <div className="absolute inset-0 hidden dark:block">
-                <BackgroundBeams/>
+            <div className="absolute inset-0 hidden dark:block overflow-hidden z-0">
+                {/*<BackgroundRippleEffect/>*/}
+
+
+                <ShootingStars/>
+                <StarsBackground/>
                 {/*<div*/}
                 {/*    className={cn(*/}
                 {/*        "absolute inset-0",*/}
@@ -38,11 +50,12 @@ export default function Hero({images, config}: HeroProps) {
             </div>
 
 
-            <div className="relative z-10 flex h-full flex-col items-center mt-[30vh] gap-8 mx-3">
+            <div className="relative z-10 flex max-w-xl  mx-auto  flex-col items-center mt-[30vh] gap-8 mx-3">
                 <>
+
                     <TextAnimate text={hero.title} type="rollIn"/>
                     <motion.p
-                        className="text-neutral-600 dark:text-neutral-400 max-w-xl text-center"
+                        className="text-neutral-600 dark:text-neutral-400 text-center"
                         initial={{opacity: 0, y: 20}}
                         animate={{opacity: 1, y: 0}}
                         transition={{delay: 1, duration: 0.6}}
