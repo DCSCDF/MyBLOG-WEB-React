@@ -1,8 +1,7 @@
 "use client";
 
-import {useState, useEffect, useCallback, useRef} from "react";
-import {useRouter, useSearchParams} from "next/navigation";
-import Link from "next/link";
+import {Link as TransitionLink, useTransitionRouter} from "next-view-transitions";
+import {useSearchParams} from "next/navigation";
 import {motion} from "motion/react";
 import {
     Pagination,
@@ -15,8 +14,6 @@ import {
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Skeleton} from "@/components/ui/skeleton";
-import {articleApi} from "@/lib/api/article";
 import type {Category, Article} from "@/lib/types";
 
 
@@ -28,18 +25,6 @@ interface BlogClientProps {
     initialSelectedCategoryId: number | null;
 }
 
-async function fetchArticleList(currentPage: number, pageSize: number, categoryId?: number) {
-    const result = await articleApi.getArticleList({
-        currentPage,
-        pageSize,
-        categoryId,
-    });
-    if (result) {
-        return {records: result.records, pages: result.pages};
-    }
-    return {records: [], pages: 0};
-}
-
 export function BlogClient({
                                initialCategories,
                                initialArticles,
@@ -47,15 +32,11 @@ export function BlogClient({
                                initialCurrentPage,
                                initialSelectedCategoryId
                            }: BlogClientProps) {
-    const router = useRouter();
+    const router = useTransitionRouter();
     const searchParams = useSearchParams();
 
-    const [articles, setArticles] = useState<Article[]>(initialArticles);
-    const [totalPages, setTotalPages] = useState<number>(initialTotalPages);
-    const [loading, setLoading] = useState(false);
-    const [contentKey, setContentKey] = useState(0);
-    const isInitialMount = useRef(true);
-
+    const articles = initialArticles;
+    const totalPages = initialTotalPages;
     const categories = initialCategories;
 
     const selectedCategoryId = (() => {
@@ -73,23 +54,6 @@ export function BlogClient({
         }
         return initialCurrentPage;
     })();
-
-    const loadData = useCallback(async (page: number, categoryId: number | null) => {
-        setLoading(true);
-        setContentKey(prev => prev + 1);
-        const result = await fetchArticleList(page, 6, categoryId ?? undefined);
-        setArticles(result.records);
-        setTotalPages(result.pages);
-        setLoading(false);
-    }, []);
-
-    useEffect(() => {
-        if (isInitialMount.current) {
-            isInitialMount.current = false;
-            return;
-        }
-        loadData(currentPage, selectedCategoryId).then();
-    }, [currentPage, selectedCategoryId, loadData]);
 
     const updateUrlParams = (newPage: number, newCategoryId: number | null) => {
         const params = new URLSearchParams();
@@ -136,40 +100,7 @@ export function BlogClient({
         return params.toString();
     };
 
-    const getPrevPageUrl = (): string => {
-        if (currentPage <= 2) {
-            return getPageUrl(1);
-        }
-        return getPageUrl(currentPage - 1);
-    };
-
-    const getNextPageUrl = (): string => {
-        return getPageUrl(currentPage + 1);
-    };
-
     const renderArticleList = () => {
-        if (loading) {
-            return (
-                <div className="space-y-6">
-                    {Array.from({length: 3}, (_, i) => (
-                        <div key={i} className="px-4 space-y-3">
-                            <div className="flex items-center gap-2">
-                                <Skeleton className="h-3 w-20"/>
-                                <Skeleton className="h-3 w-28"/>
-                            </div>
-                            <Skeleton className="h-5 w-full"/>
-                            <Skeleton className="h-4 w-3/4"/>
-                            <div className="flex gap-1.5">
-                                <Skeleton className="h-3 w-12"/>
-                                <Skeleton className="h-3 w-16"/>
-                                <Skeleton className="h-3 w-10"/>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            );
-        }
-
         if (articles.length === 0) {
             return (
                 <div className="text-center py-12 text-muted-foreground text-sm">
@@ -196,7 +127,7 @@ export function BlogClient({
 
         return (
             <motion.div
-                key={contentKey}
+                key={`${currentPage}-${selectedCategoryId ?? "all"}`}
                 className="flex flex-col"
                 variants={listVariants}
                 initial="hidden"
@@ -204,7 +135,7 @@ export function BlogClient({
             >
                 {articles.map((article) => (
                     <motion.div key={article.id} variants={itemVariants}>
-                        <Link href={`/article/${article.id}`}
+                        <TransitionLink href={`/article/${article.id}`}
                               className="block group py-6 hover:bg-muted/50 px-4">
                             <div className="flex items-center uppercase gap-2">
                                 {article.isTop && (
@@ -230,7 +161,7 @@ export function BlogClient({
                                     </Badge>
                                 ))}
                             </div>
-                        </Link>
+                        </TransitionLink>
                     </motion.div>
                 ))}
             </motion.div>
@@ -278,7 +209,7 @@ export function BlogClient({
                         <PaginationContent>
                             <PaginationItem>
                                 <PaginationPrevious
-                                    href={`/myblog?${getPrevPageUrl()}`}
+                                    href={`/myblog?${getPageUrl(Math.max(1, currentPage - 1))}`}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         if (currentPage > 1) handlePageChange(currentPage - 1);
@@ -302,7 +233,7 @@ export function BlogClient({
                             ))}
                             <PaginationItem>
                                 <PaginationNext
-                                    href={`/myblog?${getNextPageUrl()}`}
+                                    href={`/myblog?${getPageUrl(Math.min(totalPages, currentPage + 1))}`}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         if (currentPage < totalPages) handlePageChange(currentPage + 1);
