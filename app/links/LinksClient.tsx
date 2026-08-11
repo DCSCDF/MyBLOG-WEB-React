@@ -246,9 +246,9 @@ export default function LinksClient({initialFriendLinks, totalPages, currentPage
 
     return (
         <div className="relative flex min-h-screen w-full flex-col items-start justify-start overflow-hidden">
-            <div className="pointer-events-none">
-                <BackgroundRippleEffect/>
-            </div>
+            {/*<div className="pointer-events-none">*/}
+            {/*    <BackgroundRippleEffect/>*/}
+            {/*</div>*/}
             <section className="relative z-10 mt-32 px-4 w-full max-w-3xl mx-auto">
                 <div className="mb-10">
                     <h1 className="text-4xl font-extrabold text-on-surface tracking-tighter mb-2">
@@ -279,7 +279,7 @@ export default function LinksClient({initialFriendLinks, totalPages, currentPage
                             <motion.a
                                 key={`${current}-${index}`}
                                 href={link.url}
-                                className="group block p-4 backdrop-blur-xs border rounded-lg transition-colors duration-300 hover:shadow-lg"
+                                className="group block p-4 backdrop-blur-xs border rounded-lg transition-colors duration-300"
                                 rel="noopener noreferrer"
                                 target="_blank"
                                 variants={{
@@ -297,7 +297,7 @@ export default function LinksClient({initialFriendLinks, totalPages, currentPage
                                             <AvatarImage
                                                 src={link.imageUrl}
                                                 alt={link.name}
-                                                className="object-cover transition-all group-hover:scale-110"
+                                                className="object-cover transition-all"
                                             />
                                         )}
                                         <AvatarFallback className="text-xs font-medium">
