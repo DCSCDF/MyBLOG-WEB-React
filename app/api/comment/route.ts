@@ -6,19 +6,6 @@ const TOKEN_COOKIE_NAME = "blog_token";
 export async function POST(req: NextRequest) {
     try {
         const token = req.cookies.get(TOKEN_COOKIE_NAME)?.value;
-
-        if (!token) {
-            return NextResponse.json(
-                {
-                    data: { id: 0, message: "未登录" },
-                    success: false,
-                    errorMsg: "未登录或登录已过期",
-                    code: 401,
-                },
-                { status: 401 }
-            );
-        }
-
         const body = await req.json();
         const apiUrl = getApiUrlServer();
         if (!apiUrl) {
@@ -34,12 +21,15 @@ export async function POST(req: NextRequest) {
         }
 
         const apiBase = apiUrl.replace(/\/$/, "");
+        const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+        };
+        if (token) {
+            headers.token = token;
+        }
         const upstream = await fetch(`${apiBase}/api/public/comment`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                token,
-            },
+            headers,
             body: JSON.stringify(body),
         });
 

@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import {clsx, type ClassValue} from "clsx";
+import {twMerge} from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+    return twMerge(clsx(inputs));
 }
 
 const THEME_COOKIE_NAME = "theme";
@@ -20,18 +20,18 @@ const THEME_COOKIE_NAME = "theme";
 // }
 
 export function setThemeCookie(theme: "light" | "dark") {
-  if (typeof document === "undefined") return;
-  document.cookie = `${THEME_COOKIE_NAME}=${theme}; path=/; max-age=31536000`;
+    if (typeof document === "undefined") return;
+    document.cookie = `${THEME_COOKIE_NAME}=${theme}; path=/; max-age=31536000`;
 }
 
 export function applyTheme(theme: "light" | "dark") {
-  if (typeof document === "undefined") return;
-  const root = document.documentElement;
-  if (theme === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    if (theme === "dark") {
+        root.classList.add("dark");
+    } else {
+        root.classList.remove("dark");
+    }
 }
 
 const themeListeners = new Set<() => void>();
@@ -43,39 +43,87 @@ const themeListeners = new Set<() => void>();
 // must not read the class back.
 let currentTheme: "light" | "dark" = "light";
 if (typeof document !== "undefined") {
-  currentTheme = document.documentElement.classList.contains("dark")
-    ? "dark"
-    : "light";
+    currentTheme = document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light";
 }
 
 export function subscribeTheme(callback: () => void) {
-  themeListeners.add(callback);
-  return () => {
-    themeListeners.delete(callback);
-  };
+    themeListeners.add(callback);
+    return () => {
+        themeListeners.delete(callback);
+    };
 }
 
 export function getThemeSnapshot(): "light" | "dark" {
-  return currentTheme;
+    return currentTheme;
 }
 
 export function getThemeServerSnapshot(): "light" | "dark" {
-  return "light";
+    return "light";
 }
 
 export function toggleTheme() {
-  const next = currentTheme === "dark" ? "light" : "dark";
-  currentTheme = next;
-  setThemeCookie(next);
-  applyTheme(next);
-  themeListeners.forEach((l) => l());
+    const next = currentTheme === "dark" ? "light" : "dark";
+    currentTheme = next;
+    setThemeCookie(next);
+    applyTheme(next);
+    themeListeners.forEach((l) => l());
 }
 
 // Updates theme state + cookie + notifies subscribers without touching the
 // dark class. react-theme-switch-animation manages the class itself via the
 // View Transition API; we only mirror the change into our external store.
 export function syncThemeState(theme: "light" | "dark") {
-  currentTheme = theme;
-  setThemeCookie(theme);
-  themeListeners.forEach((l) => l());
+    currentTheme = theme;
+    setThemeCookie(theme);
+    themeListeners.forEach((l) => l());
+}
+
+
+const TIMEZONE = "Asia/Shanghai";
+
+export function parseDateAsUTC(input: string | number | Date): Date {
+    if (input instanceof Date) return input;
+    if (typeof input === "number") return new Date(input);
+
+    let raw = String(input).trim();
+    if (!raw) return new Date(NaN);
+    const hasTimezone = /Z|[+-]\d{2}:?\d{2}$/.test(raw);
+    if (!hasTimezone) {
+        raw = raw.replace(" ", "T") + "Z";
+    }
+    return new Date(raw);
+}
+
+
+export function formatRelativeTime(input: string | number | Date): string {
+    const date = parseDateAsUTC(input);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    if (diffHour < 1) return "刚刚";
+    if (diffHour < 24) return `${diffHour}小时前`;
+    if (diffDay < 7) return `${diffDay}天前`;
+    return formatDateLong(input);
+}
+
+
+export function formatDateLong(input: string | number | Date): string {
+    const date = parseDateAsUTC(input);
+    return date.toLocaleDateString("zh-CN", {
+        timeZone: TIMEZONE,
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+}
+
+
+export function formatArticleDate(input: string | number | Date): string {
+    return formatDateLong(input);
 }

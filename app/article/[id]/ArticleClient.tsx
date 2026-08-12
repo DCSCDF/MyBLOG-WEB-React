@@ -29,6 +29,7 @@ import {mermaid} from "@streamdown/mermaid";
 import { createMathPlugin } from "@streamdown/math";
 import {commentApi} from "@/lib/api/comment";
 import {useAuth} from "@/lib/auth/useAuth";
+import { formatRelativeTime, formatArticleDate } from "@/lib/utils";
 import type {Article} from "@/lib/types";
 import type {CommentVO, SubmitCommentRequest} from "@/lib/types";
 import "katex/dist/katex.min.css";
@@ -52,19 +53,6 @@ const validateEmail = (email: string): boolean => {
 const getInitials = (name: string): string => {
     if (!name) return "?";
     return name.charAt(0).toUpperCase();
-};
-
-const formatTime = (dateString: string): string => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(hours / 24);
-
-    if (hours < 1) return "刚刚";
-    if (hours < 24) return `${hours}小时前`;
-    if (days < 7) return `${days}天前`;
-    return date.toLocaleDateString('zh-CN');
 };
 
 interface FormData {
@@ -155,7 +143,7 @@ function CommentItem({
                                     管理员
                                 </Badge>
                             )}
-                            <span className="text-xs text-muted-foreground">{formatTime(comment.createTime)}</span>
+                            <span className="text-xs text-muted-foreground">{formatRelativeTime(comment.createTime)}</span>
                         </div>
                         <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
                             {displayContent}
@@ -430,11 +418,7 @@ export default function ArticleClient({initialArticle, initialComments}: Article
                                variant="secondary">置顶</Badge>
                     )}
                     <span className="text-xs text-muted-foreground">
-                        {new Date(article.createTime).toLocaleDateString('zh-CN', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        })}
+                        {formatArticleDate(article.createTime)}
                     </span>
                 </div>
 

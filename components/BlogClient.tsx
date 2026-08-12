@@ -15,6 +15,7 @@ import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import type {Category, Article} from "@/lib/types";
+import { formatArticleDate } from "@/lib/utils";
 
 
 interface BlogClientProps {
@@ -73,15 +74,6 @@ export function BlogClient({
     const handlePageChange = (page: number) => {
         if (page === currentPage) return;
         updateUrlParams(page, selectedCategoryId);
-    };
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString("zh-CN", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
     };
 
     const splitTags = (tags: string) => {
@@ -145,7 +137,7 @@ export function BlogClient({
                                 <span
                                     className="text-[10px] text-muted-foreground shrink-0">{article.categoryName || "未分类"}</span>
                                 <span
-                                    className="text-[10px] text-muted-foreground shrink-0">{formatDate(article.createTime)}</span>
+                                    className="text-[10px] text-muted-foreground shrink-0">{formatArticleDate(article.createTime)}</span>
                             </div>
                             <h3 className="mt-3 text-base font-medium leading-snug tracking-tight group-hover:text-primary transition-colors">
                                 {article.title}
