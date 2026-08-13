@@ -15,7 +15,7 @@ import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import type {Category, Article} from "@/lib/types";
-import { formatArticleDate } from "@/lib/utils";
+import {formatArticleDate} from "@/lib/utils";
 
 
 interface BlogClientProps {
@@ -128,7 +128,7 @@ export function BlogClient({
                 {articles.map((article) => (
                     <motion.div key={article.id} variants={itemVariants}>
                         <TransitionLink href={`/article/${article.id}`}
-                              className="block group py-6 hover:bg-muted/50 px-4">
+                                        className="block group py-6 hover:bg-muted/50 px-4">
                             <div className="flex items-center uppercase gap-2">
                                 {article.isTop && (
                                     <span
@@ -161,11 +161,12 @@ export function BlogClient({
     };
 
     return (
-        <Card className="overflow-hidden md:mx-4 mx-0 gap-y-0 ring-0">
+        <Card className="overflow-hidden md:mx-4 mx-2 gap-y-0 ring-0">
             <CardHeader className="flex-row items-baseline justify-between pb-2">
                 <div>
-                    <CardTitle className="text-sm">博客</CardTitle>
-                    <CardDescription className="mt-0.5 text-xs">我的开发/生活分享</CardDescription>
+                    <CardTitle className="text-sm">我的博客</CardTitle>
+                    <CardDescription
+                        className="mt-0.5 text-xs"> 站长的个人空间，专注于技术、架构思考与开发随笔，记录生活日常等等。</CardDescription>
                 </div>
             </CardHeader>
             <CardContent>
