@@ -267,23 +267,23 @@ export default function Header({rssLink}: HeaderProps) {
                         <CommandEmpty>未找到结果。</CommandEmpty>
                         <CommandGroup heading="导航">
                             <CommandItem onSelect={() => goTo("/")}>主页</CommandItem>
-                            <CommandItem onSelect={() => goTo("/myblog")}>我的博客</CommandItem>
-                            <CommandItem onSelect={() => goTo("/blog/list")}>用户的文章</CommandItem>
+                            {/*<CommandItem onSelect={() => goTo("/myblog")}>我的博客</CommandItem>*/}
+                            {/*<CommandItem onSelect={() => goTo("/blog/list")}>用户的文章</CommandItem>*/}
                             <CommandItem onSelect={() => goTo("/links")}>友情链接</CommandItem>
                         </CommandGroup>
-                        {/*<CommandSeparator/>*/}
-                        {/*<CommandGroup heading="文章">*/}
-                        {/*    {components.map((component) => (*/}
-                        {/*        <CommandItem*/}
-                        {/*            key={component.title}*/}
-                        {/*            value={component.title}*/}
-                        {/*            disabled={component.disabled}*/}
-                        {/*            onSelect={() => goTo(component.href)}*/}
-                        {/*        >*/}
-                        {/*            {component.title}*/}
-                        {/*        </CommandItem>*/}
-                        {/*    ))}*/}
-                        {/*</CommandGroup>*/}
+                        <CommandSeparator/>
+                        <CommandGroup heading="博客文章">
+                            {components.map((component) => (
+                                <CommandItem
+                                    key={component.title}
+                                    value={component.title}
+                                    disabled={component.disabled}
+                                    onSelect={() => goTo(component.href)}
+                                >
+                                    {component.title}
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
                         <CommandSeparator/>
                         <CommandGroup heading="其他">
                             <CommandItem
