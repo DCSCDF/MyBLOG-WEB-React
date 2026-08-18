@@ -5,7 +5,6 @@ import {motion} from "motion/react"
 import {useTransitionRouter} from "next-view-transitions"
 import {useSearchParams} from "next/navigation"
 import {Button} from "@/components/ui/button"
-import {BackgroundRippleEffect} from "@/components/ui/background-ripple-effect"
 import {
     Card,
     CardContent,
