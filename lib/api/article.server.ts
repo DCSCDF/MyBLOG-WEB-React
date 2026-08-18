@@ -50,10 +50,6 @@ export const getAdminArticleListServer = async (params: ArticleListParams): Prom
     return fetchArticleList("/admin/list", params);
 };
 
-// export const getPublicArticleListServer = async (params: ArticleListParams): Promise<ArticlePageResponse["data"] | null> => {
-//     return fetchArticleList("/list", params);
-// };
-
 export const getUserArticleListServer = async (params: ArticleListParams): Promise<ArticlePageResponse["data"] | null> => {
     return fetchArticleList("/user/list", params);
 };
